@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-91K3PERTJG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-91K3PERTJG');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>旅日嚮導</title>
@@ -8,6 +16,40 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
+/* 走訪認證標記 */
+.verified-badge {
+  color: #27ae60;
+  font-weight: bold;
+}
+.unverified-item {
+  color: #444;
+}
+.recommendation-info-icon {
+  cursor: pointer;
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.7);
+  margin-left: 4px;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.recommendation-info-icon:hover::after {
+  content: "✅ 走訪認證：編輯實地走訪｜未標示：依公開評價篩選，未經實地走訪";
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.88);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  z-index: 999;
+  width: 240px;
+  white-space: normal;
+  line-height: 1.6;
+  pointer-events: none;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f8f8f8;}
 button,input,textarea{font-family:inherit;}
@@ -40,7 +82,7 @@ const DEMO = [{
   editorial:"這是示範資料。請在 Google Sheets 新增景點並將審核狀態設為「已上架」。",
   suitable:"所有旅客",bestTime:"平日清晨",
   nearby:["上野公園・地鐵10分","押上晴空塔・地鐵5分"],
-  food:["駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
+  food:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
   stay:["THE GATE HOTEL 雷門・精品"],shops:["合羽橋道具街・廚具"],
   mapsUrl:"https://maps.google.com/?q=浅草寺",
   ticketMethod:"",ticketNote:"",ticketAlert:[],subTickets:[],
@@ -106,6 +148,19 @@ function SpotCard({s,isSel,onDetail,onToggle}){
         {isSel?"✓":"＋"}
       </button>
     </div>
+  );
+}
+
+// ── 推薦清單項目：✅開頭顯示綠色，其餘一般色 ──
+function RecommendItem({item, icon}){
+  const isVerified = item.startsWith("✅");
+  return (
+    <span style={{flex:1,paddingRight:8}}>
+      {icon}{" "}
+      <span className={isVerified ? "verified-badge" : "unverified-item"}>
+        {item}
+      </span>
+    </span>
   );
 }
 
@@ -241,16 +296,33 @@ function App(){
         )}
         <button style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:10,padding:"10px 14px",fontSize:13,cursor:"pointer",textAlign:"left"}}>🚗 電車到不了？查詢包車服務</button>
       </div>
+
+      {/* ── 推薦分頁 Tab ── */}
       <div style={{padding:"14px 16px 0"}}>
         <div style={{display:"flex",gap:6,marginBottom:4}}>
           {["附近景點","美食推薦","住宿推薦","特色店家"].map(c=>(
-            <button key={c} onClick={()=>setTab(t=>({...t,[spot.id]:c}))} style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",background:curTab===c?a.color:"#f0f0f0",color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer"}}>{c}</button>
+            <button key={c} onClick={()=>setTab(t=>({...t,[spot.id]:c}))}
+              style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",
+                background:curTab===c?a.color:"#f0f0f0",
+                color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer",
+                display:"flex",alignItems:"center",justifyContent:"center",gap:2}}>
+              {c}
+              {/* ℹ️ 只在三個推薦類別顯示 */}
+              {["美食推薦","住宿推薦","特色店家"].includes(c) && (
+                <span className="recommendation-info-icon">ℹ️</span>
+              )}
+            </button>
           ))}
         </div>
+
+        {/* ── 推薦清單 ── */}
         <div style={{paddingBottom:40}}>
           {(curTab==="附近景點"?spot.nearby:curTab==="美食推薦"?spot.food:curTab==="住宿推薦"?spot.stay:spot.shops).map((item,i)=>(
             <div key={i} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <span style={{flex:1,paddingRight:8}}>{curTab==="附近景點"?"📍":curTab==="美食推薦"?"🍜":curTab==="住宿推薦"?"🏨":"🛍"} {item}</span>
+              <RecommendItem
+                item={item}
+                icon={curTab==="附近景點"?"📍":curTab==="美食推薦"?"🍜":curTab==="住宿推薦"?"🏨":"🛍"}
+              />
               <button onClick={()=>setFb(true)} style={{fontSize:10,background:"#f0f0f0",color:"#888",border:"none",borderRadius:12,padding:"3px 8px",cursor:"pointer",flexShrink:0}}>回報問題</button>
             </div>
           ))}
@@ -258,6 +330,7 @@ function App(){
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
         </div>
       </div>
+
       {fb&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
         <div style={{background:"#fff",borderRadius:16,padding:20,width:"100%",maxWidth:320}}>
           {fbSent?<div style={{textAlign:"center",padding:"20px 0"}}>
@@ -356,7 +429,6 @@ function App(){
               </div>
             );
           })}
-          {/* 無分類景點 */}
           {spots.filter(s=>!AXIS[s.axis]).length>0&&(
             <div style={{marginBottom:8}}>
               <div style={{padding:"8px 16px 4px",fontWeight:700,fontSize:14,color:"#333"}}>📍 其他景點</div>
@@ -375,7 +447,7 @@ function App(){
       {/* 已選行程浮動面板 */}
       {selSpots.length>0&&(
         <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:420,background:"#fff",borderTop:"1px solid #eee",padding:"12px 16px",boxShadow:"0 -4px 20px rgba(0,0,0,0.1)",zIndex:50}}>
-              <div style={{fontSize:13,fontWeight:700,marginBottom:8}}>📍 規劃路線（{selSpots.length}站）</div>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:8}}>📍 規劃路線（{selSpots.length}站）</div>
           {selSpots.map((s,i)=>{
             const sa=getAx(s.axis);
             return(
