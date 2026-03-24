@@ -92,6 +92,7 @@ const DEMO = [{
   nearby:["上野公園・地鐵10分","押上晴空塔・地鐵5分"],
   food:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
   stay:["THE GATE HOTEL 雷門・精品"],shops:["合羽橋道具街・廚具"],
+  arrivalNote:"銀座線 往淺草方向",
   mapsUrl:"https://maps.google.com/?q=浅草寺",
   ticketMethod:"",ticketNote:"",ticketAlert:[],subTickets:[],
   photos:["https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Sensoji_temple_and_Skytree.jpg/800px-Sensoji_temple_and_Skytree.jpg"],
@@ -124,6 +125,7 @@ function fetchSheet(){
         openTime:g(row,"開放時間"),holiday:g(row,"公休日"),
         stayTime:g(row,"建議停留時間"),editorial:g(row,"客觀評述"),
         suitable:g(row,"適合族群"),bestTime:g(row,"建議造訪時機"),
+        arrivalNote:g(row,"抵達方式"),
         nearby:split(g(row,"附近景點")),food:split(g(row,"美食推薦")),
         stay:split(g(row,"住宿推薦")),shops:split(g(row,"特色店家")),
         mapsUrl:g(row,"Google Maps連結"),
@@ -199,7 +201,7 @@ function App(){
   },[]);
 
   const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
-  const selSpots=spots.filter(s=>sel.includes(s.id));
+  const selSpots=sel.map(id=>spots.find(s=>s.id===id)).filter(Boolean);
   const spot=did?spots.find(s=>s.id===did):null;
   const a=spot?getAx(spot.axis):DEF;
   const curTab=spot?(tab[spot.id]||"附近景點"):"";
@@ -469,17 +471,11 @@ function App(){
                   <button onClick={()=>toggleSel(s.id)} style={{fontSize:14,background:"none",border:"none",cursor:"pointer",color:"#ccc",flexShrink:0,padding:0}}>×</button>
                 </div>
                 {i<selSpots.length-1&&(
-                  <div style={{marginLeft:11,paddingLeft:10,borderLeft:"1px dashed #e0e0e0",paddingBottom:6,marginBottom:4}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8,marginTop:2}}>
-                      <span style={{fontSize:10,color:"#ccc"}}>🚇 換乘</span>
-                      <a
-                        href={"https://www.google.com/maps/dir/"+encodeURIComponent(selSpots[i].name)+"/"+encodeURIComponent(selSpots[i+1].name)+"/?travelmode=transit&hl=ja"}
-                        target="_blank" rel="noreferrer"
-                        onClick={e=>e.stopPropagation()}
-                        style={{fontSize:11,background:"#e8f4fd",color:"#1a73e8",border:"1px solid #c5dff8",borderRadius:10,padding:"3px 10px",textDecoration:"none",fontWeight:700,whiteSpace:"nowrap"}}>
-                        🚃 查電車路線
-                      </a>
-                    </div>
+                  <div style={{marginLeft:11,paddingLeft:10,borderLeft:"1px dashed #e0e0e0",paddingBottom:5,marginBottom:4}}>
+                    {selSpots[i+1].arrivalNote
+                      ?<div style={{fontSize:11,color:"#e67e22",fontWeight:600,marginTop:2}}>🚃 {selSpots[i+1].arrivalNote}</div>
+                      :<div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>
+                    }
                   </div>
                 )}
               </div>
