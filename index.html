@@ -152,6 +152,8 @@ function fetchSheet(){
         nearby:split(g(row,"附近景點")),food:split(g(row,"美食推薦")),
         stay:split(g(row,"住宿推薦")),shops:split(g(row,"特色店家")),
         mapsUrl:g(row,"Google Maps連結"),
+        sortOrder:parseInt(g(row,"排序權重"))||999,
+        banner:g(row,"季節橫幅"),
         photos:pl.length?pl:["📸"],
       };
     }).filter(Boolean);
@@ -519,8 +521,37 @@ function App(){
       ):(
         /* Netflix 橫向分軸線 */
         <div style={{paddingTop:8}}>
+          {/* 季節橫幅 */}
+          {(()=>{
+            const bannerSpots=spots.filter(s=>s.banner).sort((a,b)=>a.sortOrder-b.sortOrder);
+            if(!bannerSpots.length) return null;
+            const bannerText=bannerSpots[0].banner;
+            const bannerColor=AXIS[bannerSpots[0].axis]?.color||"#c0392b";
+            return(
+              <div style={{margin:"8px 16px",borderRadius:12,overflow:"hidden",border:"1.5px solid "+bannerColor+"44"}}>
+                <div style={{background:"linear-gradient(135deg,"+bannerColor+"22,"+bannerColor+"11)",padding:"10px 14px 8px"}}>
+                  <div style={{fontSize:12,fontWeight:700,color:bannerColor,marginBottom:6}}>✨ {bannerText}</div>
+                  <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
+                    {bannerSpots.map(s=>(
+                      <div key={s.id} onClick={()=>{setDid(s.id);setPage("detail");}}
+                        style={{flexShrink:0,display:"flex",alignItems:"center",gap:8,background:"#fff",borderRadius:10,padding:"6px 10px",cursor:"pointer",border:"1px solid "+bannerColor+"33"}}>
+                        {s.photos[0]&&s.photos[0].startsWith("http")
+                          ?<img src={s.photos[0]} style={{width:36,height:36,borderRadius:8,objectFit:"cover"}} alt=""/>
+                          :<div style={{width:36,height:36,borderRadius:8,background:AXIS[s.axis]?.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{AXIS[s.axis]?.icon}</div>
+                        }
+                        <div>
+                          <div style={{fontSize:12,fontWeight:700,color:"#333"}}>{s.name}</div>
+                          <div style={{fontSize:10,color:"#999"}}>{s.area}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
           {AXIS_ORDER.map(axName=>{
-            const axSpots=spots.filter(s=>s.axis===axName);
+            const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
             if(!axSpots.length) return null;
             const axInfo=AXIS[axName];
             return(
