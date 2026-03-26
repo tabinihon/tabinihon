@@ -260,7 +260,17 @@ function App(){
   const photos=spot?(spot.photos||["📸"]):["📸"];
 
   const q=search.trim().toLowerCase();
-  const searchResults=q?spots.filter(s=>[s.name,s.area,s.type,s.axis,s.tag,s.editorial].some(v=>v&&v.toLowerCase().includes(q))):[];
+  const searchResults=q?(()=>{
+    const matched=spots.filter(s=>[s.name,s.area,s.type,s.axis,s.tag,s.editorial].some(v=>v&&v.toLowerCase().includes(q)));
+    // 按相關度排序：景點名稱符合排最前，其次區域，最後其他欄位
+    return matched.sort((a,b)=>{
+      const aName=a.name.toLowerCase().includes(q)?0:1;
+      const bName=b.name.toLowerCase().includes(q)?0:1;
+      const aArea=(a.area||"").toLowerCase().includes(q)?0:1;
+      const bArea=(b.area||"").toLowerCase().includes(q)?0:1;
+      return (aName+aArea)-(bName+bArea);
+    });
+  })():[];
 
   const mapsLink=()=>{
     if(!selSpots.length) return "#";
