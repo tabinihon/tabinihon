@@ -357,6 +357,7 @@ function App(){
         </div>}
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
           {spot.openTime&&<div>🕐 開放時間：{spot.openTime}</div>}
+          {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
         </div>}
         {spot.ticket&&(
