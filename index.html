@@ -243,14 +243,17 @@ function App(){
   };
 
   const [favPage,setFavPage]=useState(false);
+  const [helpPage,setHelpPage]=useState(false);
 
   // 加入主畫面引導：只顯示一次
   const [showInstall,setShowInstall]=useState(()=>{
     try{ return !localStorage.getItem("tabinihon_install_shown"); }
     catch(e){ return false; }
   });
-  const dismissInstall=()=>{
-    try{ localStorage.setItem("tabinihon_install_shown","1"); }catch(e){}
+  const dismissInstall=(remember)=>{
+    if(remember){
+      try{ localStorage.setItem("tabinihon_install_shown","1"); }catch(e){}
+    }
     setShowInstall(false);
   };
 
@@ -458,9 +461,14 @@ function App(){
             <div style={{fontSize:11,opacity:.7,marginTop:2}}>真實・客觀・嚴選 ｜ 東京版</div>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"flex-end"}}>
-            <button onClick={()=>setFavPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
-              ❤️ 我的收藏<br/>{favs.length}個景點
-            </button>
+            <div style={{display:"flex",gap:6}}>
+              <button onClick={()=>setFavPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
+                ❤️ 我的收藏<br/>{favs.length}個景點
+              </button>
+              <button onClick={()=>setHelpPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 10px",fontSize:14,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
+                ？
+              </button>
+            </div>
             <button onClick={()=>setSecret(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
               💡 推薦<br/>私房景點
             </button>
@@ -625,13 +633,100 @@ function App(){
               </div>
             </div>
             <div style={{display:"flex",gap:10}}>
-              <button onClick={dismissInstall} style={{flex:1,background:"#f0f0f0",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#888"}}>
+              <button onClick={()=>dismissInstall(false)} style={{flex:1,background:"#f0f0f0",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#888"}}>
                 下次再說
               </button>
-              <button onClick={dismissInstall} style={{flex:2,background:"#c0392b",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>
+              <button onClick={()=>dismissInstall(true)} style={{flex:2,background:"#c0392b",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>
                 知道了 ✓
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 使用說明頁面 */}
+      {helpPage&&(
+        <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:100,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
+          <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
+            <button onClick={()=>setHelpPage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12}}>← 返回</button>
+            <div style={{fontWeight:700,fontSize:16}}>？ 使用說明</div>
+          </div>
+          <div style={{padding:"16px"}}>
+
+            {/* Q1 加入主畫面 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:10,color:"#c0392b"}}>📲 如何加到手機主畫面？</div>
+              <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px",marginBottom:8}}>
+                <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🍎 iPhone（請用 Safari）</div>
+                <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                  1. 點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⬆ 分享</span> 按鈕<br/>
+                  2. 選「加入主畫面」<br/>
+                  3. 點右上角「新增」完成
+                </div>
+                <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 必須用 Safari，Chrome 不支援</div>
+              </div>
+              <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px"}}>
+                <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🤖 Android</div>
+                <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                  1. 點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⋮ 選單</span><br/>
+                  2. 選「新增至主畫面」或「安裝應用程式」
+                </div>
+              </div>
+            </div>
+
+            {/* Q2 收藏 vs 行程 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:10,color:"#c0392b"}}>❤️ 收藏和加入行程有什麼不同？</div>
+              <div style={{display:"flex",gap:10}}>
+                <div style={{flex:1,background:"#fff0f0",borderRadius:10,padding:"10px 12px"}}>
+                  <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>❤️ 收藏</div>
+                  <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>存起來之後慢慢看，不限數量，關掉 APP 也不會消失</div>
+                </div>
+                <div style={{flex:1,background:"#f0f8ff",borderRadius:10,padding:"10px 12px"}}>
+                  <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>＋ 加入行程</div>
+                  <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>今天要走的路線，最多4個，可以直接導航和查電車</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Q3 查電車 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>🚃 查電車路線怎麼用？</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                1. 點景點卡片右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>＋</span> 選兩個以上景點<br/>
+                2. 底部面板換乘資訊旁邊有 <span style={{background:"#e8f4fd",color:"#1a73e8",borderRadius:4,padding:"1px 6px",fontSize:11}}>查電車 →</span><br/>
+                3. 點擊後直接開啟 Google Maps 電車路線
+              </div>
+            </div>
+
+            {/* Q4 走訪認證 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>✅ 走訪認證是什麼？</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                景點內的美食、住宿、店家推薦分兩種：<br/>
+                <span style={{color:"#27ae60",fontWeight:600}}>✅ 綠色</span> = 編輯實地走訪確認<br/>
+                一般顏色 = 依公開評價篩選的編輯精選<br/><br/>
+                點推薦區塊標題旁的 ℹ️ 可以查看說明
+              </div>
+            </div>
+
+            {/* Q5 資料更新 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>📋 資料準確嗎？發現錯誤怎麼辦？</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                所有景點資料由編輯團隊查核，但票價、開放時間等資訊可能隨時變動，建議出發前至官方網站確認。<br/><br/>
+                發現資訊有誤，點景點內「<span style={{background:"#f0f0f0",borderRadius:4,padding:"1px 6px"}}>回報問題</span>」按鈕，我們會盡快複查更新。
+              </div>
+            </div>
+
+            {/* Q6 推薦私房景點 */}
+            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:24,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>💡 怎麼推薦私房景點？</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
+                點右上角「💡 推薦私房景點」填寫景點資訊，審核通過上架後會寄送 NT$200–500 獎勵金！
+              </div>
+            </div>
+
           </div>
         </div>
       )}
