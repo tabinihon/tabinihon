@@ -93,8 +93,9 @@ const AXIS = {
   "流行潮流軸":{color:"#2980b9",bg:"#ebf5fb",icon:"✨"},
   "職人選物軸":{color:"#16a085",bg:"#e8f8f5",icon:"✏️"},
   "美食職人軸":{color:"#c0392b",bg:"#fdedec",icon:"🍜"},
+  "近郊小旅行":{color:"#d35400",bg:"#fef5e7",icon:"🚃"},
 };
-const AXIS_ORDER = ["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸"];
+const AXIS_ORDER = ["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
 const DEF = {color:"#c0392b",bg:"#fdedec",icon:"📍"};
 const getAx = a => AXIS[a]||DEF;
 
@@ -242,6 +243,16 @@ function App(){
   };
 
   const [favPage,setFavPage]=useState(false);
+
+  // 加入主畫面引導：只顯示一次
+  const [showInstall,setShowInstall]=useState(()=>{
+    try{ return !localStorage.getItem("tabinihon_install_shown"); }
+    catch(e){ return false; }
+  });
+  const dismissInstall=()=>{
+    try{ localStorage.setItem("tabinihon_install_shown","1"); }catch(e){}
+    setShowInstall(false);
+  };
 
   useEffect(()=>{
     fetchSheet().then(data=>{
@@ -584,6 +595,43 @@ function App(){
             </a>
             <button onClick={()=>setShared(true)} style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:20,padding:"10px 14px",cursor:"pointer",fontSize:13}}>📤</button>
             <button onClick={()=>setSel([])} style={{background:"#f0f0f0",color:"#888",border:"none",borderRadius:20,padding:"10px 14px",cursor:"pointer",fontSize:12}}>清除</button>
+          </div>
+        </div>
+      )}
+
+      {/* 加入主畫面引導（只出現一次） */}
+      {showInstall&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:200,padding:"0 0 20px"}}>
+          <div style={{background:"#fff",borderRadius:20,padding:"24px 20px",width:"100%",maxWidth:420,margin:"0 16px"}}>
+            <div style={{fontSize:28,textAlign:"center",marginBottom:8}}>📲</div>
+            <div style={{fontWeight:700,fontSize:17,textAlign:"center",marginBottom:6}}>加到手機主畫面</div>
+            <div style={{fontSize:13,color:"#666",textAlign:"center",marginBottom:16,lineHeight:1.7}}>
+              下次不用找網址，直接從桌面開啟！
+            </div>
+            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:16}}>
+              <div style={{fontSize:13,marginBottom:10,fontWeight:600,color:"#333"}}>🍎 iPhone / iPad</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>
+                點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⬆ 分享</span> 按鈕<br/>
+                → 選「<span style={{fontWeight:600}}>加入主畫面</span>」<br/>
+                → 點右上角「新增」
+              </div>
+              <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 請用 Safari 開啟，Chrome 不支援</div>
+            </div>
+            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:20}}>
+              <div style={{fontSize:13,marginBottom:10,fontWeight:600,color:"#333"}}>🤖 Android</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>
+                點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⋮ 選單</span><br/>
+                → 選「<span style={{fontWeight:600}}>新增至主畫面</span>」或「安裝應用程式」
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={dismissInstall} style={{flex:1,background:"#f0f0f0",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#888"}}>
+                下次再說
+              </button>
+              <button onClick={dismissInstall} style={{flex:2,background:"#c0392b",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>
+                知道了 ✓
+              </button>
+            </div>
           </div>
         </div>
       )}
