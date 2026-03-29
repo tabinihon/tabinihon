@@ -152,6 +152,7 @@ function fetchSheet(){
         nearby:split(g(row,"附近景點")),food:split(g(row,"美食推薦")),
         stay:split(g(row,"住宿推薦")),shops:split(g(row,"特色店家")),
         mapsUrl:g(row,"Google Maps連結"),
+        officialUrl:g(row,"官方網站"),
         sortOrder:parseInt(g(row,"排序權重"))||999,
         banner:g(row,"季節橫幅"),
         photos:pl.length?pl:["📸"],
@@ -358,7 +359,10 @@ function App(){
           {spot.metro.split(/\r?\n|｜|\/(?!\/)/).map(l=>l.trim()).filter(Boolean).map((l,i)=><div key={i}>{i===0?"🚇 ":"　　"}{l}</div>)}
         </div>}
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
-          {spot.openTime&&<div>🕐 開放時間：{spot.openTime}</div>}
+          {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span>🕐 開放時間：{spot.openTime}</span>
+            {spot.officialUrl&&<a href={spot.officialUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
+          </div>}
           {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
         </div>}
