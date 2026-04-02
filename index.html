@@ -110,6 +110,7 @@ const DEMO = [{
   nearby:["上野公園・地鐵10分","押上晴空塔・地鐵5分"],
   food:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
   stay:["THE GATE HOTEL 雷門・精品"],shops:["合羽橋道具街・廚具"],
+  walking:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥","THE GATE HOTEL 雷門・精品"],
   arrivalNote:"銀座線 往淺草方向",
   tripType:"",fromCity:"",transit:"",tripTip:"",
   mapsUrl:"https://maps.google.com/?q=浅草寺",
@@ -151,6 +152,7 @@ function fetchSheet(){
         tripTip:g(row,"行程建議"),
         nearby:split(g(row,"附近景點")),food:split(g(row,"美食推薦")),
         stay:split(g(row,"住宿推薦")),shops:split(g(row,"特色店家")),
+        walking:[...split(g(row,"美食推薦")),...split(g(row,"住宿推薦"))],
         mapsUrl:g(row,"Google Maps連結"),
         officialUrl:g(row,"官方網站"),
         sortOrder:parseInt(g(row,"排序權重"))||999,
@@ -419,15 +421,15 @@ function App(){
       {/* ── 推薦分頁 Tab ── */}
       <div style={{padding:"14px 16px 0"}}>
         <div style={{display:"flex",gap:6,marginBottom:4}}>
-          {["附近景點","美食推薦","住宿推薦","特色店家"].map(c=>(
+          {["附近景點","周邊散步","特色店家"].map(c=>(
             <button key={c} onClick={()=>setTab(t=>({...t,[spot.id]:c}))}
               style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",
                 background:curTab===c?a.color:"#f0f0f0",
                 color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer",
                 display:"flex",alignItems:"center",justifyContent:"center",gap:2}}>
               {c}
-              {/* ℹ️ 只在三個推薦類別顯示 */}
-              {["美食推薦","住宿推薦","特色店家"].includes(c) && (
+              {/* ℹ️ 只在推薦類別顯示 */}
+              {["周邊散步","特色店家"].includes(c) && (
                 <span className="recommendation-info-icon">ℹ️</span>
               )}
             </button>
@@ -436,11 +438,11 @@ function App(){
 
         {/* ── 推薦清單 ── */}
         <div style={{paddingBottom:40}}>
-          {(curTab==="附近景點"?spot.nearby:curTab==="美食推薦"?spot.food:curTab==="住宿推薦"?spot.stay:spot.shops).map((item,i)=>(
+          {(curTab==="附近景點"?spot.nearby:curTab==="周邊散步"?spot.walking:spot.shops).map((item,i)=>(
             <div key={i} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <RecommendItem
                 item={item}
-                icon={curTab==="附近景點"?"📍":curTab==="美食推薦"?"🍜":curTab==="住宿推薦"?"🏨":"🛍"}
+                icon={curTab==="附近景點"?"📍":curTab==="周邊散步"?"🚶":"🛍"}
               />
               <button onClick={()=>setFb(true)} style={{fontSize:10,background:"#f0f0f0",color:"#888",border:"none",borderRadius:12,padding:"3px 8px",cursor:"pointer",flexShrink:0}}>回報問題</button>
             </div>
@@ -752,7 +754,7 @@ function App(){
             <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
               <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>✅ 走訪認證是什麼？</div>
               <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                景點內的美食、住宿、店家推薦分兩種：<br/>
+                景點內的周邊散步、特色店家推薦分兩種：<br/>
                 <span style={{color:"#27ae60",fontWeight:600}}>✅ 綠色</span> = 編輯實地走訪確認<br/>
                 一般顏色 = 依公開評價篩選的編輯精選<br/><br/>
                 點推薦區塊標題旁的 ℹ️ 可以查看說明
