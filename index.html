@@ -195,9 +195,18 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
         
-        .spot-image {
+        .spot-image-container {
             width: 100%;
             height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .spot-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
         }
         
@@ -1267,6 +1276,10 @@
                 const rows = json.table.rows;
                 allSpots = rows.map(row => {
                     const cells = row.c;
+                    const coverPhoto = cells[27]?.v || '';
+                    // 只使用完整網址的封面照片,否則不顯示圖片
+                    const imageUrl = (coverPhoto && coverPhoto.startsWith('http')) ? coverPhoto : '';
+                    
                     return {
                         name: cells[0]?.v || '',
                         axis: cells[4]?.v || '',
@@ -1275,7 +1288,7 @@
                         station: cells[8]?.v || '',
                         walkTime: cells[9]?.v || '',
                         fee: cells[10]?.v || '',
-                        image: cells[27]?.v || 'icon.png',
+                        image: imageUrl,
                         verified: cells[29]?.v || '',
                         status: cells[7]?.v || ''
                     };
@@ -1321,14 +1334,33 @@
             return icons[axis] || '📍';
         }
         
+        function getAxisColor(axis) {
+            const colors = {
+                '傳統文化軸': { color: '#9c27b0', bg: '#f3e5f5' },
+                '流行潮流軸': { color: '#2196f3', bg: '#e3f2fd' },
+                '美食職人軸': { color: '#e53935', bg: '#ffebee' },
+                '職人選物軸': { color: '#43a047', bg: '#e8f5e9' },
+                '近郊小旅行': { color: '#1565c0', bg: '#e1f5fe' }
+            };
+            return colors[axis] || { color: '#757575', bg: '#f5f5f5' };
+        }
+        
         function createSpotCard(spot) {
             const isFavorite = favorites.includes(spot.name);
             const isInTrip = selectedSpots.includes(spot.name);
             const isVerified = spot.verified !== '';
+            const hasImage = spot.image && spot.image.startsWith('http');
+            const axisColor = getAxisColor(spot.axis);
+            const axisIcon = getAxisIcon(spot.axis);
             
             return `
                 <div class="spot-card" onclick="showSpotDetail('${spot.name}')">
-                    <img src="${spot.image}" alt="${spot.name}" class="spot-image">
+                    <div class="spot-image-container" style="background: ${hasImage ? '#111' : axisColor.bg};">
+                        ${hasImage 
+                            ? `<img src="${spot.image}" alt="${spot.name}" class="spot-image">`
+                            : `<div style="font-size: 36px;">${axisIcon}</div>`
+                        }
+                    </div>
                     <div class="spot-info">
                         <div class="spot-header">
                             <div class="spot-name">
