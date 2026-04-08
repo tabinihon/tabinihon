@@ -447,23 +447,7 @@ function App(){
           </div>}
           {spot.stayTime&&<div><strong>⏱️ 建議停留</strong> {spot.stayTime}</div>}
           {spot.holiday&&<div><strong>🚫 公休日</strong> {spot.holiday}</div>}
-          {/* 官方網站 */}
-  {s.ticketUrl && (
-    <div style={{marginTop:'12px'}}>
-      <strong>🌐 官方網站</strong>{' '}
-      <a 
-        href={s.ticketUrl} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        style={{
-          color:'#3498db',
-          textDecoration:'underline'
-        }}
-      >
-        前往官網 →
-      </a>
-    </div>
-  )}
+
   </div>
 )}
         </div>}
