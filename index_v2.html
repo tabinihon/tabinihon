@@ -88,8 +88,8 @@ button,input,textarea{font-family:inherit;}
 <div id="root"></div>
 <script type="text/babel">
 // Supabase 設定
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // ← 填入你的 Supabase URL
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // ← 填入你的 Supabase Anon Key
+const SUPABASE_URL = 'https://vxdpnhjitcdtyshnopus.supabase.co'; // ← 填入你的 Supabase URL
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU'; // ← 填入你的 Supabase Anon Key
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const {useState,useEffect} = React;
 
@@ -1003,7 +1003,7 @@ function App(){
             <label style={{fontSize:12,color:"#555",marginTop:10,display:"block"}}>景點描述 *</label>
             <textarea value={sf.desc} onChange={e=>setSf(f=>({...f,desc:e.target.value}))} placeholder="為什麼推薦？" style={{...S,height:70,resize:"none"}}/>
             <label style={{fontSize:12,color:"#555",marginTop:10,display:"block"}}>Email *</label>
-            <input type="email" value={sf.email} onChange={e=>setSf(f=>({...f,email:e.target.value}))} placeholder="your@email.com" style={S}/>
+            <input type="email" value={sf.email} onChange={e=>setSf(f=>({...f,email:e.target.value}))} placeholder="tabinihon.app@gmail.com" style={S}/>
             <div style={{display:"flex",gap:8,marginTop:14}}>
               <button onClick={()=>setSecret(false)} style={{flex:1,background:"#eee",border:"none",borderRadius:20,padding:"10px",cursor:"pointer"}}>取消</button>
               <button onClick={()=>{if(sf.name&&sf.area&&sf.desc&&sf.email)setSSent(true);}}
