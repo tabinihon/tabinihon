@@ -158,7 +158,58 @@ async function loadSpots() {
 
       // 票價
       ticket: spot.ticket_price?.adult === 0 
-        ? '免費入場'
+        ? '免費入場
+
+{/* 園內設施門票 - 獨立區塊 */}
+{s.subTickets && s.subTickets.length > 0 && (
+  <div style={{marginTop:'16px'}}>
+    <div style={{
+      background:'#e3f2fd',
+      padding:'12px',
+      borderRadius:'8px',
+      marginBottom:'12px'
+    }}>
+      <strong>🏛️ 園內設施門票</strong>
+    </div>
+
+    {s.subTickets.map((sub, i) => (
+      <div key={i} style={{
+        padding:'12px',
+        background:'#f8f9fa',
+        borderRadius:'8px',
+        marginBottom:'8px',
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center'
+      }}>
+        <div>
+          <div style={{fontWeight:'600',marginBottom:'4px'}}>
+            {sub.name}
+          </div>
+          <div style={{fontSize:'14px',color:'#666'}}>
+            {sub.price}
+          </div>
+        </div>
+        {sub.url && (
+          <button
+            onClick={() => window.open(sub.url, '_blank')}
+            style={{
+              padding:'8px 16px',
+              background:'#2196f3',
+              color:'white',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer'
+            }}
+          >
+            購票
+          </button>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+'
         : spot.ticket_price?.adult 
         ? `大人 ¥${spot.ticket_price.adult}`
         : spot.ticket_method || '',
@@ -447,7 +498,7 @@ function App(){
           {spot.holiday&&<div><strong>🚫 公休日</strong> {spot.holiday}</div>}
           {spot.ticketUrl && (
             <div style={{marginTop:'8px'}}>
-              <strong>🌐 官方網站</strong>{' '}
+              <strong>🌐 官方網站（按鈕版）</strong>{' '}
               <a
                 href={spot.ticketUrl}
                 target="_blank"
@@ -469,11 +520,215 @@ function App(){
               {(()=>{
                 const m=(spot.ticketMethod||"").trim();
                 const href=spot.partnerUrl||spot.ticketUrl||"";
-                let label=m.includes("優惠")?"優惠購票":m.includes("官方")?"官方購票":m.includes("免費")?"免費入場":m.includes("現場")?"現場購票":spot.partnerUrl?"優惠購票":spot.ticketUrl?"官方購票":(spot.ticket||"").includes("免費")?"免費入場":"現場購票";
+                let label=m.includes("優惠")?"優惠購票":m.includes("官方")?"官方購票":m.includes("免費")?"免費入場
+
+{/* 園內設施門票 - 獨立區塊 */}
+{s.subTickets && s.subTickets.length > 0 && (
+  <div style={{marginTop:'16px'}}>
+    <div style={{
+      background:'#e3f2fd',
+      padding:'12px',
+      borderRadius:'8px',
+      marginBottom:'12px'
+    }}>
+      <strong>🏛️ 園內設施門票</strong>
+    </div>
+
+    {s.subTickets.map((sub, i) => (
+      <div key={i} style={{
+        padding:'12px',
+        background:'#f8f9fa',
+        borderRadius:'8px',
+        marginBottom:'8px',
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center'
+      }}>
+        <div>
+          <div style={{fontWeight:'600',marginBottom:'4px'}}>
+            {sub.name}
+          </div>
+          <div style={{fontSize:'14px',color:'#666'}}>
+            {sub.price}
+          </div>
+        </div>
+        {sub.url && (
+          <button
+            onClick={() => window.open(sub.url, '_blank')}
+            style={{
+              padding:'8px 16px',
+              background:'#2196f3',
+              color:'white',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer'
+            }}
+          >
+            購票
+          </button>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+":m.includes("現場")?"現場購票":spot.partnerUrl?"優惠購票":spot.ticketUrl?"官方購票":(spot.ticket||"").includes("免費")?"免費入場
+
+{/* 園內設施門票 - 獨立區塊 */}
+{s.subTickets && s.subTickets.length > 0 && (
+  <div style={{marginTop:'16px'}}>
+    <div style={{
+      background:'#e3f2fd',
+      padding:'12px',
+      borderRadius:'8px',
+      marginBottom:'12px'
+    }}>
+      <strong>🏛️ 園內設施門票</strong>
+    </div>
+
+    {s.subTickets.map((sub, i) => (
+      <div key={i} style={{
+        padding:'12px',
+        background:'#f8f9fa',
+        borderRadius:'8px',
+        marginBottom:'8px',
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center'
+      }}>
+        <div>
+          <div style={{fontWeight:'600',marginBottom:'4px'}}>
+            {sub.name}
+          </div>
+          <div style={{fontSize:'14px',color:'#666'}}>
+            {sub.price}
+          </div>
+        </div>
+        {sub.url && (
+          <button
+            onClick={() => window.open(sub.url, '_blank')}
+            style={{
+              padding:'8px 16px',
+              background:'#2196f3',
+              color:'white',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer'
+            }}
+          >
+            購票
+          </button>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+":"現場購票";
                 const bs={borderRadius:10,padding:"10px 14px",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,textDecoration:"none",minWidth:90};
                 return href
                   ?<a href={href} target="_blank" rel="noreferrer" style={{...bs,background:label==="優惠購票"?"#e67e22":"#2c7be5",color:"#fff"}}>{label}</a>
-                  :<div style={{...bs,background:label==="免費入場"?"#e8f5e9":"#f0f0f0",color:label==="免費入場"?"#2e7d32":"#666"}}>{label}</div>;
+                  :<div style={{...bs,background:label==="免費入場
+
+{/* 園內設施門票 - 獨立區塊 */}
+{s.subTickets && s.subTickets.length > 0 && (
+  <div style={{marginTop:'16px'}}>
+    <div style={{
+      background:'#e3f2fd',
+      padding:'12px',
+      borderRadius:'8px',
+      marginBottom:'12px'
+    }}>
+      <strong>🏛️ 園內設施門票</strong>
+    </div>
+
+    {s.subTickets.map((sub, i) => (
+      <div key={i} style={{
+        padding:'12px',
+        background:'#f8f9fa',
+        borderRadius:'8px',
+        marginBottom:'8px',
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center'
+      }}>
+        <div>
+          <div style={{fontWeight:'600',marginBottom:'4px'}}>
+            {sub.name}
+          </div>
+          <div style={{fontSize:'14px',color:'#666'}}>
+            {sub.price}
+          </div>
+        </div>
+        {sub.url && (
+          <button
+            onClick={() => window.open(sub.url, '_blank')}
+            style={{
+              padding:'8px 16px',
+              background:'#2196f3',
+              color:'white',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer'
+            }}
+          >
+            購票
+          </button>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+"?"#e8f5e9":"#f0f0f0",color:label==="免費入場
+
+{/* 園內設施門票 - 獨立區塊 */}
+{s.subTickets && s.subTickets.length > 0 && (
+  <div style={{marginTop:'16px'}}>
+    <div style={{
+      background:'#e3f2fd',
+      padding:'12px',
+      borderRadius:'8px',
+      marginBottom:'12px'
+    }}>
+      <strong>🏛️ 園內設施門票</strong>
+    </div>
+
+    {s.subTickets.map((sub, i) => (
+      <div key={i} style={{
+        padding:'12px',
+        background:'#f8f9fa',
+        borderRadius:'8px',
+        marginBottom:'8px',
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center'
+      }}>
+        <div>
+          <div style={{fontWeight:'600',marginBottom:'4px'}}>
+            {sub.name}
+          </div>
+          <div style={{fontSize:'14px',color:'#666'}}>
+            {sub.price}
+          </div>
+        </div>
+        {sub.url && (
+          <button
+            onClick={() => window.open(sub.url, '_blank')}
+            style={{
+              padding:'8px 16px',
+              background:'#2196f3',
+              color:'white',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer'
+            }}
+          >
+            購票
+          </button>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+"?"#2e7d32":"#666"}}>{label}</div>;
               })()}
             </div>
             {spot.ticketNote&&<div style={{fontSize:12,color:"#888",paddingLeft:4}}>ℹ️ {spot.ticketNote}</div>}
@@ -506,7 +761,7 @@ function App(){
               color:curTab==="recommendations"?"#fff":"#555",fontSize:11,cursor:"pointer",
               display:"flex",alignItems:"center",justifyContent:"center",gap:4}}
           >
-            周邊推薦 {([...(spot.nearby||[]),...(spot.food||[]),...(spot.stay||[]),...(spot.shops||[])].filter(Boolean).length)}
+            附近景點 / 特色店家 {([...(spot.nearby||[]),...(spot.food||[]),...(spot.stay||[]),...(spot.shops||[])].filter(Boolean).length)}
             <span className="recommendation-info-icon">ℹ️</span>
           </button>
         </div>
@@ -1003,7 +1258,7 @@ function App(){
             <label style={{fontSize:12,color:"#555",marginTop:10,display:"block"}}>景點描述 *</label>
             <textarea value={sf.desc} onChange={e=>setSf(f=>({...f,desc:e.target.value}))} placeholder="為什麼推薦？" style={{...S,height:70,resize:"none"}}/>
             <label style={{fontSize:12,color:"#555",marginTop:10,display:"block"}}>Email *</label>
-            <input type="email" value={sf.email} onChange={e=>setSf(f=>({...f,email:e.target.value}))} placeholder="tabinihon.app@gmail.com" style={S}/>
+            <input type="email" value={sf.email} onChange={e=>setSf(f=>({...f,email:e.target.value}))} placeholder="your@email.com" style={S}/>
             <div style={{display:"flex",gap:8,marginTop:14}}>
               <button onClick={()=>setSecret(false)} style={{flex:1,background:"#eee",border:"none",borderRadius:20,padding:"10px",cursor:"pointer"}}>取消</button>
               <button onClick={()=>{if(sf.name&&sf.area&&sf.desc&&sf.email)setSSent(true);}}
