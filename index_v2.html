@@ -88,8 +88,8 @@ button,input,textarea{font-family:inherit;}
 <div id="root"></div>
 <script type="text/babel">
 // Supabase 設定
-const SUPABASE_URL = 'https://vxdpnhjitcdtyshnopus.supabase.co'; // ← 填入你的 Supabase URL
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU'; // ← 填入你的 Supabase Anon Key
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // ← 填入你的 Supabase URL
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // ← 填入你的 Supabase Anon Key
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const {useState,useEffect} = React;
 
@@ -110,7 +110,7 @@ const DEMO = [{
   metro:"東京Metro銀座線・淺草站 1號出口 徒步1分",walkMin:1,
   ticket:"境內免費／本堂 大人¥500",ticketUrl:"https://www.senso-ji.jp",partnerUrl:"",
   openTime:"06:00–17:00",holiday:"無休",stayTime:"30–60分鐘",
-  editorial:"這是示範資料。請在 Google Sheets 新增景點並將審核狀態設為「已上架」。",
+  editorial:"這是示範資料。請在 Supabase 新增景點並將 status 設為「已上架」。",
   suitable:"所有旅客",bestTime:"平日清晨",
   nearby:["上野公園・地鐵10分","押上晴空塔・地鐵5分"],
   food:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
@@ -164,6 +164,7 @@ async function loadSpots() {
         : spot.ticket_method || '',
       ticketUrl: spot.ticket_url_official || '',
       partnerUrl: spot.ticket_url_partner || '',
+      officialUrl: spot.ticket_url_official || '',
       ticketMethod: spot.ticket_method || '',
       ticketNote: spot.ticket_note || '',
       ticketAlert: spot.ticket_alerts ? spot.ticket_alerts.split('｜') : [],
@@ -341,7 +342,7 @@ function App(){
   const selSpots=sel.map(id=>spots.find(s=>s.id===id)).filter(Boolean);
   const spot=did?spots.find(s=>s.id===did):null;
   const a=spot?getAx(spot.axis):DEF;
-  const curTab=spot?(tab[spot.id]||"附近景點"):"";
+  const curTab=spot?(tab[spot.id]||"recommendations"):"";
   const curPi=spot?(pi[spot.id]||0):0;
   const photos=spot?(spot.photos||["📸"]):["📸"];
 
@@ -440,13 +441,23 @@ function App(){
       {spot.metro&&spot.axis!=="近郊小旅行"&&<div style={{background:"#f0f8ff",borderRadius:10,padding:"10px 14px",fontSize:13,lineHeight:1.7}}>
           {spot.metro.split(/\r?\n|｜|\/(?!\/)/).map(l=>l.trim()).filter(Boolean).map((l,i)=><div key={i}>{i===0?"🚇 ":"　　"}{l}</div>)}
         </div>}
-        {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
-          {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
-            <span>🕐 開放時間：{spot.openTime}</span>
-            {spot.officialUrl&&<a href={spot.officialUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
-          </div>}
+        {(spot.openTime||spot.holiday||spot.ticketUrl)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
+          {spot.openTime&&<div>🕐 開放時間：{spot.openTime}</div>}
           {spot.stayTime&&<div><strong>⏱️ 建議停留</strong> {spot.stayTime}</div>}
           {spot.holiday&&<div><strong>🚫 公休日</strong> {spot.holiday}</div>}
+          {spot.ticketUrl && (
+            <div style={{marginTop:'8px'}}>
+              <strong>🌐 官方網站</strong>{' '}
+              <a
+                href={spot.ticketUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{color:'#3498db',textDecoration:'underline'}}
+              >
+                前往官網 →
+              </a>
+            </div>
+          )}
         </div>}
         {spot.ticket&&(
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
@@ -488,52 +499,76 @@ function App(){
       {/* ── 推薦分頁 Tab ── */}
       <div style={{padding:"14px 16px 0"}}>
         <div style={{display:"flex",gap:6,marginBottom:4}}>
-          {["附近景點","周邊散步","特色店家"].map(c=>(
-            <button key={c} onClick={()=>setTab(t=>({...t,[spot.id]:c}))}
-              style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",
-                background:curTab===c?a.color:"#f0f0f0",
-                color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer",
-                display:"flex",alignItems:"center",justifyContent:"center",gap:2}}>
-              {c}
-              {/* ℹ️ 只在推薦類別顯示 */}
-              {["周邊散步","特色店家"].includes(c) && (
-                <span className="recommendation-info-icon">ℹ️</span>
-              )}
-            </button>
-          ))}
+          <button
+            onClick={()=>setTab(t=>({...t,[spot.id]:"recommendations"}))}
+            style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",
+              background:curTab==="recommendations"?a.color:"#f0f0f0",
+              color:curTab==="recommendations"?"#fff":"#555",fontSize:11,cursor:"pointer",
+              display:"flex",alignItems:"center",justifyContent:"center",gap:4}}
+          >
+            周邊推薦 {([...(spot.nearby||[]),...(spot.food||[]),...(spot.stay||[]),...(spot.shops||[])].filter(Boolean).length)}
+            <span className="recommendation-info-icon">ℹ️</span>
+          </button>
         </div>
 
-        {/* ── 推薦清單 ── */}
         <div style={{paddingBottom:40}}>
-          {(curTab==="附近景點"?spot.nearby:curTab==="周邊散步"?spot.walking:spot.shops).map((item,i)=>(
-            <div key={i} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <RecommendItem
-                item={item}
-                icon={curTab==="附近景點"?"📍":curTab==="周邊散步"?"🚶":"🛍"}
-              />
-              <button onClick={()=>setFb(true)} style={{fontSize:10,background:"#f0f0f0",color:"#888",border:"none",borderRadius:12,padding:"3px 8px",cursor:"pointer",flexShrink:0}}>回報問題</button>
-            </div>
-          ))}
-          <div style={{marginTop:'16px'}}>
-            <button 
-              onClick={() => {
-                const subject = `回報問題：${spot.name}`;
-                const body = `景點名稱：${spot.name}%0D%0A問題描述：（請在此說明）`;
-                window.location.href = `mailto:tabinihon.app@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-              }}
-              style={{
-                padding:'10px 16px',
-                background:'#f39c12',
-                color:'white',
-                border:'none',
-                borderRadius:'8px',
-                cursor:'pointer',
-                width:'100%'
-              }}
-            >
-              ⚠️ 回報問題
-            </button>
-          </div>
+          {curTab==="recommendations" && (() => {
+            const allRecs = [
+              ...(spot.nearby || []).map(x => ({type:'📍 景點',text:x})),
+              ...(spot.food || []).map(x => ({type:'🍽️ 美食',text:x})),
+              ...(spot.stay || []).map(x => ({type:'🏨 住宿',text:x})),
+              ...(spot.shops || []).map(x => ({type:'🛍️ 店家',text:x}))
+            ].filter(x => x.text);
+
+            if (allRecs.length === 0) {
+              return <div style={{color:'#999',textAlign:'center',padding:'20px'}}>暫無推薦</div>;
+            }
+
+            return allRecs.map((item, i) => {
+              const isVerified = item.text.startsWith('✅');
+              const displayText = item.text.replace(/^✅\s*/, '');
+
+              return (
+                <div
+                  key={i}
+                  style={{
+                    display:'flex',
+                    alignItems:'center',
+                    gap:'8px',
+                    padding:'12px',
+                    background:'#f8f9fa',
+                    borderRadius:'8px',
+                    marginBottom:'8px'
+                  }}
+                >
+                  <span style={{fontSize:'18px'}}>{item.type.split(' ')[0]}</span>
+                  <div style={{flex:1}}>
+                    <span style={{fontSize:'14px'}}>
+                      {isVerified && <span style={{color:'#27ae60',marginRight:'4px'}}>✅</span>}
+                      {displayText}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const subject = `回報問題：${spot.name} - ${displayText}`;
+                      const body = `景點：${spot.name}%0D%0A項目：${displayText}%0D%0A問題描述：`;
+                      window.location.href = `mailto:tabinihon.app@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+                    }}
+                    style={{
+                      padding:'4px 8px',
+                      border:'1px solid #ddd',
+                      borderRadius:'4px',
+                      background:'white',
+                      cursor:'pointer',
+                      fontSize:'12px'
+                    }}
+                  >
+                    ⚠️
+                  </button>
+                </div>
+              );
+            });
+          })()}
           {spot.suitable&&<div style={{padding:"10px 0",fontSize:12,color:"#888"}}>👥 {spot.suitable}</div>}
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
         </div>
@@ -710,26 +745,48 @@ function App(){
                   <button onClick={()=>toggleSel(s.id)} style={{fontSize:14,background:"none",border:"none",cursor:"pointer",color:"#ccc",flexShrink:0,padding:0}}>×</button>
                 </div>
                 {i<selSpots.length-1&&(
-                  <div style={{marginLeft:11,paddingLeft:10,borderLeft:"1px dashed #e0e0e0",paddingBottom:5,marginBottom:4}}>
-                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
-                      <div style={{flex:1}}>
-                        <div><strong>🚇 前往下一站</strong></div>
-                        {s.arrivalNote
-                          ?s.arrivalNote.split("｜").map((note,ni)=>(
-                            <div key={ni} style={{fontSize:'13px',color:'#666',marginTop:'4px',lineHeight:1.8}}>
-                              {note.trim()}
-                            </div>
-                          ))
-                          :<div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>
-                        }
-                      </div>
-                      <a
-                        href={"https://www.google.com/maps/dir/"+encodeURIComponent(selSpots[i].name)+"/"+encodeURIComponent(selSpots[i+1].name)+"/?travelmode=transit&hl=ja"}
-                        target="_blank" rel="noreferrer"
-                        style={{fontSize:10,background:"#e8f4fd",color:"#1a73e8",border:"1px solid #c5dff8",borderRadius:10,padding:"3px 8px",textDecoration:"none",fontWeight:700,whiteSpace:"nowrap",flexShrink:0,marginTop:2}}>
-                        查電車 →
-                      </a>
+                  <div style={{
+                    margin:'8px 0 8px 44px',
+                    padding:'12px',
+                    background:'#f8f9fa',
+                    borderLeft:'3px solid #3498db',
+                    borderRadius:'8px',
+                    fontSize:'14px'
+                  }}>
+                    <div style={{fontWeight:'600',marginBottom:'6px'}}>
+                      🚇 前往下一站
                     </div>
+
+                    {s.arrivalNote && (
+                      <div style={{
+                        fontSize:'13px',
+                        color:'#666',
+                        marginBottom:'8px',
+                        lineHeight:'1.5'
+                      }}>
+                        {s.arrivalNote}
+                      </div>
+                    )}
+
+                    {s.mapsUrl && selSpots[i+1].mapsUrl && (
+                      <button
+                        onClick={() => {
+                          const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(s.name)}&destination=${encodeURIComponent(selSpots[i+1].name)}&travelmode=transit`;
+                          window.open(url, '_blank');
+                        }}
+                        style={{
+                          marginTop:'8px',
+                          padding:'6px 12px',
+                          border:'1px solid #ddd',
+                          borderRadius:'6px',
+                          background:'white',
+                          cursor:'pointer',
+                          fontSize:'13px'
+                        }}
+                      >
+                        🔍 查詢路線
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
