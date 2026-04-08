@@ -1653,34 +1653,34 @@ function SpotDetailModal({ spot, isFavorite, onClose, onFavorite, onAddItinerary
 
           {/* 周邊推薦 */}
           {(() => {
-  const allRecommendations = [
-    ...(spot.nearby_spots || []).map(item => ({ type: '📍', text: item })),
-    ...(spot.food_recommendations || []).map(item => ({ type: '🍽️', text: item })),
-    ...(spot.accommodation_recommendations || []).map(item => ({ type: '🏨', text: item })),
-    ...(spot.shop_recommendations || []).map(item => ({ type: '🛍️', text: item }))
-  ];
-  
-  if (allRecommendations.length === 0) return null;
-  
-  return (
-    <div className="detail-section">
-      <h3 className="detail-section-title">🗺️ 周邊推薦</h3>
-      <div className="recommendation-list">
-        {allRecommendations.map((item, i) => {
-          const isVerified = item.text.startsWith('✅');
-          const text = item.text.replace(/^✅\s*/, '');
-          return (
-            <div key={i} className="recommendation-item">
-              <span className="recommendation-emoji">{item.type}</span>
-              <span className="recommendation-text">{text}</span>
-              {isVerified && <span className="recommendation-verified">✅</span>}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-})()}
+            const allRecommendations = [
+              ...(spot.nearby_spots || []).map(item => ({ type: '📍', text: item })),
+              ...(spot.food_recommendations || []).map(item => ({ type: '🍽️', text: item })),
+              ...(spot.accommodation_recommendations || []).map(item => ({ type: '🏨', text: item })),
+              ...(spot.shop_recommendations || []).map(item => ({ type: '🛍️', text: item }))
+            ];
+            
+            if (allRecommendations.length === 0) return null;
+            
+            return (
+              <div className="detail-section">
+                <h3 className="detail-section-title">🗺️ 周邊推薦</h3>
+                <div className="recommendation-list">
+                  {allRecommendations.map((item, i) => {
+                    const isVerified = item.text.startsWith('✅');
+                    const text = item.text.replace(/^✅\s*/, '');
+                    return (
+                      <div key={i} className="recommendation-item">
+                        <span className="recommendation-emoji">{item.type}</span>
+                        <span className="recommendation-text">{text}</span>
+                        {isVerified && <span className="recommendation-verified">✅</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* 行動按鈕 */}
           <div className="detail-section">
