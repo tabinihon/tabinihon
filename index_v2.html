@@ -211,6 +211,7 @@ async function fetchSpots() {
         ],
         mapsUrl: row.google_maps_url || '',
         officialUrl: row.ticket_url_official || '',
+        websiteUrl: row.website_url || '',
         sortOrder: row.sort_order || 999,
         banner: row.banner || '',
         photos: photos.length ? photos : ["📸"]
@@ -457,7 +458,7 @@ function App(){
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
           {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
             <span>🕐 開放時間：{spot.openTime}</span>
-            {spot.officialUrl&&<a href={spot.officialUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
+            {spot.websiteUrl&&<a href={spot.websiteUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
           </div>}
           {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
@@ -662,7 +663,7 @@ function App(){
                 <div className="hscroll">
                   {axSpots.map(s=>(
                     <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                      onDetail={()=>{setDid(s.id);setPage("detail");}}
+                      onClick={()=>{setDid(s.id);setPage("detail");}}
                       onToggle={()=>toggleSel(s.id)}
                       isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
                   ))}
@@ -676,7 +677,7 @@ function App(){
               <div className="hscroll">
                 {spots.filter(s=>!AXIS[s.axis]).map(s=>(
                   <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                    onDetail={()=>{setDid(s.id);setPage("detail");}}
+                    onClick={()=>{setDid(s.id);setPage("detail");}}
                     onToggle={()=>toggleSel(s.id)}
                     isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
                 ))}
