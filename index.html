@@ -756,35 +756,43 @@ function App(){
                         {selSpots[i+1].arrivalNote
                           ?(()=>{
                             const note = selSpots[i+1].arrivalNote.trim();
-                            // 格式：「銀座線・半藏門線 三越前站」
-                            const parts = note.split(/\s+/); // 用空格分隔
                             
-                            if(parts.length >= 2) {
-                              const line = parts[0];
-                              const station = parts.slice(1).join(' '); // 車站名稱可能有空格
-                              
-                              return (
-                                <>
-                                  <div style={{fontSize:11,color:"#666",marginBottom:4}}>🚃 前往下一站</div>
-                                  <div style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
-                                    {line}
-                                  </div>
-                                  <div style={{fontSize:11,color:"#333",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
-                                    🚇 {station}
-                                  </div>
-                                </>
-                              );
-                            } else {
-                              // 如果格式不對，直接顯示原文
-                              return (
-                                <>
-                                  <div style={{fontSize:11,color:"#666",marginBottom:4}}>🚃 前往下一站</div>
-                                  <div style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
-                                    {note}
-                                  </div>
-                                </>
-                              );
-                            }
+                            // 支援多個選項，用「｜」分隔
+                            const options = note.split('｜').map(opt => opt.trim());
+                            const hasMultipleOptions = options.length > 1;
+                            
+                            return (
+                              <>
+                                <div style={{fontSize:11,color:"#666",marginBottom:4}}>
+                                  🚃 前往下一站{hasMultipleOptions && <span style={{color:"#888"}}>（任選其一）</span>}
+                                </div>
+                                {options.map((option, idx) => {
+                                  const parts = option.split(/\s+/);
+                                  
+                                  if(parts.length >= 2) {
+                                    const line = parts[0];
+                                    const station = parts.slice(1).join(' ');
+                                    
+                                    return (
+                                      <div key={idx} style={{marginBottom:idx < options.length-1 ? 8 : 0}}>
+                                        <div style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
+                                          {line}
+                                        </div>
+                                        <div style={{fontSize:11,color:"#333",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
+                                          🚇 {station}
+                                        </div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div key={idx} style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8,marginBottom:idx < options.length-1 ? 4 : 0}}>
+                                        {option}
+                                      </div>
+                                    );
+                                  }
+                                })}
+                              </>
+                            );
                           })()
                           :<div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>
                         }
