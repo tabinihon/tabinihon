@@ -113,99 +113,55 @@ async function fetchSpots() {
       // 🔧 超強容錯解析器：支援 JSON、PostgreSQL 陣列、分隔符字串
       const parseFlexible = (field) => {
         if (!field) return [];
-        
-        // 如果已經是陣列，直接回傳
         if (Array.isArray(field)) return field;
-        
-        // 如果是字串，嘗試多種解析方式
         if (typeof field === 'string') {
           const trimmed = field.trim();
-          
-          // 1. 嘗試 JSON 解析
+          // 1. JSON
           if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
             try { 
               const parsed = JSON.parse(trimmed);
               return Array.isArray(parsed) ? parsed : [parsed];
             }
-            catch (e) { /* JSON 解析失敗，繼續下一步 */ }
+            catch (e) { /* 繼續 */ }
           }
-          
-          // 2. PostgreSQL 陣列格式 {item1,item2,item3}
+          // 2. PostgreSQL 陣列 {item1,item2}
           if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
             return trimmed.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
           }
-          
-          // 3. 全形分隔符 ｜
-          if (trimmed.includes('｜')) {
-            return trimmed.split('｜').map(s => s.trim()).filter(Boolean);
-          }
-          
-          // 4. 半形分隔符 |（支援舊資料）
-          if (trimmed.includes('|')) {
-            return trimmed.split('|').map(s => s.trim()).filter(Boolean);
-          }
-          
-          // 5. 換行分隔
-          if (trimmed.includes('\n')) {
-            return trimmed.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-          }
-          
-          // 6. 單一值
+          // 3. 全形｜或半形|
+          if (trimmed.includes('｜')) return trimmed.split('｜').map(s => s.trim()).filter(Boolean);
+          if (trimmed.includes('|')) return trimmed.split('|').map(s => s.trim()).filter(Boolean);
+          // 4. 換行
+          if (trimmed.includes('\n')) return trimmed.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+          // 5. 單一值
           return trimmed ? [trimmed] : [];
         }
-        
         return [];
       };
 
-      // 🔧 JSON 專用解析（for metro_lines, photos）
       const parseJSON = (field) => {
         if (!field) return [];
-        
-        // 已經是陣列或物件
         if (Array.isArray(field)) return field;
         if (typeof field === 'object' && field !== null) return [field];
-        
-        // 字串型態
         if (typeof field === 'string') {
           const trimmed = field.trim();
-          
-          // JSON 格式
           if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-            try { 
-              const parsed = JSON.parse(trimmed);
-              return Array.isArray(parsed) ? parsed : [parsed];
-            }
-            catch (e) { 
-              console.warn('JSON 解析失敗:', field.substring(0, 50) + '...');
-              return [];
-            }
+            try { return Array.isArray(JSON.parse(trimmed)) ? JSON.parse(trimmed) : [JSON.parse(trimmed)]; }
+            catch (e) { return parseFlexible(field); }
           }
-          
-          // 如果不是 JSON，當作普通字串處理
           return parseFlexible(field);
         }
-        
         return [];
       };
 
-      // 解析地鐵站資訊
       const metroLines = parseJSON(row.metro_lines);
-      const metroInfo = metroLines
-        .map(m => {
-          if (typeof m === 'object' && m.info) return m.info;
-          if (typeof m === 'string') return m;
-          return '';
-        })
-        .filter(Boolean)
-        .join('｜');
+      const metroInfo = metroLines.map(m => (typeof m === 'object' && m.info) ? m.info : (typeof m === 'string' ? m : '')).filter(Boolean).join('｜');
 
-      // 解析照片
       const photos = parseJSON(row.photos);
       if (row.cover_photo && !photos.includes(row.cover_photo)) {
         photos.unshift(row.cover_photo);
       }
 
-      // 解析子設施門票
       const subFacilities = row.sub_facilities ? row.sub_facilities.split('•').map(item => {
         const parts = item.split(',').map(x => x.trim());
         return {
@@ -267,7 +223,30 @@ async function fetchSpots() {
 }
 
 
-const {useState,useEffect} = React;>
+// ==========================================
+// 軸線顏色定義
+// ==========================================
+const AXES = {
+  "傳統文化軸": { icon: "⛩️", bg: "#9b59b6", color: "#9b59b6" },
+  "流行潮流軸": { icon: "🏙️", bg: "#3498db", color: "#3498db" },
+  "美食職人軸": { icon: "🍱", bg: "#e74c3c", color: "#e74c3c" },
+  "職人選物軸": { icon: "🛍️", bg: "#27ae60", color: "#27ae60" },
+  "近郊小旅行": { icon: "🚃", bg: "#34495e", color: "#34495e" }
+};
+const DEF = { icon: "📍", bg: "#95a5a6", color: "#95a5a6" };
+const getAx = ax => AXES[ax] || DEF;
+
+// ==========================================
+// React Components
+// ==========================================
+const {useState,useEffect} = React;
+
+// ── 景點卡片元件 ──
+function SpotCard({ s, isFav, isSel, onFav, onToggle, onClick }) {
+  const sa = getAx(s.axis);
+  const hasCover = s.photos && s.photos[0] && s.photos[0].startsWith("http");
+  return (
+    <div onClick={onClick} style={{ minWidth: 140, maxWidth: 140, background: "#fff", borderRadius: 12, overflow: "hidden", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", position: "relative" }}>
       <div style={{height:100,background:hasCover?"#111":sa.bg,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
         {hasCover
           ?<img src={s.photos[0]} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
@@ -276,7 +255,7 @@ const {useState,useEffect} = React;>
       <div style={{padding:"8px 10px"}}>
         <div style={{fontWeight:700,fontSize:13,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.name}</div>
         <div style={{fontSize:10,color:"#999",marginBottom:6}}>{s.area}</div>
-        {s.tag&&<div style={{display:"inline-block",fontSize:9,background:sa.bg,color:sa.color,borderRadius:8,padding:"1px 6px",marginBottom:4}}>{s.tag}</div>}
+        {s.tag&&<div style={{display:"inline-block",fontSize:9,background:sa.bg,color:"#fff",borderRadius:8,padding:"1px 6px",marginBottom:4}}>{s.tag}</div>}
       </div>
       {/* 愛心收藏按鈕 */}
       <button
