@@ -463,13 +463,13 @@ function App(){
           {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
         </div>}
-        {spot.ticket&&(
+        {(spot.ticket||spot.ticketMethod||(spot.ticketAlert||[]).length||spot.ticketUrl||spot.partnerUrl)&&(
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
             {!!(spot.ticketAlert||[]).length&&<div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
               {(spot.ticketAlert||[]).map((item,i)=><span key={i} style={{background:"#ffe5e5",color:"#c0392b",border:"1px solid #f5b7b1",borderRadius:999,padding:"4px 8px",fontSize:11,fontWeight:700}}>{item}</span>)}
             </div>}
             <div style={{display:"flex",gap:8}}>
-              <div style={{flex:1,background:"#fff3f3",borderRadius:10,padding:"10px 14px",fontSize:13}}>🎟 {spot.ticket}</div>
+              <div style={{flex:1,background:"#fff3f3",borderRadius:10,padding:"10px 14px",fontSize:13}}>🎟 {spot.ticket||"入場資訊請見官網"}</div>
               {(()=>{
                 const m=(spot.ticketMethod||"").trim();
                 const href=spot.partnerUrl||spot.ticketUrl||"";
