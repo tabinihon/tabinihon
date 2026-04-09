@@ -294,6 +294,7 @@ function App(){
   const [loading,setLoading]=useState(true);
   const [sel,setSel]=useState([]);
   const [search,setSearch]=useState("");
+  const [axisFilter,setAxisFilter]=useState(""); // 軸線篩選
   const [page,setPage]=useState("main");
   const [did,setDid]=useState(null);
   const [pi,setPi]=useState({});
@@ -590,6 +591,46 @@ function App(){
         </div>
       </div>
 
+      {/* 軸線篩選 */}
+      {!q&&<div style={{padding:"4px 16px 8px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none"}}>
+        <style dangerouslySetInnerHTML={{__html:`.axis-filter-scroll::-webkit-scrollbar{display:none;}`}}/>
+        <button 
+          onClick={()=>setAxisFilter("")} 
+          style={{
+            padding:"6px 12px",
+            borderRadius:20,
+            border:"none",
+            background:axisFilter===""?"#c0392b":"#f0f0f0",
+            color:axisFilter===""?"#fff":"#666",
+            fontSize:12,
+            cursor:"pointer",
+            whiteSpace:"nowrap",
+            flexShrink:0,
+            fontWeight:axisFilter===""?700:400
+          }}>
+          全部
+        </button>
+        {AXIS_ORDER.map(ax=>(
+          <button 
+            key={ax}
+            onClick={()=>setAxisFilter(ax)} 
+            style={{
+              padding:"6px 12px",
+              borderRadius:20,
+              border:"none",
+              background:axisFilter===ax?AXES[ax].color:"#f0f0f0",
+              color:axisFilter===ax?"#fff":"#666",
+              fontSize:12,
+              cursor:"pointer",
+              whiteSpace:"nowrap",
+              flexShrink:0,
+              fontWeight:axisFilter===ax?700:400
+            }}>
+            {ax}
+          </button>
+        ))}
+      </div>}
+
       {/* 搜尋結果 */}
       {q?(
         <div style={{padding:"8px 16px 4px"}}>
@@ -651,13 +692,16 @@ function App(){
             );
           })()}
           {AXIS_ORDER.map(axName=>{
+            // 如果有篩選且不是當前軸線，不顯示
+            if(axisFilter && axisFilter !== axName) return null;
+            
             const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
             if(!axSpots.length) return null;
             const axInfo=AXIS[axName];
             return(
               <div key={axName} style={{marginBottom:8}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 16px 4px"}}>
-                  <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axInfo.icon} {axName}</div>
+                  <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axName}</div>
                   <div style={{fontSize:11,color:"#bbb"}}>{axSpots.length}個景點</div>
                 </div>
                 <div className="hscroll">
