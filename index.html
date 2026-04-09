@@ -37,6 +37,9 @@
 <meta name="apple-mobile-web-app-title" content="旅日嚮導">
 <meta name="theme-color" content="#c0392b">
 <link rel="apple-touch-icon" href="https://fav.farm/🗾">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -85,91 +88,168 @@ button,input,textarea{font-family:inherit;}
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const SHEET_ID = "1IQGy4PaAmc_D32J8DKMpBLr1mjoygeZEPICJPCBJchE";
-const {useState,useEffect} = React;
+// ==========================================
+// 🔧 Supabase 設定（請填入你的資訊）
+// ==========================================
+const SUPABASE_URL = "https://vxdpnhjitcdtyshnopus.supabase.co";     // 填入你的 Supabase Project URL
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU";     // 填入你的 Anon Public Key
 
-const AXIS = {
-  "傳統文化軸":{color:"#8e44ad",bg:"#f5eef8",icon:"🏯"},
-  "流行潮流軸":{color:"#2980b9",bg:"#ebf5fb",icon:"✨"},
-  "職人選物軸":{color:"#16a085",bg:"#e8f8f5",icon:"✏️"},
-  "美食職人軸":{color:"#c0392b",bg:"#fdedec",icon:"🍜"},
-  "近郊小旅行":{color:"#d35400",bg:"#fef5e7",icon:"🚃"},
-};
-const AXIS_ORDER = ["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
-const DEF = {color:"#c0392b",bg:"#fdedec",icon:"📍"};
-const getAx = a => AXIS[a]||DEF;
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const DEMO = [{
-  id:"d1",name:"淺草寺",jaName:"浅草寺",area:"台東區",type:"寺廟・神社",
-  axis:"傳統文化軸",tag:"明星景點",season:["🌸春季","🍂秋季"],
-  metro:"東京Metro銀座線・淺草站 1號出口 徒步1分",walkMin:1,
-  ticket:"境內免費／本堂 大人¥500",ticketUrl:"https://www.senso-ji.jp",partnerUrl:"",
-  openTime:"06:00–17:00",holiday:"無休",stayTime:"30–60分鐘",
-  editorial:"這是示範資料。請在 Google Sheets 新增景點並將審核狀態設為「已上架」。",
-  suitable:"所有旅客",bestTime:"平日清晨",
-  nearby:["上野公園・地鐵10分","押上晴空塔・地鐵5分"],
-  food:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥"],
-  stay:["THE GATE HOTEL 雷門・精品"],shops:["合羽橋道具街・廚具"],
-  walking:["✅駒形どぜう・百年泥鰍鍋・¥¥","梅園・甜點老舖・¥","THE GATE HOTEL 雷門・精品"],
-  arrivalNote:"銀座線 往淺草方向",
-  tripType:"",fromCity:"",transit:"",tripTip:"",
-  mapsUrl:"https://maps.google.com/?q=浅草寺",
-  ticketMethod:"",ticketNote:"",ticketAlert:[],subTickets:[],
-  photos:["https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Sensoji_temple_and_Skytree.jpg/800px-Sensoji_temple_and_Skytree.jpg"],
-}];
+// ==========================================
+// 📡 從 Supabase 載入景點資料
+// ==========================================
+async function fetchSpots() {
+  try {
+    const { data, error } = await supabase
+      .from('spots')
+      .select('*')
+      .eq('status', '已上架')
+      .order('sort_order', { ascending: true });
 
-function fetchSheet(){
-  const url="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:json&t="+Date.now();
-  return fetch(url).then(r=>r.text()).then(txt=>{
-    const json=JSON.parse(txt.replace(/^[^(]+\(|\);?$/g,""));
-    const cols=json.table.cols.map(c=>(c.label||"").trim());
-    const g=(row,key)=>{const i=cols.indexOf(key);if(i<0)return "";const c=row.c[i];return c&&c.v!=null?String(c.v).trim():"";};
-    const split=s=>s?s.split("｜").map(x=>x.trim()).filter(Boolean):[];
-    return json.table.rows.map((row,i)=>{
-      const name=g(row,"景點名稱"),status=g(row,"審核狀態");
-      if(!name||!status.includes("已上架")) return null;
-      const pl=split(g(row,"照片集")),cv=g(row,"封面照片");
-      if(cv) pl.unshift(cv);
-      return {
-        id:"r"+i,name,jaName:g(row,"日文名稱"),area:g(row,"所在區域"),
-        type:g(row,"景點類型"),axis:g(row,"軸線分類"),tag:g(row,"景點定位"),
-        season:split(g(row,"季節亮點")),
-        metro:g(row,"地鐵站資訊"),walkMin:parseInt(g(row,"步行時間"))||0,
-        ticket:g(row,"入場費用"),ticketMethod:g(row,"購票方式"),
-        ticketUrl:g(row,"購票連結_官方"),partnerUrl:g(row,"購票連結_合作"),
-        ticketNote:g(row,"購票備註"),ticketAlert:split(g(row,"購票提醒")),
-        subTickets:split(g(row,"子設施")).map(item=>{
-          const p=item.split(",").map(x=>x.trim());
-          return {name:p[0]||"",price:p[1]||"",url:p[2]||"",note:p.slice(3).join(",")};
-        }).filter(x=>x.name),
-        openTime:g(row,"開放時間"),holiday:g(row,"公休日"),
-        stayTime:g(row,"建議停留時間"),editorial:g(row,"客觀評述"),
-        suitable:g(row,"適合族群"),bestTime:g(row,"建議造訪時機"),
-        arrivalNote:g(row,"抵達方式"),
-        tripType:g(row,"景點類型2"),
-        fromCity:g(row,"出發地建議"),
-        transit:g(row,"前往方式"),
-        tripTip:g(row,"行程建議"),
-        nearby:split(g(row,"附近景點")),food:split(g(row,"美食推薦")),
-        stay:split(g(row,"住宿推薦")),shops:split(g(row,"特色店家")),
-        walking:[...split(g(row,"美食推薦")),...split(g(row,"住宿推薦"))],
-        mapsUrl:g(row,"Google Maps連結"),
-        officialUrl:g(row,"官方網站"),
-        sortOrder:parseInt(g(row,"排序權重"))||999,
-        banner:g(row,"季節橫幅"),
-        photos:pl.length?pl:["📸"],
+    if (error) throw error;
+    
+    return (data || []).map((row, i) => {
+      // 🔧 超強容錯解析器：支援 JSON、PostgreSQL 陣列、分隔符字串
+      const parseFlexible = (field) => {
+        if (!field) return [];
+        if (Array.isArray(field)) return field;
+        if (typeof field === 'string') {
+          const trimmed = field.trim();
+          // 1. JSON
+          if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+            try { 
+              const parsed = JSON.parse(trimmed);
+              return Array.isArray(parsed) ? parsed : [parsed];
+            }
+            catch (e) { /* 繼續 */ }
+          }
+          // 2. PostgreSQL 陣列 {item1,item2}
+          if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+            return trimmed.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
+          }
+          // 3. 全形｜或半形|
+          if (trimmed.includes('｜')) return trimmed.split('｜').map(s => s.trim()).filter(Boolean);
+          if (trimmed.includes('|')) return trimmed.split('|').map(s => s.trim()).filter(Boolean);
+          // 4. 換行
+          if (trimmed.includes('\n')) return trimmed.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+          // 5. 單一值
+          return trimmed ? [trimmed] : [];
+        }
+        return [];
       };
-    }).filter(Boolean);
-  });
+
+      const parseJSON = (field) => {
+        if (!field) return [];
+        if (Array.isArray(field)) return field;
+        if (typeof field === 'object' && field !== null) return [field];
+        if (typeof field === 'string') {
+          const trimmed = field.trim();
+          if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+            try { return Array.isArray(JSON.parse(trimmed)) ? JSON.parse(trimmed) : [JSON.parse(trimmed)]; }
+            catch (e) { return parseFlexible(field); }
+          }
+          return parseFlexible(field);
+        }
+        return [];
+      };
+
+      const metroLines = parseJSON(row.metro_lines);
+      const metroInfo = metroLines.map(m => (typeof m === 'object' && m.info) ? m.info : (typeof m === 'string' ? m : '')).filter(Boolean).join('｜');
+
+      const photos = parseJSON(row.photos);
+      if (row.cover_photo && !photos.includes(row.cover_photo)) {
+        photos.unshift(row.cover_photo);
+      }
+
+      const subFacilities = row.sub_facilities ? row.sub_facilities.split('•').map(item => {
+        const parts = item.split(',').map(x => x.trim());
+        return {
+          name: parts[0] || '',
+          price: parts[1] || '',
+          url: parts[2] || '',
+          note: parts.slice(3).join(',')
+        };
+      }).filter(x => x.name) : [];
+
+      return {
+        id: row.id || ("r" + i),
+        name: row.name || '',
+        jaName: row.name_ja || '',
+        area: row.area || '',
+        type: row.spot_type || '',
+        axis: row.axis || '',
+        tag: row.positioning || '',
+        season: parseFlexible(row.season_highlights),
+        metro: metroInfo,
+        walkMin: row.walk_minutes || 0,
+        ticket: row.ticket_price || '',
+        ticketMethod: row.ticket_method || '',
+        ticketUrl: row.ticket_url_official || '',
+        partnerUrl: row.ticket_url_partner || '',
+        ticketNote: row.ticket_note || '',
+        ticketAlert: parseFlexible(row.ticket_alerts),
+        subTickets: subFacilities,
+        openTime: row.opening_hours || '',
+        holiday: row.closed_days || '',
+        stayTime: row.suggested_duration || '',
+        editorial: row.editorial || '',
+        suitable: row.suitable_for || '',
+        bestTime: row.best_visit_time || '',
+        arrivalNote: row.arrival_note || '',
+        tripType: row.trip_type || '',
+        fromCity: row.from_city || '',
+        transit: row.transit_method || '',
+        tripTip: row.trip_tips || '',
+        nearby: parseFlexible(row.nearby_spots),
+        food: parseFlexible(row.food_recommendations),
+        stay: parseFlexible(row.accommodation_recommendations),
+        shops: parseFlexible(row.shop_recommendations),
+        walking: [
+          ...parseFlexible(row.food_recommendations),
+          ...parseFlexible(row.accommodation_recommendations)
+        ],
+        mapsUrl: row.google_maps_url || '',
+        officialUrl: row.ticket_url_official || '',
+        websiteUrl: row.website_url || '',
+        sortOrder: row.sort_order || 999,
+        banner: row.banner || '',
+        photos: photos.length ? photos : ["📸"]
+      };
+    });
+  } catch (error) {
+    console.error('Supabase 載入失敗:', error);
+    return [];
+  }
 }
 
-const S={width:"100%",padding:"8px 10px",borderRadius:8,border:"1px solid #ddd",fontSize:13,boxSizing:"border-box",marginTop:4};
 
-function SpotCard({s,isSel,onDetail,onToggle,isFav,onFav}){
-  const sa=getAx(s.axis);
-  const hasCover=s.photos&&s.photos[0]&&s.photos[0].startsWith("http");
+// ==========================================
+// 軸線顏色定義
+// ==========================================
+const AXES = {
+  "傳統文化軸": { icon: "⛩️", bg: "#9b59b6", color: "#9b59b6" },
+  "流行潮流軸": { icon: "🏙️", bg: "#3498db", color: "#3498db" },
+  "美食職人軸": { icon: "🍱", bg: "#e74c3c", color: "#e74c3c" },
+  "職人選物軸": { icon: "🛍️", bg: "#27ae60", color: "#27ae60" },
+  "近郊小旅行": { icon: "🚃", bg: "#34495e", color: "#34495e" }
+};
+const DEF = { icon: "📍", bg: "#95a5a6", color: "#95a5a6" };
+const getAx = ax => AXES[ax] || DEF;
+const AXIS_ORDER = ["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
+const AXIS = AXES;
+
+// ==========================================
+// React Components
+// ==========================================
+const {useState,useEffect} = React;
+
+// ── 景點卡片元件 ──
+function SpotCard({ s, isFav, isSel, onFav, onToggle, onClick }) {
+  const sa = getAx(s.axis);
+  const hasCover = s.photos && s.photos[0] && s.photos[0].startsWith("http");
   return (
-    <div onClick={onDetail} style={{flexShrink:0,width:150,background:"#fff",borderRadius:12,overflow:"hidden",border:"2px solid "+(isSel?sa.color:"#eee"),boxShadow:"0 1px 6px rgba(0,0,0,0.06)",cursor:"pointer",position:"relative"}}>
+    <div onClick={onClick} style={{ minWidth: 140, maxWidth: 140, background: "#fff", borderRadius: 12, overflow: "hidden", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", position: "relative" }}>
       <div style={{height:100,background:hasCover?"#111":sa.bg,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
         {hasCover
           ?<img src={s.photos[0]} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
@@ -178,7 +258,7 @@ function SpotCard({s,isSel,onDetail,onToggle,isFav,onFav}){
       <div style={{padding:"8px 10px"}}>
         <div style={{fontWeight:700,fontSize:13,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.name}</div>
         <div style={{fontSize:10,color:"#999",marginBottom:6}}>{s.area}</div>
-        {s.tag&&<div style={{display:"inline-block",fontSize:9,background:sa.bg,color:sa.color,borderRadius:8,padding:"1px 6px",marginBottom:4}}>{s.tag}</div>}
+        {s.tag&&<div style={{display:"inline-block",fontSize:9,background:sa.bg,color:"#fff",borderRadius:8,padding:"1px 6px",marginBottom:4}}>{s.tag}</div>}
       </div>
       {/* 愛心收藏按鈕 */}
       <button
@@ -211,10 +291,10 @@ function RecommendItem({item, icon}){
 
 function App(){
   const [spots,setSpots]=useState([]);
-  const [demo,setDemo]=useState(true);
   const [loading,setLoading]=useState(true);
   const [sel,setSel]=useState([]);
   const [search,setSearch]=useState("");
+  const [axisFilter,setAxisFilter]=useState(""); // 軸線篩選
   const [page,setPage]=useState("main");
   const [did,setDid]=useState(null);
   const [pi,setPi]=useState({});
@@ -263,11 +343,14 @@ function App(){
   };
 
   useEffect(()=>{
-    fetchSheet().then(data=>{
-      if(data.length>0){setSpots(data);setDemo(false);}
-      else{setSpots(DEMO);setDemo(true);}
+    fetchSpots().then(data=>{
+      setSpots(data);
       setLoading(false);
-    }).catch(()=>{setSpots(DEMO);setDemo(true);setLoading(false);});
+    }).catch(err=>{
+      console.error('載入失敗:', err);
+      setSpots([]);
+      setLoading(false);
+    });
   },[]);
 
   const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
@@ -376,18 +459,18 @@ function App(){
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
           {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
             <span>🕐 開放時間：{spot.openTime}</span>
-            {spot.officialUrl&&<a href={spot.officialUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
+            {spot.websiteUrl&&<a href={spot.websiteUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
           </div>}
           {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
         </div>}
-        {spot.ticket&&(
+        {(spot.ticket||spot.ticketMethod||(spot.ticketAlert||[]).length||spot.ticketUrl||spot.partnerUrl)&&(
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
             {!!(spot.ticketAlert||[]).length&&<div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
               {(spot.ticketAlert||[]).map((item,i)=><span key={i} style={{background:"#ffe5e5",color:"#c0392b",border:"1px solid #f5b7b1",borderRadius:999,padding:"4px 8px",fontSize:11,fontWeight:700}}>{item}</span>)}
             </div>}
             <div style={{display:"flex",gap:8}}>
-              <div style={{flex:1,background:"#fff3f3",borderRadius:10,padding:"10px 14px",fontSize:13}}>🎟 {spot.ticket}</div>
+              <div style={{flex:1,background:"#fff3f3",borderRadius:10,padding:"10px 14px",fontSize:13}}>🎟 {spot.ticket||"入場資訊請見官網"}</div>
               {(()=>{
                 const m=(spot.ticketMethod||"").trim();
                 const href=spot.partnerUrl||spot.ticketUrl||"";
@@ -496,7 +579,6 @@ function App(){
             </button>
           </div>
         </div>
-        {demo&&<div style={{marginTop:10,background:"rgba(255,255,255,0.15)",borderRadius:8,padding:"6px 10px",fontSize:11}}>⚡ 示範模式｜Google Sheets 尚無已上架景點</div>}
       </div>
 
       {/* 搜尋框 */}
@@ -508,6 +590,46 @@ function App(){
           {search&&<button onClick={()=>setSearch("")} style={{border:"none",background:"none",cursor:"pointer",fontSize:16,color:"#bbb",padding:0}}>×</button>}
         </div>
       </div>
+
+      {/* 軸線篩選 */}
+      {!q&&<div style={{padding:"4px 16px 8px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none"}}>
+        <style dangerouslySetInnerHTML={{__html:`.axis-filter-scroll::-webkit-scrollbar{display:none;}`}}/>
+        <button 
+          onClick={()=>setAxisFilter("")} 
+          style={{
+            padding:"6px 12px",
+            borderRadius:20,
+            border:"none",
+            background:axisFilter===""?"#c0392b":"#f0f0f0",
+            color:axisFilter===""?"#fff":"#666",
+            fontSize:12,
+            cursor:"pointer",
+            whiteSpace:"nowrap",
+            flexShrink:0,
+            fontWeight:axisFilter===""?700:400
+          }}>
+          全部
+        </button>
+        {AXIS_ORDER.map(ax=>(
+          <button 
+            key={ax}
+            onClick={()=>setAxisFilter(ax)} 
+            style={{
+              padding:"6px 12px",
+              borderRadius:20,
+              border:"none",
+              background:axisFilter===ax?AXES[ax].color:"#f0f0f0",
+              color:axisFilter===ax?"#fff":"#666",
+              fontSize:12,
+              cursor:"pointer",
+              whiteSpace:"nowrap",
+              flexShrink:0,
+              fontWeight:axisFilter===ax?700:400
+            }}>
+            {ax}
+          </button>
+        ))}
+      </div>}
 
       {/* 搜尋結果 */}
       {q?(
@@ -570,19 +692,22 @@ function App(){
             );
           })()}
           {AXIS_ORDER.map(axName=>{
+            // 如果有篩選且不是當前軸線，不顯示
+            if(axisFilter && axisFilter !== axName) return null;
+            
             const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
             if(!axSpots.length) return null;
             const axInfo=AXIS[axName];
             return(
               <div key={axName} style={{marginBottom:8}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 16px 4px"}}>
-                  <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axInfo.icon} {axName}</div>
+                  <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axName}</div>
                   <div style={{fontSize:11,color:"#bbb"}}>{axSpots.length}個景點</div>
                 </div>
                 <div className="hscroll">
                   {axSpots.map(s=>(
                     <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                      onDetail={()=>{setDid(s.id);setPage("detail");}}
+                      onClick={()=>{setDid(s.id);setPage("detail");}}
                       onToggle={()=>toggleSel(s.id)}
                       isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
                   ))}
@@ -596,7 +721,7 @@ function App(){
               <div className="hscroll">
                 {spots.filter(s=>!AXIS[s.axis]).map(s=>(
                   <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                    onDetail={()=>{setDid(s.id);setPage("detail");}}
+                    onClick={()=>{setDid(s.id);setPage("detail");}}
                     onToggle={()=>toggleSel(s.id)}
                     isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
                 ))}
@@ -609,7 +734,10 @@ function App(){
       {/* 已選行程浮動面板 */}
       {selSpots.length>0&&(
         <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:420,background:"#fff",borderTop:"1px solid #eee",padding:"12px 16px",boxShadow:"0 -4px 20px rgba(0,0,0,0.1)",zIndex:50}}>
-          <div style={{fontSize:13,fontWeight:700,marginBottom:8}}>📍 規劃路線（{selSpots.length}站）</div>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:4}}>📍 規劃路線（{selSpots.length}站）</div>
+          <div style={{fontSize:11,color:"#888",marginBottom:10,background:"#f8f8f8",padding:"6px 10px",borderRadius:6,lineHeight:1.5}}>
+            ℹ️ 上車站請參考上一個景點的地鐵資訊
+          </div>
           {selSpots.map((s,i)=>{
             const sa=getAx(s.axis);
             return(
@@ -618,7 +746,6 @@ function App(){
                   <div style={{width:22,height:22,background:sa.color,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:10,fontWeight:700,flexShrink:0,marginTop:1}}>{i+1}</div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontWeight:700,fontSize:13}}>{s.name}</div>
-                    {s.metro&&<div style={{fontSize:10,color:"#888",marginTop:1,lineHeight:1.5,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>🚇 {s.metro.split(/\r?\n|\/(?!\/)/)[0].trim()}</div>}
                   </div>
                   <button onClick={()=>toggleSel(s.id)} style={{fontSize:14,background:"none",border:"none",cursor:"pointer",color:"#ccc",flexShrink:0,padding:0}}>×</button>
                 </div>
@@ -627,11 +754,14 @@ function App(){
                     <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
                       <div style={{flex:1}}>
                         {selSpots[i+1].arrivalNote
-                          ?selSpots[i+1].arrivalNote.split("｜").map((note,ni)=>(
-                            <div key={ni} style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8}}>
-                              🚃 {note.trim()}
-                            </div>
-                          ))
+                          ?<>
+                            <div style={{fontSize:11,color:"#666",marginBottom:4}}>🚃 前往下一站</div>
+                            {selSpots[i+1].arrivalNote.split("｜").map((note,ni)=>(
+                              <div key={ni} style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
+                                └─ {note.trim()}
+                              </div>
+                            ))}
+                          </>
                           :<div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>
                         }
                       </div>
