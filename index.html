@@ -439,7 +439,7 @@ function App(){
 
   // ── 詳情頁（全屏） ──
   if(page==="detail"&&spot) return(
-    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",minHeight:"100dvh",overflowY:"auto"}}>
+    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",position:"fixed",inset:0,overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
       <div style={{background:`linear-gradient(135deg,${a.color}cc,${a.color})`,color:"#fff",padding:"16px 16px 20px"}}>
         <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",marginBottom:10,fontSize:12}}>← 返回</button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
