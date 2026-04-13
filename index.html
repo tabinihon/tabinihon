@@ -464,17 +464,21 @@ function App(){
       {/* 照片輪播 */}
       <div style={{background:"#111",paddingTop:"75%",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}
-          onTouchStart={e=>{if(e.touches.length===1)e.currentTarget._swipeX=e.touches[0].clientX;}}
+          onTouchStart={e=>{if(e.touches.length===1){e.currentTarget._swipeX=e.touches[0].clientX;e.currentTarget._swipeY=e.touches[0].clientY;}}}
           onTouchEnd={e=>{
             const startX=e.currentTarget._swipeX;
+            const startY=e.currentTarget._swipeY;
             if(startX==null)return;
             const endX=e.changedTouches[0].clientX;
-            const diff=startX-endX;
-            if(Math.abs(diff)>40){
-              if(diff>0&&curPi<photos.length-1) setPi(p=>({...p,[spot.id]:curPi+1}));
-              if(diff<0&&curPi>0) setPi(p=>({...p,[spot.id]:curPi-1}));
+            const endY=e.changedTouches[0].clientY;
+            const diffX=startX-endX;
+            const diffY=startY-endY;
+            if(Math.abs(diffX)>Math.abs(diffY)&&Math.abs(diffX)>40){
+              if(diffX>0&&curPi<photos.length-1) setPi(p=>({...p,[spot.id]:curPi+1}));
+              if(diffX<0&&curPi>0) setPi(p=>({...p,[spot.id]:curPi-1}));
             }
             e.currentTarget._swipeX=null;
+            e.currentTarget._swipeY=null;
           }}>
           {photos[curPi]&&photos[curPi].startsWith("http")
             ?<img src={photos[curPi]} style={{width:"100%",height:"100%",objectFit:"cover",pointerEvents:"none"}} alt=""/>
