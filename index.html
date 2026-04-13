@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<!-- Google Analytics GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-91K3PERTJG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -10,26 +9,21 @@
   gtag('config', 'G-91K3PERTJG');
 </script>
 <meta charset="UTF-8">
-
-<!-- SEO & 社群分享預覽 -->
 <meta name="description" content="旅日嚮導－不接業配的東京旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
 <meta name="keywords" content="東京旅遊,日本旅遊,東京景點,行程規劃,不接業配">
 <meta name="author" content="旅日嚮導">
-<!-- Open Graph（FB、LINE、Dcard 分享預覽） -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="旅日嚮導｜不接業配・客觀嚴選的東京旅遊指南">
 <meta property="og:description" content="真實・客觀・嚴選｜替消費者把關，所有景點實地查核，絕不業配">
 <meta property="og:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta property="og:url" content="https://tabinihon.github.io/tabinihon/">
 <meta property="og:locale" content="zh_TW">
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="旅日嚮導｜不接業配東京旅遊">
 <meta name="twitter:description" content="真實・客觀・嚴選，替消費者把關的日本旅遊指南">
 <meta name="twitter:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>旅日嚮導</title>
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,255 +31,281 @@
 <meta name="apple-mobile-web-app-title" content="旅日嚮導">
 <meta name="theme-color" content="#c0392b">
 <link rel="apple-touch-icon" href="https://fav.farm/🗾">
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-/* 走訪認證標記 */
-.verified-badge {
-  color: #27ae60;
-  font-weight: bold;
-}
-.unverified-item {
-  color: #444;
-}
-.recommendation-info-icon {
-  cursor: pointer;
-  font-size: 0.85em;
-  color: rgba(255,255,255,0.7);
-  margin-left: 4px;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-}
-.recommendation-info-icon:hover::after {
-  content: "✅ 走訪認證：編輯實地走訪｜未標示：依公開評價篩選，未經實地走訪";
-  position: absolute;
-  bottom: 130%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.88);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 11px;
-  z-index: 999;
-  width: 240px;
-  white-space: normal;
-  line-height: 1.6;
-  pointer-events: none;
-}
+.verified-badge{color:#27ae60;font-weight:bold;}
+.unverified-item{color:#444;}
+.recommendation-info-icon{cursor:pointer;font-size:0.85em;color:rgba(255,255,255,0.7);margin-left:4px;position:relative;display:inline-block;vertical-align:middle;}
+.recommendation-info-icon:hover::after{content:"✅ 走訪認證：編輯實地走訪｜未標示：依公開評價篩選，未經實地走訪";position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.88);color:white;padding:8px 12px;border-radius:8px;font-size:11px;z-index:999;width:240px;white-space:normal;line-height:1.6;pointer-events:none;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f8f8f8;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f8f8f8;height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
 button,input,textarea{font-family:inherit;}
 .hscroll{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 12px;scrollbar-width:none;}
 .hscroll::-webkit-scrollbar{display:none;}
+
+/* ── 底部導航 ── */
+.bottom-nav{display:flex;background:#fff;border-top:1px solid #e8e8e8;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);z-index:200;}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px;border:none;background:transparent;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;min-height:56px;}
+.nav-icon{font-size:22px;line-height:1;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);}
+.nav-label{font-size:10px;font-weight:600;color:#bbb;letter-spacing:0.2px;transition:color 0.15s;}
+.nav-tab.active .nav-label{color:#c0392b;}
+.nav-tab.active .nav-icon{transform:scale(1.15);}
+.nav-tab.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#c0392b;border-radius:0 0 3px 3px;}
+.nav-badge{position:absolute;top:5px;right:calc(50% - 20px);min-width:16px;height:16px;background:#c0392b;border-radius:8px;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+
+/* ── 頁面容器 ── */
+.app-wrap{max-width:420px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#f8f8f8;}
+.app-pages{flex:1;overflow:hidden;position:relative;}
+.app-page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 0.15s ease;}
+.app-page.active{opacity:1;pointer-events:all;}
+
+/* ── 票券頁 ── */
+.ticket-filter-bar{display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.ticket-filter-bar::-webkit-scrollbar{display:none;}
+.ticket-filter-btn{padding:6px 14px;border-radius:20px;border:none;background:#f0f0f0;color:#666;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;}
+.ticket-filter-btn.active{background:#c0392b;color:#fff;}
+.ticket-section-label{font-size:11px;font-weight:700;color:#999;letter-spacing:0.8px;text-transform:uppercase;padding:10px 16px 6px;}
+.ticket-card{margin:0 16px 10px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 6px rgba(0,0,0,0.07);display:flex;gap:12px;align-items:flex-start;}
+.ticket-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.ticket-info{flex:1;min-width:0;}
+.ticket-name{font-size:14px;font-weight:700;margin-bottom:3px;}
+.ticket-desc{font-size:12px;color:#777;line-height:1.5;margin-bottom:6px;}
+.ticket-note{font-size:11px;color:#27ae60;background:rgba(39,174,96,0.08);padding:5px 8px;border-radius:6px;line-height:1.5;margin-bottom:8px;}
+.ticket-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ticket-price{font-size:13px;font-weight:700;color:#333;}
+.ticket-price small{font-size:11px;font-weight:400;color:#999;}
+.ticket-btn{font-size:12px;font-weight:700;padding:7px 13px;border-radius:9px;border:none;cursor:pointer;color:#fff;white-space:nowrap;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;}
+.btn-kkday{background:#c0392b;}
+.btn-official{background:#27ae60;}
+.ticket-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle;}
+.badge-hot{background:#FFE8E8;color:#c0392b;}
+.badge-rec{background:#E8F5EE;color:#27ae60;}
+
+/* 行程包預告 */
+.pack-teaser{margin:12px 16px 4px;background:linear-gradient(135deg,#2c3e50,#3d5166);border-radius:14px;padding:16px;color:#fff;}
+.pack-teaser h3{font-size:15px;font-weight:800;margin-bottom:5px;}
+.pack-teaser p{font-size:12px;opacity:0.75;line-height:1.6;margin-bottom:10px;}
+.pack-coming{display:inline-block;font-size:11px;font-weight:700;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-// ==========================================
-// 🔧 Supabase 設定（請填入你的資訊）
-// ==========================================
-const SUPABASE_URL = "https://vxdpnhjitcdtyshnopus.supabase.co";     // 填入你的 Supabase Project URL
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU";     // 填入你的 Anon Public Key
 
+const SUPABASE_URL = "https://vxdpnhjitcdtyshnopus.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ==========================================
-// 📡 從 Supabase 載入景點資料
-// ==========================================
+// ── 票券靜態資料 ──
+const TICKETS = [
+  { id:"skyliner", cat:"transport", icon:"🚄", iconBg:"rgba(192,57,43,0.1)", name:"京成 SKYLINER", badge:"hot", badgeText:"熱門", desc:"成田機場 ↔ 上野・日暮里，最快 41 分鐘，班次密集", note:"💬 想快速又舒適的到達目的地上野/淺草/日暮里", price:"¥2,580", priceNote:"單程", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/7913-keisei-skyliner-narita-airport-express-ticket?cid=24332&ud1=ticketskyliner" },
+ { id:"skyliner", cat:"transport", icon:"🚄", iconBg:"rgba(192,57,43,0.1)", name:"N'EX 成田特急", badge:"hot", badgeText:"", desc:"成田機場 ↔ 新宿・品川・橫濱（持 JR Pass 免費）", note:"💬 持 JR Pass、目的地新宿/品川/橫濱", price:"¥3,140～4,810", priceNote:"依目的地", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/529712?cid=24332&ud1=ticketnex" },
+  { id:"tokyometro", cat:"transport", icon:"🗺️", iconBg:"rgba(52,152,219,0.1)", name:"東京地鐵 24/48/72hr Pass", badge:"rec", badgeText:"必備", desc:"Tokyo Metro 全線 + 都營全線，外國旅客限定優惠票", note:"💬 待超過 3 天、每天跑多個景點，72hr 最划算。短停選 24hr", price:"¥800 起", priceNote:"依天數", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/5989-24-48-72-hr-tokyo-subway-ticket-japan?cid=24332&ud1=tickettokyometro" },
+  { id:"toei", cat:"transport", icon:"🚇", iconBg:"rgba(39,174,96,0.1)", name:"都營地下鐵一日券", badge:"", badgeText:"", desc:"都營全線無限搭，適合淺草・上野・日本橋一帶移動", note:"💬 只搭都營線的行程，比地鐵 Pass 更便宜", price:"¥500", priceNote:"一日搭3趟以上建議購買", btnType:"official", btnText:"各站的自動售票機", url:"" },
+  { id:"jrpass", cat:"transport", icon:"🚅", iconBg:"rgba(44,62,80,0.1)", name:"JR 東日本 Pass（JR東京廣域周遊券）", badge:"", badgeText:"", desc:"新幹線、JR 東日本線、成田特快（N'EX）", note:"💬 行程包含輕井澤、東武日光及越後湯澤，這張最划算", price:"¥16,000 起", priceNote:"依天數", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/6681-jr-east-pass-tohoku-area?cid=24332&ud1=ticketjrpass" },
+  { id:"skytree", cat:"spot", icon:"🗼", iconBg:"rgba(52,152,219,0.1)", name:"東京晴空塔", badge:"hot", badgeText:"建議預購", desc:"天望甲板（350m）+ 天望迴廊（450m）", note:"💬 現場買要排隊，旺季等 1 小時以上。線上買可指定時段", price:"¥2,100 起", priceNote:"", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/10759-tokyo-skytree-observatory-advance-ticket-japan?cid=24332&ud1=appskytree" },
+  { id:"nikko", cat:"spot", icon:"🏛️", iconBg:"rgba(155,89,182,0.1)", name:"日光東照宮", badge:"", badgeText:"", desc:"世界遺産・德川家康長眠之地，組合套票含多設施", note:"💬 與寶物館有組合套票可以參考", price:"¥1,600", priceNote:"套票", btnType:"kkday", btnText:"優惠購票", url:"https://www.kkday.com/zh-tw/product/151083-nikko-toshogu-admission-ticket-reservation-historic-site-tochigi-prefecture?cid=24332&ud1=appnikko" },
+  { id:"ghibli", cat:"spot", icon:"🎨", iconBg:"rgba(39,174,96,0.1)", name:"三鷹之森吉卜力美術館", badge:"", badgeText:"", desc:"每月 10 日 10:00 開放當月抽籤，需提前一個月預約", note:"💬 只有官方 Lawson 購票管道，第三方套票皆為半日遊, price:"¥1,000", priceNote:"成人", btnType:"official", btnText:"Lawson海外", url:"https://l-tike.com/st1/ghibli-en/sitetop" },
+];
+
+const TICKET_CATS = [
+  { id:"all", label:"全部" },
+  { id:"transport", label:"🚆 交通" },
+  { id:"spot", label:"🎟 景點" },
+];
+
 async function fetchSpots() {
   try {
-    const { data, error } = await supabase
-      .from('spots')
-      .select('*')
-      .eq('status', '已上架')
-      .order('sort_order', { ascending: true });
-
+    const { data, error } = await supabase.from('spots').select('*').eq('status', '已上架').order('sort_order', { ascending: true });
     if (error) throw error;
-    
     return (data || []).map((row, i) => {
-      // 🔧 超強容錯解析器：支援 JSON、PostgreSQL 陣列、分隔符字串
       const parseFlexible = (field) => {
         if (!field) return [];
         if (Array.isArray(field)) return field;
         if (typeof field === 'string') {
-          const trimmed = field.trim();
-          // 1. JSON
-          if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-            try { 
-              const parsed = JSON.parse(trimmed);
-              return Array.isArray(parsed) ? parsed : [parsed];
-            }
-            catch (e) { /* 繼續 */ }
-          }
-          // 2. PostgreSQL 陣列 {item1,item2}
-          if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-            return trimmed.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
-          }
-          // 3. 全形｜或半形|
-          if (trimmed.includes('｜')) return trimmed.split('｜').map(s => s.trim()).filter(Boolean);
-          if (trimmed.includes('|')) return trimmed.split('|').map(s => s.trim()).filter(Boolean);
-          // 4. 換行
-          if (trimmed.includes('\n')) return trimmed.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-          // 5. 單一值
-          return trimmed ? [trimmed] : [];
+          const t = field.trim();
+          if (t.startsWith('[') || t.startsWith('{')) { try { const p=JSON.parse(t); return Array.isArray(p)?p:[p]; } catch(e){} }
+          if (t.startsWith('{') && t.endsWith('}')) return t.slice(1,-1).split(',').map(s=>s.trim()).filter(Boolean);
+          if (t.includes('｜')) return t.split('｜').map(s=>s.trim()).filter(Boolean);
+          if (t.includes('|')) return t.split('|').map(s=>s.trim()).filter(Boolean);
+          if (t.includes('\n')) return t.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+          return t?[t]:[];
         }
         return [];
       };
-
       const parseJSON = (field) => {
         if (!field) return [];
         if (Array.isArray(field)) return field;
-        if (typeof field === 'object' && field !== null) return [field];
-        if (typeof field === 'string') {
-          const trimmed = field.trim();
-          if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-            try { return Array.isArray(JSON.parse(trimmed)) ? JSON.parse(trimmed) : [JSON.parse(trimmed)]; }
-            catch (e) { return parseFlexible(field); }
-          }
+        if (typeof field==='object'&&field!==null) return [field];
+        if (typeof field==='string') {
+          const t=field.trim();
+          if (t.startsWith('[')||t.startsWith('{')) { try { return Array.isArray(JSON.parse(t))?JSON.parse(t):[JSON.parse(t)]; } catch(e){ return parseFlexible(field); } }
           return parseFlexible(field);
         }
         return [];
       };
-
       const metroLines = parseJSON(row.metro_lines);
-      const metroInfo = metroLines.map(m => (typeof m === 'object' && m.info) ? m.info : (typeof m === 'string' ? m : '')).filter(Boolean).join('｜');
-
+      const metroInfo = metroLines.map(m=>(typeof m==='object'&&m.info)?m.info:(typeof m==='string'?m:'')).filter(Boolean).join('｜');
       const photos = parseJSON(row.photos);
-      if (row.cover_photo && !photos.includes(row.cover_photo)) {
-        photos.unshift(row.cover_photo);
-      }
-
-      const subFacilities = row.sub_facilities ? row.sub_facilities.split('•').map(item => {
-        const parts = item.split(',').map(x => x.trim());
-        return {
-          name: parts[0] || '',
-          price: parts[1] || '',
-          url: parts[2] || '',
-          note: parts.slice(3).join(',')
-        };
-      }).filter(x => x.name) : [];
-
+      if (row.cover_photo && !photos.includes(row.cover_photo)) photos.unshift(row.cover_photo);
+      const subFacilities = row.sub_facilities ? row.sub_facilities.split('•').map(item=>{
+        const parts=item.split(',').map(x=>x.trim());
+        return { name:parts[0]||'', price:parts[1]||'', url:parts[2]||'', note:parts.slice(3).join(',') };
+      }).filter(x=>x.name) : [];
       return {
-        id: row.id || ("r" + i),
-        name: row.name || '',
-        jaName: row.name_ja || '',
-        area: row.area || '',
-        type: row.spot_type || '',
-        axis: row.axis || '',
-        tag: row.positioning || '',
-        season: parseFlexible(row.season_highlights),
-        metro: metroInfo,
-        walkMin: row.walk_minutes || 0,
-        ticket: row.ticket_price || '',
-        ticketMethod: row.ticket_method || '',
-        ticketUrl: row.ticket_url_official || '',
-        partnerUrl: row.ticket_url_partner || '',
-        ticketNote: row.ticket_note || '',
-        ticketAlert: parseFlexible(row.ticket_alerts),
-        subTickets: subFacilities,
-        openTime: row.opening_hours || '',
-        holiday: row.closed_days || '',
-        stayTime: row.suggested_duration || '',
-        editorial: row.editorial || '',
-        suitable: row.suitable_for || '',
-        bestTime: row.best_visit_time || '',
-        arrivalNote: row.arrival_note || '',
-        tripType: row.trip_type || '',
-        fromCity: row.from_city || '',
-        transit: row.transit_method || '',
-        tripTip: row.trip_tips || '',
-        nearby: parseFlexible(row.nearby_spots),
-        food: parseFlexible(row.food_recommendations),
-        stay: parseFlexible(row.accommodation_recommendations),
-        shops: parseFlexible(row.shop_recommendations),
-        walking: [
-          ...parseFlexible(row.food_recommendations),
-          ...parseFlexible(row.accommodation_recommendations)
-        ],
-        mapsUrl: row.google_maps_url || '',
-        officialUrl: row.ticket_url_official || '',
-        websiteUrl: row.website_url || '',
-        sortOrder: row.sort_order || 999,
-        banner: row.banner || '',
-        photos: photos.length ? photos : ["📸"]
+        id:row.id||("r"+i), name:row.name||'', jaName:row.name_ja||'', area:row.area||'',
+        type:row.spot_type||'', axis:row.axis||'', tag:row.positioning||'',
+        season:parseFlexible(row.season_highlights), metro:metroInfo, walkMin:row.walk_minutes||0,
+        ticket:row.ticket_price||'', ticketMethod:row.ticket_method||'',
+        ticketUrl:row.ticket_url_official||'', partnerUrl:row.ticket_url_partner||'',
+        ticketNote:row.ticket_note||'', ticketAlert:parseFlexible(row.ticket_alerts),
+        subTickets:subFacilities, openTime:row.opening_hours||'', holiday:row.closed_days||'',
+        stayTime:row.suggested_duration||'', editorial:row.editorial||'',
+        suitable:row.suitable_for||'', bestTime:row.best_visit_time||'',
+        arrivalNote:row.arrival_note||'', tripType:row.trip_type||'',
+        fromCity:row.from_city||'', transit:row.transit_method||'', tripTip:row.trip_tips||'',
+        nearby:parseFlexible(row.nearby_spots), food:parseFlexible(row.food_recommendations),
+        stay:parseFlexible(row.accommodation_recommendations), shops:parseFlexible(row.shop_recommendations),
+        walking:[...parseFlexible(row.food_recommendations),...parseFlexible(row.accommodation_recommendations)],
+        mapsUrl:row.google_maps_url||'', officialUrl:row.ticket_url_official||'',
+        websiteUrl:row.website_url||'', sortOrder:row.sort_order||999, banner:row.banner||'',
+        photos:photos.length?photos:["📸"]
       };
     });
-  } catch (error) {
-    console.error('Supabase 載入失敗:', error);
-    return [];
-  }
+  } catch(error) { console.error('Supabase 載入失敗:', error); return []; }
 }
 
-
-// ==========================================
-// 軸線顏色定義
-// ==========================================
 const AXES = {
-  "傳統文化軸": { icon: "⛩️", bg: "#9b59b6", color: "#9b59b6" },
-  "流行潮流軸": { icon: "🏙️", bg: "#3498db", color: "#3498db" },
-  "美食職人軸": { icon: "🍱", bg: "#e74c3c", color: "#e74c3c" },
-  "職人選物軸": { icon: "🛍️", bg: "#27ae60", color: "#27ae60" },
-  "近郊小旅行": { icon: "🚃", bg: "#34495e", color: "#34495e" }
+  "傳統文化軸":{icon:"⛩️",bg:"#9b59b6",color:"#9b59b6"},
+  "流行潮流軸":{icon:"🏙️",bg:"#3498db",color:"#3498db"},
+  "美食職人軸":{icon:"🍱",bg:"#e74c3c",color:"#e74c3c"},
+  "職人選物軸":{icon:"🛍️",bg:"#27ae60",color:"#27ae60"},
+  "近郊小旅行":{icon:"🚃",bg:"#34495e",color:"#34495e"}
 };
-const DEF = { icon: "📍", bg: "#95a5a6", color: "#95a5a6" };
-const getAx = ax => AXES[ax] || DEF;
-const AXIS_ORDER = ["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
-const AXIS = AXES;
+const DEF={icon:"📍",bg:"#95a5a6",color:"#95a5a6"};
+const getAx=ax=>AXES[ax]||DEF;
+const AXIS_ORDER=["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
+const AXIS=AXES;
+const {useState,useEffect}=React;
+const S={width:"100%",padding:"9px 12px",borderRadius:10,border:"1px solid #e0e0e0",fontSize:13,marginTop:6,outline:"none",display:"block",background:"#fafafa"};
 
-// ==========================================
-// React Components
-// ==========================================
-const {useState,useEffect} = React;
-
-// ── 景點卡片元件 ──
-function SpotCard({ s, isFav, isSel, onFav, onToggle, onClick }) {
-  const sa = getAx(s.axis);
-  const hasCover = s.photos && s.photos[0] && s.photos[0].startsWith("http");
-  return (
-    <div onClick={onClick} style={{ minWidth: 140, maxWidth: 140, background: "#fff", borderRadius: 12, overflow: "hidden", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", position: "relative" }}>
+function SpotCard({s,isFav,isSel,onFav,onToggle,onClick}){
+  const sa=getAx(s.axis);
+  const hasCover=s.photos&&s.photos[0]&&s.photos[0].startsWith("http");
+  return(
+    <div onClick={onClick} style={{minWidth:140,maxWidth:140,background:"#fff",borderRadius:12,overflow:"hidden",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.08)",position:"relative"}}>
       <div style={{height:100,background:hasCover?"#111":sa.bg,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
-        {hasCover
-          ?<img src={s.photos[0]} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
-          :<div style={{fontSize:36}}>{sa.icon}</div>}
+        {hasCover?<img src={s.photos[0]} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>:<div style={{fontSize:36}}>{sa.icon}</div>}
       </div>
       <div style={{padding:"8px 10px"}}>
         <div style={{fontWeight:700,fontSize:13,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.name}</div>
         <div style={{fontSize:10,color:"#999",marginBottom:6}}>{s.area}</div>
         {s.tag&&<div style={{display:"inline-block",fontSize:9,background:sa.bg,color:"#fff",borderRadius:8,padding:"1px 6px",marginBottom:4}}>{s.tag}</div>}
       </div>
-      {/* 愛心收藏按鈕 */}
-      <button
-        onClick={e=>{e.stopPropagation();onFav();}}
-        style={{position:"absolute",top:8,left:8,width:26,height:26,background:"rgba(255,255,255,0.9)",border:"none",borderRadius:"50%",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
+      <button onClick={e=>{e.stopPropagation();onFav();}} style={{position:"absolute",top:8,left:8,width:26,height:26,background:"rgba(255,255,255,0.9)",border:"none",borderRadius:"50%",cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
         {isFav?"❤️":"🤍"}
       </button>
-      {/* 加入行程按鈕 */}
-      <button
-        onClick={e=>{e.stopPropagation();onToggle();}}
-        style={{position:"absolute",top:8,right:8,width:28,height:28,background:isSel?sa.color:"rgba(255,255,255,0.9)",border:"none",borderRadius:"50%",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",color:isSel?"#fff":"#555",boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
+      <button onClick={e=>{e.stopPropagation();onToggle();}} style={{position:"absolute",top:8,right:8,width:28,height:28,background:isSel?sa.color:"rgba(255,255,255,0.9)",border:"none",borderRadius:"50%",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",color:isSel?"#fff":"#555",boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
         {isSel?"✓":"＋"}
       </button>
     </div>
   );
 }
 
-// ── 推薦清單項目：✅開頭顯示綠色，其餘一般色 ──
-function RecommendItem({item, icon}){
-  const isVerified = item.startsWith("✅");
-  return (
+function RecommendItem({item,icon}){
+  const isVerified=item.startsWith("✅");
+  return(
     <span style={{flex:1,paddingRight:8}}>
       {icon}{" "}
-      <span className={isVerified ? "verified-badge" : "unverified-item"}>
-        {item}
-      </span>
+      <span className={isVerified?"verified-badge":"unverified-item"}>{item}</span>
     </span>
+  );
+}
+
+// ── 換乘顯示元件 ──
+function ArrivalNote({note}){
+  if(!note) return <div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>;
+  const options=note.trim().split('｜').map(o=>o.trim()).filter(Boolean);
+  const multi=options.length>1;
+  return(
+    <>
+      <div style={{fontSize:11,color:"#666",marginBottom:6,fontWeight:600}}>
+        🚃 前往下一站{multi&&<span style={{color:"#999",fontWeight:400}}> （任選其一）</span>}
+      </div>
+      {options.map((opt,idx)=>{
+        // 空格切路線名 和 站名
+        const spaceIdx=opt.indexOf(' ');
+        const line=spaceIdx>-1?opt.slice(0,spaceIdx):opt;
+        const station=spaceIdx>-1?opt.slice(spaceIdx+1):'';
+        return(
+          <div key={idx} style={{marginBottom:idx<options.length-1?10:0,paddingLeft:8,borderLeft:multi?"2px solid #f0e6d3":"none"}}>
+            <div style={{fontSize:11,color:"#e67e22",fontWeight:700,lineHeight:1.6}}>{line}</div>
+            {station&&<div style={{fontSize:12,color:"#333",fontWeight:600,lineHeight:1.6,display:"flex",alignItems:"center",gap:4}}>
+              <span style={{fontSize:10}}>🚇</span>{station}
+            </div>}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+// ── 票券頁 ──
+function TicketPage(){
+  const [cat,setCat]=useState("all");
+  const filtered=TICKETS.filter(t=>cat==="all"||t.cat===cat);
+  const transportList=filtered.filter(t=>t.cat==="transport");
+  const spotList=filtered.filter(t=>t.cat==="spot");
+
+  const TicketCard=({t})=>(
+    <div className="ticket-card">
+      <div className="ticket-icon" style={{background:t.iconBg}}>{t.icon}</div>
+      <div className="ticket-info">
+        <div className="ticket-name">
+          {t.name}
+          {t.badge&&<span className={`ticket-badge badge-${t.badge}`}>{t.badgeText}</span>}
+        </div>
+        <div className="ticket-desc">{t.desc}</div>
+        <div className="ticket-note">{t.note}</div>
+        <div className="ticket-bottom">
+          <div className="ticket-price">{t.price} <small>{t.priceNote}</small></div>
+          <a href={t.url} target="_blank" rel="noreferrer" className={`ticket-btn btn-${t.btnType}`}>{t.btnText}</a>
+        </div>
+      </div>
+    </div>
+  );
+
+  return(
+    <div style={{paddingBottom:24}}>
+      {/* 行程包預告 */}
+      <div className="pack-teaser">
+        <h3>🎒 旅日嚮導 行程包</h3>
+        <p>幫你規劃好的完整攻略<br/>川越一日遊、東京神社散策…</p>
+        <div className="pack-coming">即將推出 Coming Soon</div>
+      </div>
+
+      {/* 篩選 */}
+      <div className="ticket-filter-bar">
+        {TICKET_CATS.map(c=>(
+          <button key={c.id} className={`ticket-filter-btn${cat===c.id?" active":""}`} onClick={()=>setCat(c.id)}>{c.label}</button>
+        ))}
+      </div>
+
+      {/* 交通票券 */}
+      {transportList.length>0&&<>
+        <div className="ticket-section-label">🚆 交通票券</div>
+        {transportList.map(t=><TicketCard key={t.id} t={t}/>)}
+      </>}
+
+      {/* 景點門票 */}
+      {spotList.length>0&&<>
+        <div className="ticket-section-label">🎟️ 景點門票</div>
+        {spotList.map(t=><TicketCard key={t.id} t={t}/>)}
+      </>}
+    </div>
   );
 }
 
@@ -294,7 +314,7 @@ function App(){
   const [loading,setLoading]=useState(true);
   const [sel,setSel]=useState([]);
   const [search,setSearch]=useState("");
-  const [axisFilter,setAxisFilter]=useState(""); // 軸線篩選
+  const [axisFilter,setAxisFilter]=useState("");
   const [page,setPage]=useState("main");
   const [did,setDid]=useState(null);
   const [pi,setPi]=useState({});
@@ -306,15 +326,15 @@ function App(){
   const [fb,setFb]=useState(false);
   const [fbSent,setFbSent]=useState(false);
   const [fbTxt,setFbTxt]=useState("");
+  const [helpPage,setHelpPage]=useState(false);
+  const [activeTab,setActiveTab]=useState("explore");
 
-  // 收藏功能：從 localStorage 讀取，7天失效保護用 timestamp
   const [favs,setFavs]=useState(()=>{
     try {
       const raw=localStorage.getItem("tabinihon_favs");
       if(!raw) return [];
       const {ids,ts}=JSON.parse(raw);
-      // 超過180天才清除（旅遊規劃通常3-6個月）
-      if(Date.now()-ts > 180*24*60*60*1000) return [];
+      if(Date.now()-ts>180*24*60*60*1000) return [];
       return ids||[];
     } catch(e){ return []; }
   });
@@ -327,30 +347,16 @@ function App(){
     });
   };
 
-  const [favPage,setFavPage]=useState(false);
-  const [helpPage,setHelpPage]=useState(false);
-
-  // 加入主畫面引導：只顯示一次
   const [showInstall,setShowInstall]=useState(()=>{
-    try{ return !localStorage.getItem("tabinihon_install_shown"); }
-    catch(e){ return false; }
+    try{ return !localStorage.getItem("tabinihon_install_shown"); }catch(e){ return false; }
   });
   const dismissInstall=(remember)=>{
-    if(remember){
-      try{ localStorage.setItem("tabinihon_install_shown","1"); }catch(e){}
-    }
+    if(remember){ try{ localStorage.setItem("tabinihon_install_shown","1"); }catch(e){} }
     setShowInstall(false);
   };
 
   useEffect(()=>{
-    fetchSpots().then(data=>{
-      setSpots(data);
-      setLoading(false);
-    }).catch(err=>{
-      console.error('載入失敗:', err);
-      setSpots([]);
-      setLoading(false);
-    });
+    fetchSpots().then(data=>{setSpots(data);setLoading(false);}).catch(()=>{setSpots([]);setLoading(false);});
   },[]);
 
   const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
@@ -364,7 +370,6 @@ function App(){
   const q=search.trim().toLowerCase();
   const searchResults=q?(()=>{
     const matched=spots.filter(s=>[s.name,s.area,s.type,s.axis,s.tag,s.editorial].some(v=>v&&v.toLowerCase().includes(q)));
-    // 按相關度排序：景點名稱符合排最前，其次區域，最後其他欄位
     return matched.sort((a,b)=>{
       const aName=a.name.toLowerCase().includes(q)?0:1;
       const bName=b.name.toLowerCase().includes(q)?0:1;
@@ -381,20 +386,19 @@ function App(){
     const w=selSpots.slice(1,-1).map(s=>encodeURIComponent(s.name)).join("|");
     return "https://www.google.com/maps/dir/?api=1&origin="+o+"&destination="+d+(w?"&waypoints="+w:"")+"&travelmode=transit";
   };
-
   const shareText=()=>selSpots.map((s,i)=>`【第${i+1}站】${s.name}（${s.area}）\n交通：${s.metro}\n票價：${s.ticket}`).join("\n\n")+"\n\n✅ 由旅日嚮導嚴選・真實評價・不接業配";
 
   if(loading) return(
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100vh",gap:12}}>
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100dvh",gap:12}}>
       <div style={{fontSize:48}}>🗾</div>
       <div style={{fontSize:15,color:"#c0392b",fontWeight:700}}>旅日嚮導</div>
       <div style={{fontSize:12,color:"#aaa"}}>載入景點資料中…</div>
     </div>
   );
 
-  // 詳情頁
+  // ── 詳情頁（全屏） ──
   if(page==="detail"&&spot) return(
-    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",minHeight:"100vh"}}>
+    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",minHeight:"100dvh",overflowY:"auto"}}>
       <div style={{background:`linear-gradient(135deg,${a.color}cc,${a.color})`,color:"#fff",padding:"16px 16px 20px"}}>
         <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",marginBottom:10,fontSize:12}}>← 返回</button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
@@ -416,44 +420,45 @@ function App(){
           </div>
         </div>
       </div>
-      <div style={{background:"#111",paddingTop:"75%",position:"relative",overflow:"hidden"}}><div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}
-        onTouchStart={e=>{if(e.touches.length===1)e.currentTarget._swipeX=e.touches[0].clientX;}}
-        onTouchEnd={e=>{
-          const startX=e.currentTarget._swipeX;
-          if(startX==null)return;
-          const endX=e.changedTouches[0].clientX;
-          const diff=startX-endX;
-          if(Math.abs(diff)>40){
-            if(diff>0&&curPi<photos.length-1) setPi(p=>({...p,[spot.id]:curPi+1}));
-            if(diff<0&&curPi>0) setPi(p=>({...p,[spot.id]:curPi-1}));
-          }
-          e.currentTarget._swipeX=null;
-        }}
-      >
-        {photos[curPi]&&photos[curPi].startsWith("http")
-          ?<img src={photos[curPi]} style={{width:"100%",height:"100%",objectFit:"cover",pointerEvents:"none"}} alt=""/>
-          :<div style={{fontSize:80}}>{photos[curPi]||"📸"}</div>}
-        <div style={{position:"absolute",bottom:8,display:"flex",gap:5}}>
-          {photos.map((_,i)=><div key={i} onClick={()=>setPi(p=>({...p,[spot.id]:i}))} style={{width:7,height:7,borderRadius:"50%",background:i===curPi?"#fff":"rgba(255,255,255,0.3)",cursor:"pointer"}}/>)}
+      {/* 照片輪播 */}
+      <div style={{background:"#111",paddingTop:"75%",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}
+          onTouchStart={e=>{if(e.touches.length===1)e.currentTarget._swipeX=e.touches[0].clientX;}}
+          onTouchEnd={e=>{
+            const startX=e.currentTarget._swipeX;
+            if(startX==null)return;
+            const endX=e.changedTouches[0].clientX;
+            const diff=startX-endX;
+            if(Math.abs(diff)>40){
+              if(diff>0&&curPi<photos.length-1) setPi(p=>({...p,[spot.id]:curPi+1}));
+              if(diff<0&&curPi>0) setPi(p=>({...p,[spot.id]:curPi-1}));
+            }
+            e.currentTarget._swipeX=null;
+          }}>
+          {photos[curPi]&&photos[curPi].startsWith("http")
+            ?<img src={photos[curPi]} style={{width:"100%",height:"100%",objectFit:"cover",pointerEvents:"none"}} alt=""/>
+            :<div style={{fontSize:80}}>{photos[curPi]||"📸"}</div>}
+          <div style={{position:"absolute",bottom:8,display:"flex",gap:5}}>
+            {photos.map((_,i)=><div key={i} onClick={()=>setPi(p=>({...p,[spot.id]:i}))} style={{width:7,height:7,borderRadius:"50%",background:i===curPi?"#fff":"rgba(255,255,255,0.3)",cursor:"pointer"}}/>)}
+          </div>
+          {curPi>0&&<button onClick={()=>setPi(p=>({...p,[spot.id]:curPi-1}))} style={{position:"absolute",left:8,background:"rgba(0,0,0,0.45)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:18}}>‹</button>}
+          {curPi<photos.length-1&&<button onClick={()=>setPi(p=>({...p,[spot.id]:curPi+1}))} style={{position:"absolute",right:8,background:"rgba(0,0,0,0.45)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:18}}>›</button>}
         </div>
-        {curPi>0&&<button onClick={()=>setPi(p=>({...p,[spot.id]:curPi-1}))} style={{position:"absolute",left:8,background:"rgba(0,0,0,0.45)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:18}}>‹</button>}
-        {curPi<photos.length-1&&<button onClick={()=>setPi(p=>({...p,[spot.id]:curPi+1}))} style={{position:"absolute",right:8,background:"rgba(0,0,0,0.45)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:18}}>›</button>}
-      </div></div>
+      </div>
       {spot.editorial&&<div style={{padding:"12px 16px",background:"#fafafa",borderLeft:"4px solid "+a.color,margin:"12px 16px 8px",borderRadius:"0 8px 8px 0"}}>
         <div style={{fontSize:11,color:a.color,fontWeight:700,marginBottom:4}}>📋 旅日嚮導 客觀評述</div>
         <div style={{fontSize:13,color:"#444",lineHeight:1.7}}>{spot.editorial}</div>
       </div>}
       <div style={{padding:"0 16px",display:"flex",flexDirection:"column",gap:8}}>
-        {/* 小旅行資訊區塊 */}
-      {spot.axis==="近郊小旅行"&&(spot.fromCity||spot.transit||spot.tripTip)&&(
-        <div style={{background:"#f0f8ff",borderRadius:10,padding:"12px 14px",fontSize:13,display:"flex",flexDirection:"column",gap:6}}>
-          <div style={{fontSize:11,color:"#2980b9",fontWeight:700,marginBottom:2}}>🚉 小旅行資訊</div>
-          {spot.fromCity&&<div style={{lineHeight:1.7}}>📍 出發地：{spot.fromCity}</div>}
-          {spot.transit&&<div style={{lineHeight:1.7}}>🚌 前往方式：{spot.transit}</div>}
-          {spot.tripTip&&<div style={{lineHeight:1.7,color:"#555"}}>💡 {spot.tripTip}</div>}
-        </div>
-      )}
-      {spot.metro&&spot.axis!=="近郊小旅行"&&<div style={{background:"#f0f8ff",borderRadius:10,padding:"10px 14px",fontSize:13,lineHeight:1.7}}>
+        {spot.axis==="近郊小旅行"&&(spot.fromCity||spot.transit||spot.tripTip)&&(
+          <div style={{background:"#f0f8ff",borderRadius:10,padding:"12px 14px",fontSize:13,display:"flex",flexDirection:"column",gap:6}}>
+            <div style={{fontSize:11,color:"#2980b9",fontWeight:700,marginBottom:2}}>🚉 小旅行資訊</div>
+            {spot.fromCity&&<div style={{lineHeight:1.7}}>📍 出發地：{spot.fromCity}</div>}
+            {spot.transit&&<div style={{lineHeight:1.7}}>🚌 前往方式：{spot.transit}</div>}
+            {spot.tripTip&&<div style={{lineHeight:1.7,color:"#555"}}>💡 {spot.tripTip}</div>}
+          </div>
+        )}
+        {spot.metro&&spot.axis!=="近郊小旅行"&&<div style={{background:"#f0f8ff",borderRadius:10,padding:"10px 14px",fontSize:13,lineHeight:1.7}}>
           {spot.metro.split(/\r?\n|｜|\/(?!\/)/).map(l=>l.trim()).filter(Boolean).map((l,i)=><div key={i}>{i===0?"🚇 ":"　　"}{l}</div>)}
         </div>}
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
@@ -500,33 +505,20 @@ function App(){
         )}
         <button style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:10,padding:"10px 14px",fontSize:13,cursor:"pointer",textAlign:"left"}}>🚗 電車到不了？查詢包車服務</button>
       </div>
-
-      {/* ── 推薦分頁 Tab ── */}
       <div style={{padding:"14px 16px 0"}}>
         <div style={{display:"flex",gap:6,marginBottom:4}}>
           {["附近景點","周邊散步","特色店家"].map(c=>(
             <button key={c} onClick={()=>setTab(t=>({...t,[spot.id]:c}))}
-              style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",
-                background:curTab===c?a.color:"#f0f0f0",
-                color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer",
-                display:"flex",alignItems:"center",justifyContent:"center",gap:2}}>
+              style={{flex:1,padding:"6px 4px",borderRadius:20,border:"none",background:curTab===c?a.color:"#f0f0f0",color:curTab===c?"#fff":"#555",fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:2}}>
               {c}
-              {/* ℹ️ 只在推薦類別顯示 */}
-              {["周邊散步","特色店家"].includes(c) && (
-                <span className="recommendation-info-icon">ℹ️</span>
-              )}
+              {["周邊散步","特色店家"].includes(c)&&<span className="recommendation-info-icon">ℹ️</span>}
             </button>
           ))}
         </div>
-
-        {/* ── 推薦清單 ── */}
-        <div style={{paddingBottom:40}}>
+        <div style={{paddingBottom:60}}>
           {(curTab==="附近景點"?spot.nearby:curTab==="周邊散步"?spot.walking:spot.shops).map((item,i)=>(
             <div key={i} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <RecommendItem
-                item={item}
-                icon={curTab==="附近景點"?"📍":curTab==="周邊散步"?"🚶":"🛍"}
-              />
+              <RecommendItem item={item} icon={curTab==="附近景點"?"📍":curTab==="周邊散步"?"🚶":"🛍"}/>
               <button onClick={()=>setFb(true)} style={{fontSize:10,background:"#f0f0f0",color:"#888",border:"none",borderRadius:12,padding:"3px 8px",cursor:"pointer",flexShrink:0}}>回報問題</button>
             </div>
           ))}
@@ -534,7 +526,6 @@ function App(){
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
         </div>
       </div>
-
       {fb&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
         <div style={{background:"#fff",borderRadius:16,padding:20,width:"100%",maxWidth:320}}>
           {fbSent?<div style={{textAlign:"center",padding:"20px 0"}}>
@@ -555,404 +546,199 @@ function App(){
     </div>
   );
 
-  // 主畫面
-  return(
-    <div style={{maxWidth:420,margin:"0 auto",background:"#f8f8f8",minHeight:"100vh",paddingBottom:120}}>
-      {/* Header */}
-      <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"18px 16px 14px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div>
-            <div style={{fontSize:22,fontWeight:800,letterSpacing:1}}>🗾 旅日嚮導</div>
-            <div style={{fontSize:11,opacity:.7,marginTop:2}}>真實・客觀・嚴選 ｜ 東京版</div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"flex-end"}}>
-            <div style={{display:"flex",gap:6}}>
-              <button onClick={()=>setFavPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
-                ❤️ 我的收藏<br/>{favs.length}個景點
-              </button>
-              <button onClick={()=>setHelpPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 10px",fontSize:14,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
-                ？
-              </button>
+  // ── 使用說明頁（全屏） ──
+  if(helpPage) return(
+    <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:300,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
+      <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
+        <button onClick={()=>setHelpPage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12}}>← 返回</button>
+        <div style={{fontWeight:700,fontSize:16}}>？ 使用說明</div>
+      </div>
+      <div style={{padding:"16px"}}>
+        {[
+          {title:"📲 如何加到手機主畫面？",body:<div>
+            <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px",marginBottom:8}}>
+              <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🍎 iPhone（請用 Safari）</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>1. 點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⬆ 分享</span> 按鈕<br/>2. 選「加入主畫面」<br/>3. 點右上角「新增」完成</div>
+              <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 必須用 Safari，Chrome 不支援</div>
             </div>
-            <button onClick={()=>setSecret(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer",lineHeight:1.4,textAlign:"center"}}>
-              💡 推薦<br/>私房景點
-            </button>
+            <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px"}}>
+              <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🤖 Android</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>1. 點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⋮ 選單</span><br/>2. 選「新增至主畫面」</div>
+            </div>
+          </div>},
+          {title:"❤️ 收藏和加入行程有什麼不同？",body:<div style={{display:"flex",gap:10}}>
+            <div style={{flex:1,background:"#fff0f0",borderRadius:10,padding:"10px 12px"}}>
+              <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>❤️ 收藏</div>
+              <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>存起來之後慢慢看，不限數量，關掉 APP 也不會消失</div>
+            </div>
+            <div style={{flex:1,background:"#f0f8ff",borderRadius:10,padding:"10px 12px"}}>
+              <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>＋ 加入行程</div>
+              <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>今天要走的路線，最多4個，可以直接導航和查電車</div>
+            </div>
+          </div>},
+          {title:"🚃 查電車路線怎麼用？",body:<div style={{fontSize:12,color:"#555",lineHeight:1.9}}>1. 點景點卡片右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>＋</span> 選兩個以上景點<br/>2. 切換到下方「📋 行程」分頁<br/>3. 換乘資訊旁有 <span style={{background:"#e8f4fd",color:"#1a73e8",borderRadius:4,padding:"1px 6px",fontSize:11}}>查電車 →</span> 按鈕</div>},
+          {title:"✅ 走訪認證是什麼？",body:<div style={{fontSize:12,color:"#555",lineHeight:1.9}}>景點內的周邊散步、特色店家推薦分兩種：<br/><span style={{color:"#27ae60",fontWeight:600}}>✅ 綠色</span> = 編輯實地走訪確認<br/>一般顏色 = 依公開評價篩選的編輯精選</div>},
+          {title:"📋 資料準確嗎？發現錯誤怎麼辦？",body:<div style={{fontSize:12,color:"#555",lineHeight:1.9}}>所有景點資料由編輯團隊查核，但票價、開放時間可能隨時變動，建議出發前至官方網站確認。<br/><br/>發現資訊有誤，點景點內「<span style={{background:"#f0f0f0",borderRadius:4,padding:"1px 6px"}}>回報問題</span>」按鈕。</div>},
+          {title:"💡 怎麼推薦私房景點？",body:<div style={{fontSize:12,color:"#555",lineHeight:1.9}}>點右上角「💡 推薦景點」填寫景點資訊，審核通過上架後會寄送通知！</div>},
+        ].map((q,i)=>(
+          <div key={i} style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+            <div style={{fontWeight:700,fontSize:14,marginBottom:10,color:"#c0392b"}}>{q.title}</div>
+            {q.body}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ── 主畫面 ──
+  return(
+    <div className="app-wrap">
+
+      {/* Header */}
+      <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"14px 16px 10px",flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:activeTab==="explore"?10:0}}>
+          <div>
+            <div style={{fontSize:20,fontWeight:800,letterSpacing:1}}>🗾 旅日嚮導</div>
+            <div style={{fontSize:10,opacity:.7,marginTop:1}}>真實・客觀・嚴選 ｜ 東京版</div>
+          </div>
+          <div style={{display:"flex",gap:6}}>
+            <button onClick={()=>setSecret(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 12px",fontSize:11,cursor:"pointer"}}>💡 推薦景點</button>
+            <button onClick={()=>setHelpPage(true)} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",borderRadius:20,padding:"6px 10px",fontSize:14,cursor:"pointer"}}>？</button>
           </div>
         </div>
+        {activeTab==="explore"&&(
+          <div style={{display:"flex",alignItems:"center",background:"rgba(255,255,255,0.15)",borderRadius:20,padding:"8px 14px",gap:8,border:"1px solid rgba(255,255,255,0.2)"}}>
+            <span style={{fontSize:13,opacity:.7}}>🔍</span>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="搜尋景點、區域、類型…"
+              style={{border:"none",outline:"none",fontSize:13,flex:1,background:"transparent",color:"#fff"}}/>
+            {search&&<button onClick={()=>setSearch("")} style={{border:"none",background:"none",cursor:"pointer",fontSize:16,color:"rgba(255,255,255,0.6)",padding:0}}>×</button>}
+          </div>
+        )}
       </div>
 
-      {/* 搜尋框 */}
-      <div style={{padding:"10px 16px 4px"}}>
-        <div style={{display:"flex",alignItems:"center",background:"#fff",borderRadius:20,padding:"9px 14px",gap:8,boxShadow:"0 1px 4px rgba(0,0,0,0.08)"}}>
-          <span style={{fontSize:14,color:"#aaa"}}>🔍</span>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="搜尋景點、區域、類型…"
-            style={{border:"none",outline:"none",fontSize:13,flex:1,background:"transparent",color:"#333"}}/>
-          {search&&<button onClick={()=>setSearch("")} style={{border:"none",background:"none",cursor:"pointer",fontSize:16,color:"#bbb",padding:0}}>×</button>}
-        </div>
-      </div>
+      {/* Pages */}
+      <div className="app-pages">
 
-      {/* 軸線篩選 */}
-      {!q&&<div style={{padding:"4px 16px 8px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none"}}>
-        <style dangerouslySetInnerHTML={{__html:`.axis-filter-scroll::-webkit-scrollbar{display:none;}`}}/>
-        <button 
-          onClick={()=>setAxisFilter("")} 
-          style={{
-            padding:"6px 12px",
-            borderRadius:20,
-            border:"none",
-            background:axisFilter===""?"#c0392b":"#f0f0f0",
-            color:axisFilter===""?"#fff":"#666",
-            fontSize:12,
-            cursor:"pointer",
-            whiteSpace:"nowrap",
-            flexShrink:0,
-            fontWeight:axisFilter===""?700:400
-          }}>
-          全部
-        </button>
-        {AXIS_ORDER.map(ax=>(
-          <button 
-            key={ax}
-            onClick={()=>setAxisFilter(ax)} 
-            style={{
-              padding:"6px 12px",
-              borderRadius:20,
-              border:"none",
-              background:axisFilter===ax?AXES[ax].color:"#f0f0f0",
-              color:axisFilter===ax?"#fff":"#666",
-              fontSize:12,
-              cursor:"pointer",
-              whiteSpace:"nowrap",
-              flexShrink:0,
-              fontWeight:axisFilter===ax?700:400
-            }}>
-            {ax}
-          </button>
-        ))}
-      </div>}
+        {/* 探索 */}
+        <div className={`app-page${activeTab==="explore"?" active":""}`}>
+          {!q&&<div style={{padding:"8px 16px 4px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none"}}>
+            {["", ...AXIS_ORDER].map(ax=>(
+              <button key={ax||"all"} onClick={()=>setAxisFilter(ax)}
+                style={{padding:"5px 12px",borderRadius:20,border:"none",
+                  background:axisFilter===ax?(ax?AXES[ax].color:"#c0392b"):"#f0f0f0",
+                  color:axisFilter===ax?"#fff":"#666",fontSize:11,cursor:"pointer",
+                  whiteSpace:"nowrap",flexShrink:0,fontWeight:axisFilter===ax?700:400}}>
+                {ax||"全部"}
+              </button>
+            ))}
+          </div>}
 
-      {/* 搜尋結果 */}
-      {q?(
-        <div style={{padding:"8px 16px 4px"}}>
-          <div style={{fontSize:12,color:"#aaa",marginBottom:8}}>搜尋結果（{searchResults.length}筆）</div>
-          {searchResults.length===0
-            ?<div style={{textAlign:"center",padding:"40px 0",color:"#ccc"}}>找不到相關景點</div>
-            :<div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {searchResults.map(s=>{
-                const isSel=sel.includes(s.id),sa=getAx(s.axis);
-                return(
-                  <div key={s.id} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"2px solid "+(isSel?sa.color:"#eee"),boxShadow:"0 1px 4px rgba(0,0,0,0.04)"}}>
-                    {s.photos&&s.photos[0]&&s.photos[0].startsWith("http")&&
-                      <img src={s.photos[0]} style={{width:"100%",height:100,objectFit:"cover",display:"block"}} alt=""/>}
-                    <div style={{padding:"10px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                      <div style={{flex:1}}>
-                        <div style={{fontWeight:700,fontSize:15}}>{s.name}</div>
-                        <div style={{fontSize:11,color:"#999",marginTop:2}}>{s.area}<span style={{color:sa.color,marginLeft:6}}>{s.axis}</span></div>
+          {q?(
+            <div style={{padding:"8px 16px 4px"}}>
+              <div style={{fontSize:12,color:"#aaa",marginBottom:8}}>搜尋結果（{searchResults.length}筆）</div>
+              {searchResults.length===0
+                ?<div style={{textAlign:"center",padding:"40px 0",color:"#ccc"}}>找不到相關景點</div>
+                :<div style={{display:"flex",flexDirection:"column",gap:8}}>
+                  {searchResults.map(s=>{
+                    const isSel=sel.includes(s.id),sa=getAx(s.axis);
+                    return(
+                      <div key={s.id} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"2px solid "+(isSel?sa.color:"#eee"),boxShadow:"0 1px 4px rgba(0,0,0,0.04)"}}>
+                        {s.photos&&s.photos[0]&&s.photos[0].startsWith("http")&&
+                          <img src={s.photos[0]} style={{width:"100%",height:100,objectFit:"cover",display:"block"}} alt=""/>}
+                        <div style={{padding:"10px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                          <div style={{flex:1}}>
+                            <div style={{fontWeight:700,fontSize:15}}>{s.name}</div>
+                            <div style={{fontSize:11,color:"#999",marginTop:2}}>{s.area}<span style={{color:sa.color,marginLeft:6}}>{s.axis}</span></div>
+                          </div>
+                          <div style={{display:"flex",gap:6}}>
+                            <button onClick={()=>{setDid(s.id);setPage("detail");}} style={{fontSize:11,background:"#f5f5f5",border:"none",borderRadius:12,padding:"4px 10px",cursor:"pointer",color:"#666"}}>詳情</button>
+                            <button onClick={()=>toggleSel(s.id)} style={{fontSize:12,background:isSel?sa.color:"#f0f0f0",color:isSel?"#fff":"#555",border:"none",borderRadius:12,padding:"4px 14px",cursor:"pointer",fontWeight:700}}>{isSel?"✓":"＋"}</button>
+                          </div>
+                        </div>
                       </div>
-                      <div style={{display:"flex",gap:6}}>
-                        <button onClick={()=>{setDid(s.id);setPage("detail");}} style={{fontSize:11,background:"#f5f5f5",border:"none",borderRadius:12,padding:"4px 10px",cursor:"pointer",color:"#666"}}>詳情</button>
-                        <button onClick={()=>toggleSel(s.id)} style={{fontSize:12,background:isSel?sa.color:"#f0f0f0",color:isSel?"#fff":"#555",border:"none",borderRadius:12,padding:"4px 14px",cursor:"pointer",fontWeight:700}}>{isSel?"✓":"＋"}</button>
+                    );
+                  })}
+                </div>}
+            </div>
+          ):(
+            <div style={{paddingTop:4,paddingBottom:8}}>
+              {(()=>{
+                const bannerSpots=spots.filter(s=>s.banner).sort((a,b)=>a.sortOrder-b.sortOrder);
+                if(!bannerSpots.length) return null;
+                const bannerText=bannerSpots[0].banner;
+                const bannerColor=AXIS[bannerSpots[0].axis]?.color||"#c0392b";
+                return(
+                  <div style={{margin:"8px 16px",borderRadius:12,overflow:"hidden",border:"1.5px solid "+bannerColor+"44"}}>
+                    <div style={{background:"linear-gradient(135deg,"+bannerColor+"22,"+bannerColor+"11)",padding:"10px 14px 8px"}}>
+                      <div style={{fontSize:12,fontWeight:700,color:bannerColor,marginBottom:6}}>✨ {bannerText}</div>
+                      <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
+                        {bannerSpots.map(s=>(
+                          <div key={s.id} onClick={()=>{setDid(s.id);setPage("detail");}}
+                            style={{flexShrink:0,display:"flex",alignItems:"center",gap:8,background:"#fff",borderRadius:10,padding:"6px 10px",cursor:"pointer",border:"1px solid "+bannerColor+"33"}}>
+                            {s.photos[0]&&s.photos[0].startsWith("http")
+                              ?<img src={s.photos[0]} style={{width:36,height:36,borderRadius:8,objectFit:"cover"}} alt=""/>
+                              :<div style={{width:36,height:36,borderRadius:8,background:AXIS[s.axis]?.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{AXIS[s.axis]?.icon}</div>}
+                            <div>
+                              <div style={{fontSize:12,fontWeight:700,color:"#333"}}>{s.name}</div>
+                              <div style={{fontSize:10,color:"#999"}}>{s.area}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
                 );
+              })()}
+              {AXIS_ORDER.map(axName=>{
+                if(axisFilter&&axisFilter!==axName) return null;
+                const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
+                if(!axSpots.length) return null;
+                return(
+                  <div key={axName} style={{marginBottom:8}}>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 16px 4px"}}>
+                      <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axName}</div>
+                      <div style={{fontSize:11,color:"#bbb"}}>{axSpots.length}個景點</div>
+                    </div>
+                    <div className="hscroll">
+                      {axSpots.map(s=>(
+                        <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
+                          onClick={()=>{setDid(s.id);setPage("detail");}}
+                          onToggle={()=>toggleSel(s.id)}
+                          isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
+                      ))}
+                    </div>
+                  </div>
+                );
               })}
-            </div>}
-        </div>
-      ):(
-        /* Netflix 橫向分軸線 */
-        <div style={{paddingTop:8}}>
-          {/* 季節橫幅 */}
-          {(()=>{
-            const bannerSpots=spots.filter(s=>s.banner).sort((a,b)=>a.sortOrder-b.sortOrder);
-            if(!bannerSpots.length) return null;
-            const bannerText=bannerSpots[0].banner;
-            const bannerColor=AXIS[bannerSpots[0].axis]?.color||"#c0392b";
-            return(
-              <div style={{margin:"8px 16px",borderRadius:12,overflow:"hidden",border:"1.5px solid "+bannerColor+"44"}}>
-                <div style={{background:"linear-gradient(135deg,"+bannerColor+"22,"+bannerColor+"11)",padding:"10px 14px 8px"}}>
-                  <div style={{fontSize:12,fontWeight:700,color:bannerColor,marginBottom:6}}>✨ {bannerText}</div>
-                  <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
-                    {bannerSpots.map(s=>(
-                      <div key={s.id} onClick={()=>{setDid(s.id);setPage("detail");}}
-                        style={{flexShrink:0,display:"flex",alignItems:"center",gap:8,background:"#fff",borderRadius:10,padding:"6px 10px",cursor:"pointer",border:"1px solid "+bannerColor+"33"}}>
-                        {s.photos[0]&&s.photos[0].startsWith("http")
-                          ?<img src={s.photos[0]} style={{width:36,height:36,borderRadius:8,objectFit:"cover"}} alt=""/>
-                          :<div style={{width:36,height:36,borderRadius:8,background:AXIS[s.axis]?.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{AXIS[s.axis]?.icon}</div>
-                        }
-                        <div>
-                          <div style={{fontSize:12,fontWeight:700,color:"#333"}}>{s.name}</div>
-                          <div style={{fontSize:10,color:"#999"}}>{s.area}</div>
-                        </div>
-                      </div>
+              {spots.filter(s=>!AXIS[s.axis]).length>0&&(
+                <div style={{marginBottom:8}}>
+                  <div style={{padding:"8px 16px 4px",fontWeight:700,fontSize:14,color:"#333"}}>📍 其他景點</div>
+                  <div className="hscroll">
+                    {spots.filter(s=>!AXIS[s.axis]).map(s=>(
+                      <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
+                        onClick={()=>{setDid(s.id);setPage("detail");}}
+                        onToggle={()=>toggleSel(s.id)}
+                        isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
                     ))}
                   </div>
                 </div>
-              </div>
-            );
-          })()}
-          {AXIS_ORDER.map(axName=>{
-            // 如果有篩選且不是當前軸線，不顯示
-            if(axisFilter && axisFilter !== axName) return null;
-            
-            const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
-            if(!axSpots.length) return null;
-            const axInfo=AXIS[axName];
-            return(
-              <div key={axName} style={{marginBottom:8}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 16px 4px"}}>
-                  <div style={{fontWeight:700,fontSize:14,color:"#333"}}>{axName}</div>
-                  <div style={{fontSize:11,color:"#bbb"}}>{axSpots.length}個景點</div>
-                </div>
-                <div className="hscroll">
-                  {axSpots.map(s=>(
-                    <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                      onClick={()=>{setDid(s.id);setPage("detail");}}
-                      onToggle={()=>toggleSel(s.id)}
-                      isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-          {spots.filter(s=>!AXIS[s.axis]).length>0&&(
-            <div style={{marginBottom:8}}>
-              <div style={{padding:"8px 16px 4px",fontWeight:700,fontSize:14,color:"#333"}}>📍 其他景點</div>
-              <div className="hscroll">
-                {spots.filter(s=>!AXIS[s.axis]).map(s=>(
-                  <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
-                    onClick={()=>{setDid(s.id);setPage("detail");}}
-                    onToggle={()=>toggleSel(s.id)}
-                    isFav={favs.includes(s.id)} onFav={()=>toggleFav(s.id)}/>
-                ))}
-              </div>
+              )}
             </div>
           )}
         </div>
-      )}
 
-      {/* 已選行程浮動面板 */}
-      {selSpots.length>0&&(
-        <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:420,background:"#fff",borderTop:"1px solid #eee",padding:"12px 16px",boxShadow:"0 -4px 20px rgba(0,0,0,0.1)",zIndex:50}}>
-          <div style={{fontSize:13,fontWeight:700,marginBottom:4}}>📍 規劃路線（{selSpots.length}站）</div>
-          <div style={{fontSize:11,color:"#888",marginBottom:10,background:"#f8f8f8",padding:"6px 10px",borderRadius:6,lineHeight:1.5}}>
-            ℹ️ 點「查電車」查看詳細轉乘路線
-          </div>
-          {selSpots.map((s,i)=>{
-            const sa=getAx(s.axis);
-            return(
-              <div key={s.id}>
-                <div style={{display:"flex",gap:8,alignItems:"flex-start",marginBottom:4}}>
-                  <div style={{width:22,height:22,background:sa.color,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:10,fontWeight:700,flexShrink:0,marginTop:1}}>{i+1}</div>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontWeight:700,fontSize:13}}>{s.name}</div>
-                  </div>
-                  <button onClick={()=>toggleSel(s.id)} style={{fontSize:14,background:"none",border:"none",cursor:"pointer",color:"#ccc",flexShrink:0,padding:0}}>×</button>
-                </div>
-                {i<selSpots.length-1&&(
-                  <div style={{marginLeft:11,paddingLeft:10,borderLeft:"1px dashed #e0e0e0",paddingBottom:5,marginBottom:4}}>
-                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
-                      <div style={{flex:1}}>
-                        {selSpots[i+1].arrivalNote
-                          ?(()=>{
-                            const note = selSpots[i+1].arrivalNote.trim();
-                            
-                            // 支援多個選項，用「｜」分隔
-                            const options = note.split('｜').map(opt => opt.trim());
-                            const hasMultipleOptions = options.length > 1;
-                            
-                            return (
-                              <>
-                                <div style={{fontSize:11,color:"#666",marginBottom:4}}>
-                                  🚃 前往下一站{hasMultipleOptions && <span style={{color:"#888"}}>（任選其一）</span>}
-                                </div>
-                                {options.map((option, idx) => {
-                                  const parts = option.split(/\s+/);
-                                  
-                                  if(parts.length >= 2) {
-                                    const line = parts[0];
-                                    const station = parts.slice(1).join(' ');
-                                    
-                                    return (
-                                      <div key={idx} style={{marginBottom:idx < options.length-1 ? 8 : 0}}>
-                                        <div style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
-                                          {line}
-                                        </div>
-                                        <div style={{fontSize:11,color:"#333",fontWeight:600,lineHeight:1.8,paddingLeft:8}}>
-                                          🚇 {station}
-                                        </div>
-                                      </div>
-                                    );
-                                  } else {
-                                    return (
-                                      <div key={idx} style={{fontSize:11,color:"#e67e22",fontWeight:600,lineHeight:1.8,paddingLeft:8,marginBottom:idx < options.length-1 ? 4 : 0}}>
-                                        {option}
-                                      </div>
-                                    );
-                                  }
-                                })}
-                              </>
-                            );
-                          })()
-                          :<div style={{fontSize:10,color:"#ccc",marginTop:2}}>🚇 換乘</div>
-                        }
-                      </div>
-                      <a
-                        href={"https://www.google.com/maps/dir/"+encodeURIComponent(selSpots[i].name)+"/"+encodeURIComponent(selSpots[i+1].name)+"/?travelmode=transit&hl=ja"}
-                        target="_blank" rel="noreferrer"
-                        style={{fontSize:10,background:"#e8f4fd",color:"#1a73e8",border:"1px solid #c5dff8",borderRadius:10,padding:"3px 8px",textDecoration:"none",fontWeight:700,whiteSpace:"nowrap",flexShrink:0,marginTop:2}}>
-                        查電車 →
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          <div style={{display:"flex",gap:8}}>
-            <a href={mapsLink()} target="_blank" rel="noreferrer" style={{flex:1,background:"#c0392b",color:"#fff",border:"none",borderRadius:20,padding:"10px",fontWeight:700,fontSize:13,textDecoration:"none",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              🗺 Google Maps 導航
-            </a>
-            <button onClick={()=>setShared(true)} style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:20,padding:"10px 14px",cursor:"pointer",fontSize:13}}>📤</button>
-            <button onClick={()=>setSel([])} style={{background:"#f0f0f0",color:"#888",border:"none",borderRadius:20,padding:"10px 14px",cursor:"pointer",fontSize:12}}>清除</button>
-          </div>
+        {/* 票券 */}
+        <div className={`app-page${activeTab==="ticket"?" active":""}`}>
+          <TicketPage/>
         </div>
-      )}
 
-      {/* 加入主畫面引導（只出現一次） */}
-      {showInstall&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:200,padding:"0 0 20px"}}>
-          <div style={{background:"#fff",borderRadius:20,padding:"24px 20px",width:"100%",maxWidth:420,margin:"0 16px"}}>
-            <div style={{fontSize:28,textAlign:"center",marginBottom:8}}>📲</div>
-            <div style={{fontWeight:700,fontSize:17,textAlign:"center",marginBottom:6}}>加到手機主畫面</div>
-            <div style={{fontSize:13,color:"#666",textAlign:"center",marginBottom:16,lineHeight:1.7}}>
-              下次不用找網址，直接從桌面開啟！
-            </div>
-            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:16}}>
-              <div style={{fontSize:13,marginBottom:10,fontWeight:600,color:"#333"}}>🍎 iPhone / iPad</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>
-                點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⬆ 分享</span> 按鈕<br/>
-                → 選「<span style={{fontWeight:600}}>加入主畫面</span>」<br/>
-                → 點右上角「新增」
-              </div>
-              <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 請用 Safari 開啟，Chrome 不支援</div>
-            </div>
-            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:20}}>
-              <div style={{fontSize:13,marginBottom:10,fontWeight:600,color:"#333"}}>🤖 Android</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>
-                點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⋮ 選單</span><br/>
-                → 選「<span style={{fontWeight:600}}>新增至主畫面</span>」
-              </div>
-            </div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>dismissInstall(false)} style={{flex:1,background:"#f0f0f0",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#888"}}>
-                下次再說
-              </button>
-              <button onClick={()=>dismissInstall(true)} style={{flex:2,background:"#c0392b",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>
-                知道了 ✓
-              </button>
-            </div>
+        {/* 收藏 */}
+        <div className={`app-page${activeTab==="fav"?" active":""}`}>
+          <div style={{padding:"16px 16px 8px"}}>
+            <div style={{fontSize:20,fontWeight:800,marginBottom:2}}>❤️ 我的收藏</div>
+            <div style={{fontSize:12,color:"#999"}}>點景點卡片左上角的 ❤️ 加入收藏</div>
           </div>
-        </div>
-      )}
-
-      {/* 使用說明頁面 */}
-      {helpPage&&(
-        <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:100,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
-          <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
-            <button onClick={()=>setHelpPage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12}}>← 返回</button>
-            <div style={{fontWeight:700,fontSize:16}}>？ 使用說明</div>
-          </div>
-          <div style={{padding:"16px"}}>
-
-            {/* Q1 加入主畫面 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:10,color:"#c0392b"}}>📲 如何加到手機主畫面？</div>
-              <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px",marginBottom:8}}>
-                <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🍎 iPhone（請用 Safari）</div>
-                <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                  1. 點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⬆ 分享</span> 按鈕<br/>
-                  2. 選「加入主畫面」<br/>
-                  3. 點右上角「新增」完成
-                </div>
-                <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 必須用 Safari，Chrome 不支援</div>
-              </div>
-              <div style={{background:"#f8f8f8",borderRadius:10,padding:"12px"}}>
-                <div style={{fontWeight:600,fontSize:13,marginBottom:6}}>🤖 Android</div>
-                <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                  1. 點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>⋮ 選單</span><br/>
-                  2. 選「新增至主畫面」
-                </div>
-              </div>
-            </div>
-
-            {/* Q2 收藏 vs 行程 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:10,color:"#c0392b"}}>❤️ 收藏和加入行程有什麼不同？</div>
-              <div style={{display:"flex",gap:10}}>
-                <div style={{flex:1,background:"#fff0f0",borderRadius:10,padding:"10px 12px"}}>
-                  <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>❤️ 收藏</div>
-                  <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>存起來之後慢慢看，不限數量，關掉 APP 也不會消失</div>
-                </div>
-                <div style={{flex:1,background:"#f0f8ff",borderRadius:10,padding:"10px 12px"}}>
-                  <div style={{fontWeight:600,fontSize:12,marginBottom:4}}>＋ 加入行程</div>
-                  <div style={{fontSize:11,color:"#666",lineHeight:1.7}}>今天要走的路線，最多4個，可以直接導航和查電車</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Q3 查電車 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>🚃 查電車路線怎麼用？</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                1. 點景點卡片右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px"}}>＋</span> 選兩個以上景點<br/>
-                2. 底部面板換乘資訊旁邊有 <span style={{background:"#e8f4fd",color:"#1a73e8",borderRadius:4,padding:"1px 6px",fontSize:11}}>查電車 →</span><br/>
-                3. 點擊後直接開啟 Google Maps 電車路線
-              </div>
-            </div>
-
-            {/* Q4 走訪認證 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>✅ 走訪認證是什麼？</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                景點內的周邊散步、特色店家推薦分兩種：<br/>
-                <span style={{color:"#27ae60",fontWeight:600}}>✅ 綠色</span> = 編輯實地走訪確認<br/>
-                一般顏色 = 依公開評價篩選的編輯精選<br/><br/>
-                點推薦區塊標題旁的 ℹ️ 可以查看說明
-              </div>
-            </div>
-
-            {/* Q5 資料更新 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>📋 資料準確嗎？發現錯誤怎麼辦？</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                所有景點資料由編輯團隊查核，但票價、開放時間等資訊可能隨時變動，建議出發前至官方網站確認。<br/><br/>
-                發現資訊有誤，點景點內「<span style={{background:"#f0f0f0",borderRadius:4,padding:"1px 6px"}}>回報問題</span>」按鈕，我們會盡快複查更新。
-              </div>
-            </div>
-
-            {/* Q6 推薦私房景點 */}
-            <div style={{background:"#fff",borderRadius:12,padding:"14px 16px",marginBottom:24,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-              <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#c0392b"}}>💡 怎麼推薦私房景點？</div>
-              <div style={{fontSize:12,color:"#555",lineHeight:1.9}}>
-                點右上角「💡 推薦私房景點」填寫景點資訊。<br/><br/>
-                審核通過上架後會寄送通知，歡迎推薦你認為值得被更多人知道的好地方！
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* 收藏頁面 */}
-      {favPage&&(
-        <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:100,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
-          <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
-            <button onClick={()=>setFavPage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",fontSize:12}}>← 返回</button>
-            <div style={{fontWeight:700,fontSize:16}}>❤️ 我的收藏</div>
-          </div>
-          <div style={{padding:"12px 16px"}}>
+          <div style={{padding:"0 16px 24px"}}>
             {favs.length===0
               ?<div style={{textAlign:"center",padding:"60px 0",color:"#ccc"}}>
                   <div style={{fontSize:48,marginBottom:12}}>🤍</div>
@@ -965,31 +751,132 @@ function App(){
                   if(!s) return null;
                   const sa=getAx(s.axis);
                   return(
-                    <div key={id} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #eee",display:"flex",alignItems:"center",gap:0}}>
+                    <div key={id} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"1px solid #eee",display:"flex",alignItems:"center"}}>
                       {s.photos&&s.photos[0]&&s.photos[0].startsWith("http")
                         ?<img src={s.photos[0]} style={{width:70,height:70,objectFit:"cover",flexShrink:0}} alt=""/>
-                        :<div style={{width:70,height:70,background:sa.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{sa.icon}</div>
-                      }
+                        :<div style={{width:70,height:70,background:sa.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{sa.icon}</div>}
                       <div style={{flex:1,padding:"10px 12px",minWidth:0}}>
                         <div style={{fontWeight:700,fontSize:14}}>{s.name}</div>
                         <div style={{fontSize:11,color:"#999",marginTop:2}}>{s.area}・{s.axis}</div>
                         {s.ticket&&<div style={{fontSize:11,color:"#c0392b",marginTop:3}}>🎟 {s.ticket}</div>}
                       </div>
                       <div style={{display:"flex",flexDirection:"column",gap:6,padding:"0 10px",flexShrink:0}}>
-                        <button onClick={()=>{setDid(s.id);setPage("detail");setFavPage(false);}} style={{background:"#f5f5f5",border:"none",borderRadius:10,padding:"5px 10px",cursor:"pointer",fontSize:11,color:"#555"}}>查看</button>
+                        <button onClick={()=>{setDid(s.id);setPage("detail");}} style={{background:"#f5f5f5",border:"none",borderRadius:10,padding:"5px 10px",cursor:"pointer",fontSize:11,color:"#555"}}>查看</button>
                         <button onClick={()=>toggleSel(s.id)} style={{background:sel.includes(s.id)?"#c0392b":"#f5f5f5",border:"none",borderRadius:10,padding:"5px 10px",cursor:"pointer",fontSize:11,color:sel.includes(s.id)?"#fff":"#555"}}>{sel.includes(s.id)?"已加入":"加行程"}</button>
                         <button onClick={()=>toggleFav(id)} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,padding:"2px"}}>❤️</button>
                       </div>
                     </div>
                   );
                 })}
+              </div>}
+          </div>
+        </div>
+
+        {/* 行程 */}
+        <div className={`app-page${activeTab==="itin"?" active":""}`}>
+          <div style={{padding:"16px 16px 8px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div>
+              <div style={{fontSize:20,fontWeight:800,marginBottom:2}}>📋 我的行程</div>
+              <div style={{fontSize:12,color:"#999"}}>最多選 4 個景點</div>
+            </div>
+            {selSpots.length>0&&<div style={{fontSize:12,color:"#c0392b",background:"#fff0f0",borderRadius:20,padding:"4px 12px",fontWeight:700}}>{selSpots.length} / 4 站</div>}
+          </div>
+
+          {selSpots.length===0
+            ?<div style={{margin:"0 16px",background:"#fff",borderRadius:14,padding:"32px 20px",textAlign:"center",color:"#bbb"}}>
+                <div style={{fontSize:44,marginBottom:12}}>🗺️</div>
+                <div style={{fontSize:14,marginBottom:6}}>還沒有選擇景點</div>
+                <div style={{fontSize:12,lineHeight:1.7}}>到「探索」頁面點景點卡片右上角的 <strong style={{color:"#555"}}>＋</strong> 加入行程</div>
               </div>
-            }
+            :<div style={{padding:"0 16px"}}>
+              <div style={{fontSize:11,color:"#888",marginBottom:12,background:"#f8f8f8",padding:"7px 10px",borderRadius:6,lineHeight:1.5}}>
+                ℹ️ 點「查電車」查看詳細轉乘路線
+              </div>
+              {selSpots.map((s,i)=>{
+                const sa=getAx(s.axis);
+                return(
+                  <div key={s.id}>
+                    {/* 景點列 */}
+                    <div style={{display:"flex",gap:10,alignItems:"center",marginBottom:4,background:"#fff",borderRadius:12,padding:"10px 12px",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
+                      <div style={{width:24,height:24,background:sa.color,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{i+1}</div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontWeight:700,fontSize:14}}>{s.name}</div>
+                        <div style={{fontSize:11,color:"#999",marginTop:1}}>{s.area}</div>
+                      </div>
+                      <button onClick={()=>toggleSel(s.id)} style={{fontSize:16,background:"none",border:"none",cursor:"pointer",color:"#ccc",flexShrink:0,padding:0}}>×</button>
+                    </div>
+                    {/* 換乘資訊 */}
+                    {i<selSpots.length-1&&(
+                      <div style={{marginLeft:22,paddingLeft:12,borderLeft:"1px dashed #e0e0e0",paddingBottom:6,marginBottom:4,paddingTop:4}}>
+                        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
+                          <div style={{flex:1}}>
+                            <ArrivalNote note={selSpots[i+1].arrivalNote}/>
+                          </div>
+                          <a href={"https://www.google.com/maps/dir/"+encodeURIComponent(selSpots[i].name)+"/"+encodeURIComponent(selSpots[i+1].name)+"/?travelmode=transit&hl=ja"}
+                            target="_blank" rel="noreferrer"
+                            style={{fontSize:10,background:"#e8f4fd",color:"#1a73e8",border:"1px solid #c5dff8",borderRadius:10,padding:"4px 8px",textDecoration:"none",fontWeight:700,whiteSpace:"nowrap",flexShrink:0,marginTop:2}}>
+                            查電車 →
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              <div style={{display:"flex",gap:8,marginTop:14,paddingBottom:24}}>
+                <a href={mapsLink()} target="_blank" rel="noreferrer"
+                  style={{flex:1,background:"#c0392b",color:"#fff",border:"none",borderRadius:20,padding:"11px",fontWeight:700,fontSize:13,textDecoration:"none",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  🗺 Google Maps 導航
+                </a>
+                <button onClick={()=>setShared(true)} style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:13}}>📤</button>
+                <button onClick={()=>setSel([])} style={{background:"#f0f0f0",color:"#888",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:12}}>清除</button>
+              </div>
+            </div>}
+        </div>
+
+      </div>{/* end app-pages */}
+
+      {/* 底部導航 */}
+      <nav className="bottom-nav">
+        {[
+          {id:"explore",icon:"🗾",label:"探索"},
+          {id:"ticket",icon:"🎫",label:"票券"},
+          {id:"fav",icon:"❤️",label:"收藏",badge:favs.length||0},
+          {id:"itin",icon:"📋",label:"行程",badge:sel.length||0},
+        ].map(t=>(
+          <button key={t.id} className={`nav-tab${activeTab===t.id?" active":""}`}
+            onClick={()=>{setActiveTab(t.id);if(t.id!=="explore")setSearch("");}}>
+            {t.badge>0&&<div className="nav-badge">{t.badge}</div>}
+            <span className="nav-icon">{t.icon}</span>
+            <span className="nav-label">{t.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* Modals */}
+      {showInstall&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:200,padding:"0 0 20px"}}>
+          <div style={{background:"#fff",borderRadius:20,padding:"24px 20px",width:"100%",maxWidth:420,margin:"0 16px"}}>
+            <div style={{fontSize:28,textAlign:"center",marginBottom:8}}>📲</div>
+            <div style={{fontWeight:700,fontSize:17,textAlign:"center",marginBottom:6}}>加到手機主畫面</div>
+            <div style={{fontSize:13,color:"#666",textAlign:"center",marginBottom:16,lineHeight:1.7}}>下次不用找網址，直接從桌面開啟！</div>
+            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:10}}>
+              <div style={{fontSize:13,marginBottom:8,fontWeight:600,color:"#333"}}>🍎 iPhone / iPad</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>點底部中間的 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⬆ 分享</span> → 選「加入主畫面」→ 點右上角「新增」</div>
+              <div style={{fontSize:11,color:"#e67e22",marginTop:6}}>⚠️ 請用 Safari 開啟，Chrome 不支援</div>
+            </div>
+            <div style={{background:"#f8f8f8",borderRadius:12,padding:"12px 14px",marginBottom:20}}>
+              <div style={{fontSize:13,marginBottom:8,fontWeight:600,color:"#333"}}>🤖 Android</div>
+              <div style={{fontSize:12,color:"#555",lineHeight:1.8}}>點右上角 <span style={{background:"#e0e0e0",borderRadius:4,padding:"1px 6px",fontWeight:600}}>⋮ 選單</span> → 選「新增至主畫面」</div>
+            </div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={()=>dismissInstall(false)} style={{flex:1,background:"#f0f0f0",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#888"}}>下次再說</button>
+              <button onClick={()=>dismissInstall(true)} style={{flex:2,background:"#c0392b",border:"none",borderRadius:20,padding:"11px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>知道了 ✓</button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* 分享 Modal */}
       {shared&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
         <div style={{background:"#fff",borderRadius:16,padding:20,width:"100%",maxWidth:340}}>
           <div style={{fontWeight:700,marginBottom:10}}>📤 分享行程</div>
@@ -1001,7 +888,6 @@ function App(){
         </div>
       </div>}
 
-      {/* 私房景點 Modal */}
       {secret&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
         <div style={{background:"#fff",borderRadius:16,padding:20,width:"100%",maxWidth:340,maxHeight:"90vh",overflowY:"auto"}}>
           {sSent?<div style={{textAlign:"center",padding:"24px 0"}}>
@@ -1031,13 +917,13 @@ function App(){
           </>}
         </div>
       </div>}
+
     </div>
   );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
-
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
