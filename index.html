@@ -388,7 +388,7 @@ function App(){
     setShowInstall(false);
   };
 
-  useEffect(()=>{
+  const loadData = () => {
     Promise.all([fetchSpots(), fetchTickets()]).then(([spotsData, ticketsData])=>{
       setSpots(spotsData);
       setTickets(ticketsData);
@@ -398,6 +398,14 @@ function App(){
       setTickets([]);
       setLoading(false);
     });
+  };
+
+  useEffect(()=>{ loadData(); },[]);
+
+  useEffect(()=>{
+    const handleVisibility=()=>{ if(document.visibilityState==='visible') loadData(); };
+    document.addEventListener('visibilitychange',handleVisibility);
+    return ()=>document.removeEventListener('visibilitychange',handleVisibility);
   },[]);
 
   const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
