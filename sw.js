@@ -1,4 +1,4 @@
-const CACHE = 'tabinihon-v140';
+const CACHE = 'tabinihon-v141';
 const ASSETS = [
   '/tabinihon/',
   '/tabinihon/index.html',
@@ -23,23 +23,24 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (e.request.url.includes('googleapis') || e.request.url.includes('gviz')) return;
+  if (e.request.url.includes('supabase')) return;
+
+  const isHTML = e.request.destination === 'document' || e.request.url.endsWith('.html');
 
   e.respondWith(
-    // 網路優先：先抓最新版本，失敗才用快取
-    fetch(e.request).then(res => {
-      if (res && res.status === 200 && res.type !== 'opaque') {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
-      }
-      return res;
-    }).catch(() => {
-      // 離線時才用快取
-      return caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        if (e.request.destination === 'document') {
-          return caches.match('/tabinihon/index.html');
+    fetch(e.request, isHTML ? { cache: 'no-store' } : {})
+      .then(res => {
+        if (res && res.status === 200 && res.type !== 'opaque' && !isHTML) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
         }
-      });
-    })
+        return res;
+      })
+      .catch(() => {
+        return caches.match(e.request).then(cached => {
+          if (cached) return cached;
+          if (isHTML) return caches.match('/tabinihon/index.html');
+        });
+      })
   );
 });
