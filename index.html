@@ -48,9 +48,9 @@ button,input,textarea{font-family:inherit;}
 
 /* ── 底部導航 ── */
 .bottom-nav{display:flex;background:#fff;border-top:1px solid #e8e8e8;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);z-index:200;}
-.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px;border:none;background:transparent;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;min-height:56px;}
-.nav-icon{font-size:22px;line-height:1;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);}
-.nav-label{font-size:10px;font-weight:600;color:#bbb;letter-spacing:0.2px;transition:color 0.15s;}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 4px;border:none;background:transparent;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;min-height:68px;}
+.nav-icon{font-size:28px;line-height:1;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);}
+.nav-label{font-size:12px;font-weight:600;color:#bbb;letter-spacing:0.2px;transition:color 0.15s;}
 .nav-tab.active .nav-label{color:#c0392b;}
 .nav-tab.active .nav-icon{transform:scale(1.15);}
 .nav-tab.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#c0392b;border-radius:0 0 3px 3px;}
@@ -388,7 +388,7 @@ function App(){
     setShowInstall(false);
   };
 
-  const loadData = () => {
+  useEffect(()=>{
     Promise.all([fetchSpots(), fetchTickets()]).then(([spotsData, ticketsData])=>{
       setSpots(spotsData);
       setTickets(ticketsData);
@@ -398,14 +398,6 @@ function App(){
       setTickets([]);
       setLoading(false);
     });
-  };
-
-  useEffect(()=>{ loadData(); },[]);
-
-  useEffect(()=>{
-    const handleVisibility=()=>{ if(document.visibilityState==='visible') loadData(); };
-    document.addEventListener('visibilitychange',handleVisibility);
-    return ()=>document.removeEventListener('visibilitychange',handleVisibility);
   },[]);
 
   const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
@@ -447,7 +439,7 @@ function App(){
 
   // ── 詳情頁（全屏） ──
   if(page==="detail"&&spot) return(
-    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",position:"fixed",inset:0,overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
+    <div style={{maxWidth:420,margin:"0 auto",background:"#fff",minHeight:"100dvh",overflowY:"auto"}}>
       <div style={{background:`linear-gradient(135deg,${a.color}cc,${a.color})`,color:"#fff",padding:"16px 16px 20px"}}>
         <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",marginBottom:10,fontSize:12}}>← 返回</button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
