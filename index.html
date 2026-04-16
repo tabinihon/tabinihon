@@ -508,7 +508,7 @@ function App(){
             <div style={{fontSize:11,color:"#2980b9",fontWeight:700,marginBottom:2}}>🚉 小旅行資訊</div>
             {spot.fromCity&&<div style={{lineHeight:1.7}}>📍 出發地：{spot.fromCity}</div>}
             {spot.transit&&<div style={{lineHeight:1.7}}>🚌 前往方式：{spot.transit}</div>}
-            {spot.tripTip&&<div style={{lineHeight:1.7,color:"#555"}}>💡 {spot.tripTip}</div>}
+            {spot.tripTip&&<div style={{lineHeight:1.7,color:"#555"}}>💡 {spot.tripTip.split(/\n/).map((line,li)=>{const parts=line.split(/(https?:\/\/[^\s]+)/g);return(<div key={li}>{parts.map((p,pi)=>p.match(/^https?:\/\//)? <a key={pi} href={p} target="_blank" rel="noreferrer" style={{color:"#2980b9",textDecoration:"underline",wordBreak:"break-all"}}>{p}</a>:p)}</div>);})}</div>}
           </div>
         )}
         {spot.metro&&spot.axis!=="近郊小旅行"&&<div style={{background:"#f0f8ff",borderRadius:10,padding:"10px 14px",fontSize:13,lineHeight:1.7}}>
