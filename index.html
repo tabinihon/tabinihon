@@ -531,9 +531,15 @@ function App(){
               <div style={{flex:1,background:"#fff3f3",borderRadius:10,padding:"10px 14px",fontSize:13}}>🎟 {spot.ticket||"入場資訊請見官網"}</div>
               {(()=>{
                 const m=(spot.ticketMethod||"").trim();
+                const bs={borderRadius:10,padding:"10px 14px",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,textDecoration:"none",minWidth:90};
+                if(spot.partnerUrl&&spot.ticketUrl){
+                  return <div style={{display:"flex",flexDirection:"column",gap:6,flexShrink:0}}>
+                    <a href={spot.partnerUrl} target="_blank" rel="noreferrer" style={{...bs,background:"#e67e22",color:"#fff",minWidth:80}}>優惠購票</a>
+                    <a href={spot.ticketUrl} target="_blank" rel="noreferrer" style={{...bs,background:"#2c7be5",color:"#fff",minWidth:80}}>官方購票</a>
+                  </div>;
+                }
                 const href=spot.partnerUrl||spot.ticketUrl||"";
                 let label=m.includes("優惠")?"優惠購票":m.includes("官方")?"官方購票":m.includes("免費")?"免費入場":m.includes("現場")?"現場購票":spot.partnerUrl?"優惠購票":spot.ticketUrl?"官方購票":(spot.ticket||"").includes("免費")?"免費入場":"現場購票";
-                const bs={borderRadius:10,padding:"10px 14px",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,textDecoration:"none",minWidth:90};
                 return href
                   ?<a href={href} target="_blank" rel="noreferrer" style={{...bs,background:label==="優惠購票"?"#e67e22":"#2c7be5",color:"#fff"}}>{label}</a>
                   :<div style={{...bs,background:label==="免費入場"?"#e8f5e9":"#f0f0f0",color:label==="免費入場"?"#2e7d32":"#666"}}>{label}</div>;
@@ -612,26 +618,26 @@ function App(){
         <div style={{background:"#fff",borderRadius:12,padding:"16px",marginBottom:16,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
           <div style={{fontWeight:700,fontSize:15,color:"#c0392b",marginBottom:10}}>🗾 關於旅日嚮導</div>
           <div style={{fontSize:13,color:"#444",lineHeight:2}}>
-            旅日嚮導是一個喜愛走訪日本的旅遊 APP
+            旅日嚮導是一個喜愛走訪日本的旅遊 APP。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:6}}>
-            第一站從東京出發<br/>
-            所有景點皆經實地走訪<br/>
-            或經過嚴格評選才納入<br/>
-            <span style={{color:"#27ae60",fontWeight:600}}>✅ 標記</span>代表我們親自到訪過
+            第一站從東京出發。<br/>
+            所有景點皆經實地走訪，<br/>
+            或經過嚴格評選才納入。<br/>
+            <span style={{color:"#27ae60",fontWeight:600}}>✅ 標記</span>代表我們親自到訪過。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:10}}>
             我們推薦的每一個景點<br/>
             都有它值得去的理由——<br/>
-            不是每個人都適合，但一定有它的對象
+            不是每個人都適合，但一定有它的對象。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:10}}>
-            我們不希望你白跑一趟<br/>
-            也無法把一個不 OK 的地方寫成必去
+            我們不希望你白跑一趟，<br/>
+            也無法把一個不 OK 的地方寫成必去。
           </div>
           <div style={{fontSize:12,color:"#888",lineHeight:1.8,marginTop:10}}>
-            景點資訊隨時可能變動<br/>
-            如有出入歡迎點選「回報問題」告訴我們
+            景點資訊隨時可能變動，<br/>
+            如有出入歡迎點選「回報問題」告訴我們。
           </div>
         </div>
 
