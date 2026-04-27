@@ -361,6 +361,7 @@ function App(){
   const [fbTxt,setFbTxt]=useState("");
   const [helpPage,setHelpPage]=useState(false);
   const [activeTab,setActiveTab]=useState("explore");
+  const [toast,setToast]=useState("");
 
   const [favs,setFavs]=useState(()=>{
     try {
@@ -408,7 +409,14 @@ function App(){
     return ()=>document.removeEventListener('visibilitychange',fn);
   },[]);
 
-  const toggleSel=id=>setSel(s=>s.includes(id)?s.filter(x=>x!==id):s.length<4?[...s,id]:s);
+  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(""),2000);};
+  const toggleSel=id=>setSel(s=>{
+    if(s.includes(id)){showToast("已移除");return s.filter(x=>x!==id);}
+    if(s.length>=4){showToast("最多選 4 個景點");return s;}
+    const spot=spots.find(x=>x.id===id);
+    showToast((spot?.name||"景點")+" 已加入行程 ✓");
+    return [...s,id];
+  });
   const selSpots=sel.map(id=>spots.find(s=>s.id===id)).filter(Boolean);
   const spot=did?spots.find(s=>s.id===did):null;
   const a=spot?getAx(spot.axis):DEF;
@@ -865,16 +873,34 @@ function App(){
           <div style={{padding:"16px 16px 8px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <div>
               <div style={{fontSize:20,fontWeight:800,marginBottom:2}}>📋 我的行程</div>
-              <div style={{fontSize:12,color:"#999"}}>最多選 4 個景點</div>
+              <div style={{fontSize:12,color:"#999"}}>最多選 4 個景點・到探索頁按 ＋ 加入</div>
             </div>
             {selSpots.length>0&&<div style={{fontSize:12,color:"#c0392b",background:"#fff0f0",borderRadius:20,padding:"4px 12px",fontWeight:700}}>{selSpots.length} / 4 站</div>}
           </div>
 
           {selSpots.length===0
-            ?<div style={{margin:"0 16px",background:"#fff",borderRadius:14,padding:"32px 20px",textAlign:"center",color:"#bbb"}}>
-                <div style={{fontSize:44,marginBottom:12}}>🗺️</div>
-                <div style={{fontSize:14,marginBottom:6}}>還沒有選擇景點</div>
-                <div style={{fontSize:12,lineHeight:1.7}}>到「探索」頁面點景點卡片右上角的 <strong style={{color:"#555"}}>＋</strong> 加入行程</div>
+            ?<div style={{padding:"0 16px"}}>
+                <div style={{background:"#fff",borderRadius:14,padding:"32px 20px",textAlign:"center",color:"#bbb",marginBottom:16}}>
+                  <div style={{fontSize:44,marginBottom:12}}>🗺️</div>
+                  <div style={{fontSize:14,marginBottom:6}}>還沒有選擇景點</div>
+                  <div style={{fontSize:12,lineHeight:1.7}}>到「探索」頁面點景點卡片右上角的 <strong style={{color:"#555"}}>＋</strong> 加入行程</div>
+                </div>
+                {/* 諮詢橫幅（無景點時） */}
+                <a href="https://forms.gle/PLACEHOLDER" target="_blank" rel="noreferrer"
+                  style={{display:"block",textDecoration:"none",background:"linear-gradient(135deg,#2c3e50,#3d5166)",borderRadius:14,padding:"16px 18px",marginBottom:24}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:"#fff",marginBottom:4}}>✉️ 需要專人規劃行程？</div>
+                      <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",lineHeight:1.6}}>告訴我你的偏好和天數<br/>旅日嚮導為你量身安排</div>
+                    </div>
+                    <div style={{background:"#c0392b",borderRadius:20,padding:"8px 14px",fontSize:12,fontWeight:700,color:"#fff",flexShrink:0,marginLeft:12}}>填寫諮詢 →</div>
+                  </div>
+                  <div style={{marginTop:10,display:"flex",gap:8}}>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>3天 NT$1,200起</span>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>走訪認證景點</span>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>實地規劃</span>
+                  </div>
+                </a>
               </div>
             :<div style={{padding:"0 16px"}}>
               <div style={{fontSize:11,color:"#888",marginBottom:12,background:"#f8f8f8",padding:"7px 10px",borderRadius:6,lineHeight:1.5}}>
@@ -911,7 +937,7 @@ function App(){
                   </div>
                 );
               })}
-              <div style={{display:"flex",gap:8,marginTop:14,paddingBottom:24}}>
+              <div style={{display:"flex",gap:8,marginTop:14,marginBottom:16}}>
                 <a href={mapsLink()} target="_blank" rel="noreferrer"
                   style={{flex:1,background:"#c0392b",color:"#fff",border:"none",borderRadius:20,padding:"11px",fontWeight:700,fontSize:13,textDecoration:"none",textAlign:"center",display:"flex",alignItems:"center",justifyContent:"center"}}>
                   🗺 Google Maps 導航
@@ -919,10 +945,33 @@ function App(){
                 <button onClick={()=>setShared(true)} style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:13}}>📤</button>
                 <button onClick={()=>setSel([])} style={{background:"#f0f0f0",color:"#888",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:12}}>清除</button>
               </div>
+              {/* 諮詢橫幅（有景點時） */}
+              <a href="https://forms.gle/PLACEHOLDER" target="_blank" rel="noreferrer"
+                style={{display:"block",textDecoration:"none",background:"linear-gradient(135deg,#2c3e50,#3d5166)",borderRadius:14,padding:"16px 18px",marginBottom:24}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:"#fff",marginBottom:4}}>✉️ 需要專人規劃行程？</div>
+                    <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",lineHeight:1.6}}>告訴我你的偏好和天數<br/>旅日嚮導為你量身安排</div>
+                  </div>
+                  <div style={{background:"#c0392b",borderRadius:20,padding:"8px 14px",fontSize:12,fontWeight:700,color:"#fff",flexShrink:0,marginLeft:12}}>填寫諮詢 →</div>
+                </div>
+                <div style={{marginTop:10,display:"flex",gap:8}}>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>3天 NT$1,200起</span>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>走訪認證景點</span>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>實地規劃</span>
+                </div>
+              </a>
             </div>}
         </div>
 
       </div>{/* end app-pages */}
+
+      {/* Toast 提示 */}
+      {toast&&(
+        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",background:"rgba(0,0,0,0.78)",color:"#fff",borderRadius:20,padding:"8px 18px",fontSize:13,fontWeight:600,zIndex:999,whiteSpace:"nowrap",pointerEvents:"none"}}>
+          {toast}
+        </div>
+      )}
 
       {/* 底部導航 */}
       <nav className="bottom-nav">
