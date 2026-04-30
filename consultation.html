@@ -9,54 +9,60 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:#f7f6f3;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
 .wrap{max-width:560px;margin:0 auto}
 .header{text-align:center;margin-bottom:2.5rem}
-.logo{font-size:13px;letter-spacing:0.12em;color:#888;margin-bottom:1rem}
-h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
-.subtitle{font-size:14px;color:#666;line-height:1.7}
-.tip-box{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:1rem;border:1px solid #ebebeb}
-.tip-box .tip-title{font-size:12px;font-weight:600;letter-spacing:0.08em;color:#aaa;text-transform:uppercase;margin-bottom:10px}
-.tip-box p{font-size:13px;color:#555;line-height:1.7}
-.tip-box a{color:#1a1a1a;font-weight:500;text-decoration:underline;text-underline-offset:3px}
-.card{background:#fff;border-radius:16px;padding:1.75rem;margin-bottom:1rem;border:1px solid #ebebeb}
-.section-title{font-size:11px;font-weight:600;letter-spacing:0.1em;color:#aaa;text-transform:uppercase;margin-bottom:1.25rem}
+.logo{font-size:12px;letter-spacing:0.14em;color:#aaa;margin-bottom:12px}
+h1{font-size:22px;font-weight:500;color:#1a1a1a;margin-bottom:8px}
+.subtitle{font-size:14px;color:#777;line-height:1.7}
+.tip-box{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:1rem;border:0.5px solid #e0e0e0}
+.tip-title{font-size:11px;font-weight:500;letter-spacing:0.08em;color:#bbb;text-transform:uppercase;margin-bottom:8px}
+.tip-box p{font-size:13px;color:#666;line-height:1.7}
+.tip-box a{color:#1a1a1a;text-decoration:underline;text-underline-offset:3px}
+.card{background:#fff;border-radius:16px;padding:1.75rem;margin-bottom:1rem;border:0.5px solid #e0e0e0}
+.sec{font-size:11px;font-weight:500;letter-spacing:0.1em;color:#bbb;text-transform:uppercase;margin-bottom:1.25rem}
 .field{margin-bottom:1.25rem}
 .field:last-child{margin-bottom:0}
-.field label{display:block;font-size:13px;font-weight:500;color:#333;margin-bottom:6px}
-.field label .opt{font-weight:400;color:#aaa;font-size:12px;margin-left:4px}
-.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1px solid #e0e0e0;border-radius:10px;font-size:14px;color:#1a1a1a;background:#fff;font-family:inherit;transition:border-color 0.15s;-webkit-appearance:none}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#1a1a1a}
-.field textarea{resize:vertical;min-height:80px;line-height:1.6}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+.field label{display:block;font-size:13px;font-weight:500;color:#444;margin-bottom:6px}
+.opt{font-weight:400;color:#bbb;font-size:12px;margin-left:4px}
+input[type=text],input[type=date],select,textarea{width:100%;padding:10px 13px;border:0.5px solid #e0e0e0;border-radius:10px;font-size:14px;color:#1a1a1a;background:#fff;font-family:inherit;-webkit-appearance:none;outline:none;transition:border-color 0.15s}
+input[type=text]:focus,input[type=date]:focus,select:focus,textarea:focus{border-color:#aaa}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23bbb' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.plan-card{border:1.5px solid #e0e0e0;border-radius:12px;padding:13px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s;user-select:none}
-.plan-card:hover{border-color:#888}
-.plan-card.active{border-color:#1a1a1a;background:#fafafa}
-.plan-card .plan-name{font-size:12px;color:#888;margin-bottom:3px}
-.plan-card .plan-price{font-size:16px;font-weight:600;color:#1a1a1a}
-.plan-card .plan-desc{font-size:11px;color:#aaa;margin-top:3px}
+.plan-card{border:0.5px solid #e0e0e0;border-radius:12px;padding:13px 12px;cursor:pointer;transition:border-color 0.15s,background 0.15s;user-select:none}
+.plan-card:hover{border-color:#aaa}
+.plan-card.on{border:1.5px solid #1a1a1a;background:#fafafa}
+.plan-name{font-size:11px;color:#aaa;margin-bottom:3px}
+.plan-price{font-size:16px;font-weight:500;color:#1a1a1a}
+.plan-desc{font-size:11px;color:#bbb;margin-top:3px}
 .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check-col{display:flex;flex-direction:column;gap:8px}
-.check-item{display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 10px;border-radius:9px;border:1px solid #ebebeb;transition:background 0.12s,border-color 0.12s;-webkit-tap-highlight-color:transparent}
-.check-item:hover{background:#fafafa;border-color:#ddd}
-.check-item input[type=checkbox],.check-item input[type=radio]{width:15px;height:15px;accent-color:#1a1a1a;flex-shrink:0;cursor:pointer;margin:0;pointer-events:none;}
-.check-item span{font-size:13px;color:#333;line-height:1.3;pointer-events:none}
-.policy-box{background:#f7f6f3;border-radius:12px;padding:16px 18px;margin-bottom:1rem;border:1px solid #ebebeb}
-.policy-box .policy-title{font-size:12px;font-weight:600;letter-spacing:0.08em;color:#999;text-transform:uppercase;margin-bottom:12px}
+.ci{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;border:0.5px solid #e0e0e0;cursor:pointer;user-select:none;transition:background 0.1s,border-color 0.1s}
+.ci:hover{background:#fafafa;border-color:#ddd}
+.ci.on{border-color:#1a1a1a;background:#fafafa}
+.ci-box{width:15px;height:15px;border:0.5px solid #ccc;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;transition:background 0.1s,border-color 0.1s}
+.ci.on .ci-box{background:#1a1a1a;border-color:#1a1a1a}
+.ci-check{width:8px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px);display:none}
+.ci.on .ci-check{display:block}
+.ci-radio{width:7px;height:7px;border-radius:50%;background:#fff;display:none}
+.ci.on .ci-radio{display:block}
+.ci span{font-size:13px;color:#444;line-height:1.3}
+.policy-box{background:#f7f6f3;border-radius:12px;padding:16px 18px;margin-bottom:1rem;border:0.5px solid #e8e8e5}
+.policy-title{font-size:11px;font-weight:500;letter-spacing:0.08em;color:#bbb;text-transform:uppercase;margin-bottom:12px}
 .policy-row{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
 .policy-row:last-child{margin-bottom:0}
-.policy-tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:1px}
-.tag-green{background:#e8f5e9;color:#2e7d32}
-.tag-gray{background:#f0f0f0;color:#666}
-.tag-red{background:#fff0f0;color:#c00}
-.notice{background:#fff;border-radius:12px;padding:14px 16px;font-size:13px;color:#777;line-height:1.7;margin-bottom:1.25rem;border:1px solid #ebebeb}
+.ptag{font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.t-green{background:#e8f5e9;color:#2e7d32}
+.t-gray{background:#efefef;color:#666}
+.t-red{background:#fff0f0;color:#c00}
+.notice{font-size:13px;color:#888;line-height:1.6;margin-bottom:1.25rem;padding:0 2px}
 .btn{width:100%;padding:14px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity 0.15s}
 .btn:hover{opacity:0.85}
 .btn:disabled{opacity:0.4;cursor:not-allowed}
-.success{display:none;text-align:center;padding:3rem 1.5rem;background:#fff;border-radius:16px;border:1px solid #ebebeb}
+.err{display:none;background:#fff0f0;border:0.5px solid #fcc;border-radius:10px;padding:12px 14px;font-size:13px;color:#c00;margin-bottom:1rem}
+.success{display:none;text-align:center;padding:3rem 1.5rem;background:#fff;border-radius:16px;border:0.5px solid #e0e0e0}
 .success .icon{font-size:32px;margin-bottom:1rem}
-.success h2{font-size:18px;font-weight:600;margin-bottom:8px}
-.success p{font-size:14px;color:#666;line-height:1.8}
-.error-msg{display:none;background:#fff0f0;border:1px solid #fcc;border-radius:10px;padding:12px 14px;font-size:13px;color:#c00;margin-bottom:1rem}
+.success h2{font-size:18px;font-weight:500;margin-bottom:8px}
+.success p{font-size:14px;color:#777;line-height:1.8}
 </style>
 </head>
 <body>
@@ -68,151 +74,115 @@ h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
   </div>
 
   <div id="form-area">
-
     <div class="tip-box">
       <div class="tip-title">填寫前建議</div>
-      <p>建議先瀏覽 <a href="https://www.instagram.com/tabinihon.jp" target="_blank">IG @tabinihon.jp</a> 或 <a href="https://tabinihon.github.io/tabinihon/" target="_blank">旅日嚮導 APP</a>，了解我們的景點風格與選點邏輯，再決定是否諮詢。<br><br>本服務適合有一定體力的成人旅客，以深度東京市區行程為主。</p>
+      <p>建議先瀏覽 <a href="https://www.instagram.com/tabinihon.jp" target="_blank">IG @tabinihon.jp</a> 或 <a href="https://tabinihon.github.io/tabinihon/" target="_blank">旅日嚮導 APP</a>，了解景點風格再決定是否諮詢。<br><br>本服務適合有一定體力的成人旅客，以深度東京市區行程為主。</p>
     </div>
 
-    <div class="error-msg" id="error-msg"></div>
+    <div class="err" id="err"></div>
 
     <div class="card">
-      <div class="section-title">基本資訊</div>
+      <div class="sec">基本資訊</div>
       <div class="row">
-        <div class="field">
-          <label>稱呼</label>
-          <input type="text" id="name" placeholder="例：小陳、Amy">
-        </div>
-        <div class="field">
-          <label>LINE ID</label>
-          <input type="text" id="contact" placeholder="你的 LINE ID">
-        </div>
+        <div class="field"><label>稱呼</label><input type="text" id="name" placeholder="例：小陳、Amy"></div>
+        <div class="field"><label>LINE ID</label><input type="text" id="contact" placeholder="你的 LINE ID"></div>
       </div>
       <div class="row">
-        <div class="field">
-          <label>出發日期</label>
-          <input type="date" id="date">
-        </div>
-        <div class="field">
-          <label>旅行人數</label>
-          <input type="text" id="people" placeholder="例：2大人">
-        </div>
+        <div class="field"><label>出發日期</label><input type="date" id="date"></div>
+        <div class="field"><label>旅行人數</label><input type="text" id="people" placeholder="例：2大人"></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title">選擇方案</div>
+      <div class="sec">選擇方案</div>
       <div class="plan-grid">
-        <div class="plan-card" data-plan="基本款 NT$1,200 / 3天東京市區" onclick="selectPlan(this)">
-          <div class="plan-name">基本款</div>
-          <div class="plan-price">NT$1,200</div>
-          <div class="plan-desc">3天・東京市區</div>
+        <div class="plan-card" data-val="基本款 NT$1,200 / 3天東京市區" onclick="selectPlan(this)">
+          <div class="plan-name">基本款</div><div class="plan-price">NT$1,200</div><div class="plan-desc">3天・東京市區</div>
         </div>
-        <div class="plan-card active" data-plan="進階款 NT$2,000 / 5天含近郊" onclick="selectPlan(this)">
-          <div class="plan-name">進階款</div>
-          <div class="plan-price">NT$2,000</div>
-          <div class="plan-desc">5天・含近郊</div>
+        <div class="plan-card on" data-val="進階款 NT$2,000 / 5天含近郊" onclick="selectPlan(this)">
+          <div class="plan-name">進階款</div><div class="plan-price">NT$2,000</div><div class="plan-desc">5天・含近郊</div>
         </div>
-        <div class="plan-card" data-plan="深度款 NT$3,000 / 7天多主題" onclick="selectPlan(this)">
-          <div class="plan-name">深度款</div>
-          <div class="plan-price">NT$3,000</div>
-          <div class="plan-desc">7天・多主題</div>
+        <div class="plan-card" data-val="深度款 NT$3,000 / 7天多主題" onclick="selectPlan(this)">
+          <div class="plan-name">深度款</div><div class="plan-price">NT$3,000</div><div class="plan-desc">7天・多主題</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title">旅行背景</div>
+      <div class="sec">旅行背景</div>
       <div class="field">
         <label>去過東京幾次？</label>
         <div class="check-col">
-          <label class="check-item"><input type="radio" name="times" value="第一次"><span>第一次</span></label>
-          <label class="check-item"><input type="radio" name="times" value="2–3次"><span>2–3次</span></label>
-          <label class="check-item"><input type="radio" name="times" value="4次以上"><span>4次以上</span></label>
+          <div class="ci" data-group="times" data-val="第一次" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>第一次</span></div>
+          <div class="ci" data-group="times" data-val="2–3次" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>2–3次</span></div>
+          <div class="ci" data-group="times" data-val="4次以上" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>4次以上</span></div>
         </div>
       </div>
       <div class="field">
-        <label>這次想去哪些區域或景點？ <span class="opt">可空白</span></label>
+        <label>這次想去哪些區域或景點？<span class="opt">可空白</span></label>
         <textarea id="spots" placeholder="例：想去谷中散步、第一次去淺草、想順路到鎌倉…"></textarea>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title">行程偏好</div>
+      <div class="sec">行程偏好</div>
       <div class="field">
-        <label>景點偏好 <span class="opt">可多選</span></label>
+        <label>景點偏好<span class="opt">可多選</span></label>
         <div class="check-grid">
-          <div class="check-item" onclick="toggleCheck('p1')"><input type="checkbox" id="p1" class="pref" value="神社寺廟・傳統文化"><span>神社寺廟・傳統文化</span></div>
-          <div class="check-item" onclick="toggleCheck('p2')"><input type="checkbox" id="p2" class="pref" value="文青咖啡・選物店"><span>文青咖啡・選物店</span></div>
-          <div class="check-item" onclick="toggleCheck('p3')"><input type="checkbox" id="p3" class="pref" value="下町老街・在地生活"><span>下町老街・在地生活</span></div>
-          <div class="check-item" onclick="toggleCheck('p4')"><input type="checkbox" id="p4" class="pref" value="自然公園・河畔散步"><span>自然公園・河畔散步</span></div>
-          <div class="check-item" onclick="toggleCheck('p5')"><input type="checkbox" id="p5" class="pref" value="近郊小旅行"><span>近郊小旅行</span></div>
-          <div class="check-item" onclick="toggleCheck('p6')"><input type="checkbox" id="p6" class="pref" value="美食職人・市場"><span>美食職人・市場</span></div>
+          <div class="ci" data-group="pref" data-val="神社寺廟・傳統文化" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>神社寺廟・傳統文化</span></div>
+          <div class="ci" data-group="pref" data-val="文青咖啡・選物店" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>文青咖啡・選物店</span></div>
+          <div class="ci" data-group="pref" data-val="下町老街・在地生活" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>下町老街・在地生活</span></div>
+          <div class="ci" data-group="pref" data-val="自然公園・河畔散步" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>自然公園・河畔散步</span></div>
+          <div class="ci" data-group="pref" data-val="近郊小旅行" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>近郊小旅行</span></div>
+          <div class="ci" data-group="pref" data-val="美食職人・市場" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>美食職人・市場</span></div>
         </div>
       </div>
       <div class="field">
-        <label>想避開的類型 <span class="opt">可多選</span></label>
+        <label>想避開的類型<span class="opt">可多選</span></label>
         <div class="check-grid">
-          <div class="check-item" onclick="toggleCheck('a1')"><input type="checkbox" id="a1" class="avoid" value="人太多的熱門景點"><span>人太多的熱門景點</span></div>
-          <div class="check-item" onclick="toggleCheck('a2')"><input type="checkbox" id="a2" class="avoid" value="需要大量步行"><span>需要大量步行</span></div>
-          <div class="check-item" onclick="toggleCheck('a3')"><input type="checkbox" id="a3" class="avoid" value="室內博物館"><span>室內博物館</span></div>
-          <div class="check-item" onclick="toggleCheck('a4')"><input type="checkbox" id="a4" class="avoid" value="神社寺廟"><span>神社寺廟</span></div>
-          <div class="check-item" onclick="toggleCheck('a5')"><input type="checkbox" id="a5" class="avoid" value="購物商圈"><span>購物商圈</span></div>
+          <div class="ci" data-group="avoid" data-val="人太多的熱門景點" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>人太多的熱門景點</span></div>
+          <div class="ci" data-group="avoid" data-val="需要大量步行" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>需要大量步行</span></div>
+          <div class="ci" data-group="avoid" data-val="室內博物館" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>室內博物館</span></div>
+          <div class="ci" data-group="avoid" data-val="神社寺廟" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>神社寺廟</span></div>
+          <div class="ci" data-group="avoid" data-val="購物商圈" onclick="toggleCheck(this)"><div class="ci-box"><div class="ci-check"></div></div><span>購物商圈</span></div>
         </div>
       </div>
       <div class="field">
         <label>每天可以走幾小時？</label>
         <div class="check-col">
-          <label class="check-item"><input type="radio" name="walk" value="4小時以內（輕鬆步調）"><span>4小時以內（輕鬆步調）</span></label>
-          <label class="check-item"><input type="radio" name="walk" value="4–6小時（一般步調）"><span>4–6小時（一般步調）</span></label>
-          <label class="check-item"><input type="radio" name="walk" value="6小時以上（行程紮實）"><span>6小時以上（行程紮實）</span></label>
+          <div class="ci" data-group="walk" data-val="4小時以內（輕鬆步調）" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>4小時以內（輕鬆步調）</span></div>
+          <div class="ci" data-group="walk" data-val="4–6小時（一般步調）" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>4–6小時（一般步調）</span></div>
+          <div class="ci" data-group="walk" data-val="6小時以上（行程紮實）" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>6小時以上（行程紮實）</span></div>
         </div>
       </div>
       <div class="field">
         <label>預算範圍</label>
         <div class="check-col">
-          <label class="check-item"><input type="radio" name="budget" value="以免費／低消費景點為主"><span>以免費／低消費景點為主</span></label>
-          <label class="check-item"><input type="radio" name="budget" value="部分付費景點可以接受"><span>部分付費景點可以接受</span></label>
-          <label class="check-item"><input type="radio" name="budget" value="不限，以質感為主"><span>不限，以質感為主</span></label>
+          <div class="ci" data-group="budget" data-val="以免費／低消費景點為主" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>以免費／低消費景點為主</span></div>
+          <div class="ci" data-group="budget" data-val="部分付費景點可以接受" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>部分付費景點可以接受</span></div>
+          <div class="ci" data-group="budget" data-val="不限，以質感為主" onclick="selectRadio(this)"><div class="ci-box"><div class="ci-radio"></div></div><span>不限，以質感為主</span></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title">補充說明</div>
+      <div class="sec">補充說明</div>
       <div class="field">
-        <label>其他備注 <span class="opt">可空白</span></label>
+        <label>其他備注<span class="opt">可空白</span></label>
         <textarea id="notes" placeholder="飲食限制、特殊需求、想體驗的事情…"></textarea>
       </div>
     </div>
 
     <div class="policy-box">
       <div class="policy-title">服務說明</div>
-      <div class="policy-row">
-        <span class="policy-tag tag-green">流程</span>
-        <span class="policy-text">填表送出 → 48小時內回覆框架 → 確認方向 → 全額付款 → 1–2工作天交付完整行程</span>
-      </div>
-      <div class="policy-row">
-        <span class="policy-tag tag-green">包含</span>
-        <span class="policy-text">每天行程動線、景點說明、沿途餐廳與選物店推薦（以走訪認證為主）、交通建議</span>
-      </div>
-      <div class="policy-row">
-        <span class="policy-tag tag-gray">退款</span>
-        <span class="policy-text">付款後尚未交付：全額退款。交付後：不退款，提供一次免費調整</span>
-      </div>
-      <div class="policy-row">
-        <span class="policy-tag tag-red">不適合</span>
-        <span class="policy-text">需要無障礙設施規劃、嬰幼兒推車行程、銀髮族專屬路線</span>
-      </div>
-      <div class="policy-row">
-        <span class="policy-tag tag-gray">不含</span>
-        <span class="policy-text">訂房、訂票代訂服務。高爾夫行程請於備注說明，費用另計</span>
-      </div>
+      <div class="policy-row"><span class="ptag t-green">流程</span><span style="font-size:13px;color:#666;line-height:1.6">填表送出 → 48小時內回覆框架 → 確認方向 → 全額付款 → 1–2工作天交付完整行程</span></div>
+      <div class="policy-row"><span class="ptag t-green">包含</span><span style="font-size:13px;color:#666;line-height:1.6">每天行程動線、景點說明、沿途餐廳與選物店推薦（以走訪認證為主）、交通建議</span></div>
+      <div class="policy-row"><span class="ptag t-gray">退款</span><span style="font-size:13px;color:#666;line-height:1.6">付款後尚未交付：全額退款。交付後：不退款，提供一次免費調整</span></div>
+      <div class="policy-row"><span class="ptag t-red">不適合</span><span style="font-size:13px;color:#666;line-height:1.6">需要無障礙設施規劃、嬰幼兒推車行程、銀髮族專屬路線</span></div>
+      <div class="policy-row"><span class="ptag t-gray">不含</span><span style="font-size:13px;color:#666;line-height:1.6">訂房、訂票代訂服務。高爾夫行程請於備注說明，費用另計</span></div>
     </div>
 
-    <div class="notice">
-      送出後我會透過 LINE 與你聯繫，請確認 LINE ID 填寫正確。
-    </div>
+    <p class="notice">送出後我會透過 LINE 與你聯繫，請確認 LINE ID 填寫正確。</p>
 
     <button class="btn" id="submit-btn" onclick="submitForm()">送出諮詢</button>
   </div>
@@ -225,32 +195,37 @@ h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxt4fTh8KPRjj5fVsCLyd5UdBHybjc4KgY_MZIQzAyZ4dFCub9CM7W3EFrV_7zYbCZ8dA/exec';
+var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxt4fTh8KPRjj5fVsCLyd5UdBHybjc4KgY_MZIQzAyZ4dFCub9CM7W3EFrV_7zYbCZ8dA/exec';
 
-function toggleCheck(id){
-  var cb = document.getElementById(id);
-  cb.checked = !cb.checked;
+function toggleCheck(el){
+  el.classList.toggle('on');
+}
+
+function selectRadio(el){
+  var group=el.dataset.group;
+  document.querySelectorAll('[data-group="'+group+'"]').forEach(function(e){e.classList.remove('on');});
+  el.classList.add('on');
 }
 
 function selectPlan(el){
-  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
+  document.querySelectorAll('.plan-card').forEach(function(e){e.classList.remove('on');});
+  el.classList.add('on');
 }
 
-function getChecked(name){
-  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i=>i.value).join('、')||'未選擇';
+function getGroup(group){
+  return [...document.querySelectorAll('[data-group="'+group+'"].on')].map(function(e){return e.dataset.val;}).join('、')||'未選擇';
 }
 
-function getCheckboxes(cls){
-  return [...document.querySelectorAll(`.${cls}:checked`)].map(i=>i.value).join('、')||'無';
+function getChecks(group){
+  return [...document.querySelectorAll('[data-group="'+group+'"].on')].map(function(e){return e.dataset.val;}).join('、')||'無';
 }
 
 function submitForm(){
-  const name=document.getElementById('name').value.trim();
-  const contact=document.getElementById('contact').value.trim();
-  const date=document.getElementById('date').value;
-  const people=document.getElementById('people').value.trim();
-  const err=document.getElementById('error-msg');
+  var name=document.getElementById('name').value.trim();
+  var contact=document.getElementById('contact').value.trim();
+  var date=document.getElementById('date').value;
+  var people=document.getElementById('people').value.trim();
+  var err=document.getElementById('err');
 
   if(!name||!contact||!date||!people){
     err.style.display='block';
@@ -259,34 +234,36 @@ function submitForm(){
     return;
   }
 
-  const data={
+  var plan=document.querySelector('.plan-card.on');
+
+  var data={
     送出時間:new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'}),
     稱呼:name,
     LINE_ID:contact,
     出發日期:date,
     旅行人數:people,
-    選擇方案:document.querySelector('.plan-card.active')?.dataset.plan||'未選擇',
-    去過東京幾次:getChecked('times'),
+    選擇方案:plan?plan.dataset.val:'未選擇',
+    去過東京幾次:getGroup('times'),
     想去的區域景點:document.getElementById('spots').value.trim()||'無',
-    景點偏好:getCheckboxes('pref'),
-    想避開的類型:getCheckboxes('avoid'),
-    每天步行時數:getChecked('walk'),
-    預算範圍:getChecked('budget'),
+    景點偏好:getChecks('pref'),
+    想避開的類型:getChecks('avoid'),
+    每天步行時數:getGroup('walk'),
+    預算範圍:getGroup('budget'),
     其他備注:document.getElementById('notes').value.trim()||'無'
   };
 
-  const btn=document.getElementById('submit-btn');
+  var btn=document.getElementById('submit-btn');
   btn.disabled=true;
   btn.textContent='送出中…';
   err.style.display='none';
 
   fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-  .then(()=>{
+  .then(function(){
     document.getElementById('form-area').style.display='none';
     document.getElementById('success-area').style.display='block';
     window.scrollTo({top:0,behavior:'smooth'});
   })
-  .catch(()=>{
+  .catch(function(){
     btn.disabled=false;
     btn.textContent='送出諮詢';
     err.style.display='block';
