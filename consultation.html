@@ -36,10 +36,10 @@ h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
 .plan-card .plan-desc{font-size:11px;color:#aaa;margin-top:3px}
 .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check-col{display:flex;flex-direction:column;gap:8px}
-.check-item{display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 10px;border-radius:9px;border:1px solid #ebebeb;transition:background 0.12s,border-color 0.12s}
+.check-item{display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 10px;border-radius:9px;border:1px solid #ebebeb;transition:background 0.12s,border-color 0.12s;-webkit-tap-highlight-color:transparent}
 .check-item:hover{background:#fafafa;border-color:#ddd}
-.check-item input{width:15px;height:15px;accent-color:#1a1a1a;flex-shrink:0;cursor:pointer}
-.check-item span{font-size:13px;color:#333;line-height:1.3}
+.check-item input[type=checkbox],.check-item input[type=radio]{width:15px;height:15px;accent-color:#1a1a1a;flex-shrink:0;cursor:pointer;margin:0;pointer-events:none;}
+.check-item span{font-size:13px;color:#333;line-height:1.3;pointer-events:none}
 .policy-box{background:#f7f6f3;border-radius:12px;padding:16px 18px;margin-bottom:1rem;border:1px solid #ebebeb}
 .policy-box .policy-title{font-size:12px;font-weight:600;letter-spacing:0.08em;color:#999;text-transform:uppercase;margin-bottom:12px}
 .policy-row{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
@@ -142,22 +142,22 @@ h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
       <div class="field">
         <label>景點偏好 <span class="opt">可多選</span></label>
         <div class="check-grid">
-          <label class="check-item"><input type="checkbox" class="pref" value="神社寺廟・傳統文化"><span>神社寺廟・傳統文化</span></label>
-          <label class="check-item"><input type="checkbox" class="pref" value="文青咖啡・選物店"><span>文青咖啡・選物店</span></label>
-          <label class="check-item"><input type="checkbox" class="pref" value="下町老街・在地生活"><span>下町老街・在地生活</span></label>
-          <label class="check-item"><input type="checkbox" class="pref" value="自然公園・河畔散步"><span>自然公園・河畔散步</span></label>
-          <label class="check-item"><input type="checkbox" class="pref" value="近郊小旅行"><span>近郊小旅行</span></label>
-          <label class="check-item"><input type="checkbox" class="pref" value="美食職人・市場"><span>美食職人・市場</span></label>
+          <div class="check-item" onclick="toggleCheck('p1')"><input type="checkbox" id="p1" class="pref" value="神社寺廟・傳統文化"><span>神社寺廟・傳統文化</span></div>
+          <div class="check-item" onclick="toggleCheck('p2')"><input type="checkbox" id="p2" class="pref" value="文青咖啡・選物店"><span>文青咖啡・選物店</span></div>
+          <div class="check-item" onclick="toggleCheck('p3')"><input type="checkbox" id="p3" class="pref" value="下町老街・在地生活"><span>下町老街・在地生活</span></div>
+          <div class="check-item" onclick="toggleCheck('p4')"><input type="checkbox" id="p4" class="pref" value="自然公園・河畔散步"><span>自然公園・河畔散步</span></div>
+          <div class="check-item" onclick="toggleCheck('p5')"><input type="checkbox" id="p5" class="pref" value="近郊小旅行"><span>近郊小旅行</span></div>
+          <div class="check-item" onclick="toggleCheck('p6')"><input type="checkbox" id="p6" class="pref" value="美食職人・市場"><span>美食職人・市場</span></div>
         </div>
       </div>
       <div class="field">
         <label>想避開的類型 <span class="opt">可多選</span></label>
         <div class="check-grid">
-          <label class="check-item"><input type="checkbox" class="avoid" value="人太多的熱門景點"><span>人太多的熱門景點</span></label>
-          <label class="check-item"><input type="checkbox" class="avoid" value="需要大量步行"><span>需要大量步行</span></label>
-          <label class="check-item"><input type="checkbox" class="avoid" value="室內博物館"><span>室內博物館</span></label>
-          <label class="check-item"><input type="checkbox" class="avoid" value="神社寺廟"><span>神社寺廟</span></label>
-          <label class="check-item"><input type="checkbox" class="avoid" value="購物商圈"><span>購物商圈</span></label>
+          <div class="check-item" onclick="toggleCheck('a1')"><input type="checkbox" id="a1" class="avoid" value="人太多的熱門景點"><span>人太多的熱門景點</span></div>
+          <div class="check-item" onclick="toggleCheck('a2')"><input type="checkbox" id="a2" class="avoid" value="需要大量步行"><span>需要大量步行</span></div>
+          <div class="check-item" onclick="toggleCheck('a3')"><input type="checkbox" id="a3" class="avoid" value="室內博物館"><span>室內博物館</span></div>
+          <div class="check-item" onclick="toggleCheck('a4')"><input type="checkbox" id="a4" class="avoid" value="神社寺廟"><span>神社寺廟</span></div>
+          <div class="check-item" onclick="toggleCheck('a5')"><input type="checkbox" id="a5" class="avoid" value="購物商圈"><span>購物商圈</span></div>
         </div>
       </div>
       <div class="field">
@@ -226,6 +226,11 @@ h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxt4fTh8KPRjj5fVsCLyd5UdBHybjc4KgY_MZIQzAyZ4dFCub9CM7W3EFrV_7zYbCZ8dA/exec';
+
+function toggleCheck(id){
+  var cb = document.getElementById(id);
+  cb.checked = !cb.checked;
+}
 
 function selectPlan(el){
   document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('active'));
