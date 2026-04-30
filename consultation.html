@@ -191,11 +191,29 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <div class="icon">🗾</div>
     <h2>已收到您的諮詢</h2>
     <p>48 小時內會透過 LINE 回覆行程框架<br>如有急件歡迎直接聯繫<br><strong>IG @tabinihon.jp</strong></p>
+    <p style="margin-top:1.25rem;font-size:13px;color:#bbb"><span id="countdown">5</span> 秒後自動回到首頁</p>
+    <button class="btn" onclick="goHome()" style="margin-top:1rem;max-width:200px;margin-left:auto;margin-right:auto;display:block;">回到旅日嚮導</button>
   </div>
 </div>
 
 <script>
 var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxt4fTh8KPRjj5fVsCLyd5UdBHybjc4KgY_MZIQzAyZ4dFCub9CM7W3EFrV_7zYbCZ8dA/exec';
+
+var HOME_URL='https://tabinihon.github.io/tabinihon/';
+
+function goHome(){
+  window.location.href=HOME_URL;
+}
+
+function startCountdown(){
+  var n=5;
+  var el=document.getElementById('countdown');
+  var timer=setInterval(function(){
+    n--;
+    if(el)el.textContent=n;
+    if(n<=0){clearInterval(timer);goHome();}
+  },1000);
+}
 
 function toggleCheck(el){
   el.classList.toggle('on');
@@ -262,6 +280,7 @@ function submitForm(){
     document.getElementById('form-area').style.display='none';
     document.getElementById('success-area').style.display='block';
     window.scrollTo({top:0,behavior:'smooth'});
+    startCountdown();
   })
   .catch(function(){
     btn.disabled=false;
