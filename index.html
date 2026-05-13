@@ -536,7 +536,7 @@ function App(){
           </div>
         )}
         {spot.metro&&spot.axis!=="近郊小旅行"&&<div style={{background:"#f0f8ff",borderRadius:10,padding:"10px 14px",fontSize:13,lineHeight:1.7}}>
-          {spot.metro.split(/\r?\n|｜|\/(?!\/)/).map(l=>l.trim()).filter(Boolean).map((l,i)=><div key={i}>{i===0?"🚇 ":"　　"}{l}</div>)}
+          {spot.metro.split(/\\r?\\n|｜/).map(l=>l.trim()).filter(Boolean).map((l,i)=>{const isWc=l.startsWith("♿");return(<div key={i} style={{display:"flex",gap:4,alignItems:"flex-start"}}><span style={{flexShrink:0}}>{isWc?"♿":"🚇"}</span><span>{isWc?l.slice(1).trim():l}</span></div>);})}
         </div>}
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
           {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -645,23 +645,23 @@ function App(){
             旅日嚮導是一個喜愛走訪日本的旅遊 APP。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:6}}>
-            第一站從東京出發<br/>
-            所有景點皆經實地走訪<br/>
-            真實客述日本的每個景點<br/>
-            <span style={{color:"#27ae60",fontWeight:600}}>✅ 標記</span>代表我們親自到訪過
+            第一站從東京出發。<br/>
+            所有景點皆經實地走訪，<br/>
+            或經過嚴格評選才納入。<br/>
+            <span style={{color:"#27ae60",fontWeight:600}}>✅ 標記</span>代表我們親自到訪過。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:10}}>
-            每一個景點<br/>
-            都有它值得去的理由<br/>
-            雖然不是每個人都適合，但一定有你想去的原因
+            我們推薦的每一個景點<br/>
+            都有它值得去的理由——<br/>
+            不是每個人都適合，但一定有它的對象。
           </div>
           <div style={{fontSize:13,color:"#444",lineHeight:2,marginTop:10}}>
-            我們不希望你白跑一趟<br/>
-            也無法把真的不OK的地方寫成必去
+            我們不希望你白跑一趟，<br/>
+            也無法把一個不 OK 的地方寫成必去。
           </div>
           <div style={{fontSize:12,color:"#888",lineHeight:1.8,marginTop:10}}>
-            景點資訊隨時可能變動<br/>
-            如有出入歡迎點選「回報問題」告訴我們
+            景點資訊隨時可能變動，<br/>
+            如有出入歡迎點選「回報問題」告訴我們。
           </div>
         </div>
 
