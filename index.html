@@ -9,19 +9,19 @@
   gtag('config', 'G-91K3PERTJG');
 </script>
 <meta charset="UTF-8">
-<meta name="description" content="旅日嚮導－日本旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
-<meta name="keywords" content="東京旅遊,日本旅遊,東京景點,行程規劃">
+<meta name="description" content="旅日嚮導－不接業配的東京旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
+<meta name="keywords" content="東京旅遊,日本旅遊,東京景點,行程規劃,不接業配">
 <meta name="author" content="旅日嚮導">
 <meta property="og:type" content="website">
-<meta property="og:title" content="旅日嚮導｜嚴選的日本旅遊指南">
-<meta property="og:description" content="走在日本，記下值得記的">
-<meta property="og:image" content="https://tabinihon.github.io/tabinihon_og.png">
+<meta property="og:title" content="旅日嚮導｜不接業配・客觀嚴選的東京旅遊指南">
+<meta property="og:description" content="真實・客觀・嚴選｜替消費者把關，所有景點實地查核，絕不業配">
+<meta property="og:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta property="og:url" content="https://tabinihon.github.io/tabinihon/">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="旅日嚮導｜嚴選的日本旅遊指南">
-<meta name="twitter:description" content="走在日本，記下值得記的">
-<meta name="twitter:image" content="https://tabinihon.github.io/tabinihon_og.png">
+<meta name="twitter:title" content="旅日嚮導｜不接業配東京旅遊">
+<meta name="twitter:description" content="真實・客觀・嚴選，替消費者把關的日本旅遊指南">
+<meta name="twitter:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>旅日嚮導</title>
 <link rel="manifest" href="manifest.json">
@@ -30,7 +30,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="旅日嚮導">
 <meta name="theme-color" content="#c0392b">
-<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" href="https://fav.farm/🗾">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -204,12 +204,27 @@ const AXES = {
   "流行潮流軸":{icon:"🏙️",bg:"#3498db",color:"#3498db"},
   "美食職人軸":{icon:"🍱",bg:"#e74c3c",color:"#e74c3c"},
   "職人選物軸":{icon:"🛍️",bg:"#27ae60",color:"#27ae60"},
-  "近郊小旅行":{icon:"🚃",bg:"#34495e",color:"#34495e"}
+  "近郊小旅行":{icon:"🚃",bg:"#34495e",color:"#34495e"},
+  "療癒慢步軸":{icon:"🚶",bg:"#16a085",color:"#16a085"}
 };
 const DEF={icon:"📍",bg:"#95a5a6",color:"#95a5a6"};
 const getAx=ax=>AXES[ax]||DEF;
-const AXIS_ORDER=["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行"];
+const AXIS_ORDER=["傳統文化軸","流行潮流軸","美食職人軸","職人選物軸","近郊小旅行","療癒慢步軸"];
 const AXIS=AXES;
+
+// ── 住宿區域對照表（用戶視角：我住哪裡）──
+const AREA_MAP={
+  "淺草・上野周邊":["淺草・上野","台東區・谷中","藏前","淺草・押上","墨田・押上","台東區・合羽橋","兩國"],
+  "新宿周邊":["新宿","新宿・神樂坂","世田谷・下北澤","澀谷・代々木公園"],
+  "銀座・東京站周邊":["銀座・日本橋","銀座・赤坂","築地・月島","人形町","新橋・汐留","神保町・千代田","九段下・千代田"],
+  "澀谷・原宿周邊":["澀谷・原宿","原宿・表參道","中目黒・代官山","惠比壽"],
+  "秋葉原・上野周邊":["秋葉原・神田","文京・根津","文京・谷中","文京・湯島","文京・本郷","本郷・文京","駒込・文京"],
+  "六本木・麻布周邊":["六本木・麻布","白金台","赤坂","乃木坂"],
+  "吉祥寺・自由が丘周邊":["等々力・自由が丘","三鷹・吉祥寺","世田谷・豪德寺"],
+  "清澄白河・門前仲町周邊":["清澄白河・深川","門前仲町"],
+  "近郊小旅行":["川越","鎌倉・江之島","鎌倉・長谷","鎌倉・北鎌倉","輕井澤","富士山・河口湖","日光","山形・東北","鹿島","お台場"]
+};
+const AREA_ORDER=["淺草・上野周邊","新宿周邊","銀座・東京站周邊","澀谷・原宿周邊","秋葉原・上野周邊","六本木・麻布周邊","吉祥寺・自由が丘周邊","清澄白河・門前仲町周邊","近郊小旅行"];
 const {useState,useEffect}=React;
 const S={width:"100%",padding:"9px 12px",borderRadius:10,border:"1px solid #e0e0e0",fontSize:13,marginTop:6,outline:"none",display:"block",background:"#fafafa"};
 
@@ -348,6 +363,7 @@ function App(){
   const [sel,setSel]=useState([]);
   const [search,setSearch]=useState("");
   const [axisFilter,setAxisFilter]=useState("");
+  const [areaFilter,setAreaFilter]=useState("");
   const [page,setPage]=useState("main");
   const [did,setDid]=useState(null);
   const [pi,setPi]=useState({});
@@ -729,6 +745,20 @@ function App(){
             ))}
           </div>}
 
+          {/* 區域篩選 */}
+          {!q&&<div style={{display:"flex",gap:6,overflowX:"auto",padding:"2px 16px 4px",scrollbarWidth:"none"}}>
+            {["", ...AREA_ORDER].map(ar=>(
+              <button key={ar||"area-all"} onClick={()=>setAreaFilter(ar)}
+                style={{padding:"4px 11px",borderRadius:20,border:"1px solid "+(areaFilter===ar?"#2980b9":"#ddd"),
+                  background:areaFilter===ar?"#2980b9":"#fff",
+                  color:areaFilter===ar?"#fff":"#888",fontSize:10,cursor:"pointer",
+                  whiteSpace:"nowrap",flexShrink:0,fontWeight:areaFilter===ar?700:400,transition:"all 0.15s"}}>
+                {ar||"🗺️ 全區域"}
+              </button>
+            ))}
+          </div>}
+
+
           {q?(
             <div style={{padding:"8px 16px 4px"}}>
               <div style={{fontSize:12,color:"#aaa",marginBottom:8}}>搜尋結果（{searchResults.length}筆）</div>
@@ -787,7 +817,11 @@ function App(){
               })()}
               {AXIS_ORDER.map(axName=>{
                 if(axisFilter&&axisFilter!==axName) return null;
-                const axSpots=spots.filter(s=>s.axis===axName).sort((a,b)=>a.sortOrder-b.sortOrder);
+                const axSpots=spots.filter(s=>{
+                  if(s.axis!==axName) return false;
+                  if(areaFilter){const areas=AREA_MAP[areaFilter]||[];if(!areas.includes(s.area)) return false;}
+                  return true;
+                }).sort((a,b)=>a.sortOrder-b.sortOrder);
                 if(!axSpots.length) return null;
                 return(
                   <div key={axName} style={{marginBottom:8}}>
@@ -806,11 +840,19 @@ function App(){
                   </div>
                 );
               })}
-              {spots.filter(s=>!AXIS[s.axis]).length>0&&(
+              {spots.filter(s=>{
+                if(AXIS[s.axis]) return false;
+                if(areaFilter){const areas=AREA_MAP[areaFilter]||[];if(!areas.includes(s.area)) return false;}
+                return true;
+              }).length>0&&(
                 <div style={{marginBottom:8}}>
                   <div style={{padding:"8px 16px 4px",fontWeight:700,fontSize:14,color:"#333"}}>📍 其他景點</div>
                   <div className="hscroll">
-                    {spots.filter(s=>!AXIS[s.axis]).map(s=>(
+                    {spots.filter(s=>{
+                      if(AXIS[s.axis]) return false;
+                      if(areaFilter){const areas=AREA_MAP[areaFilter]||[];if(!areas.includes(s.area)) return false;}
+                      return true;
+                    }).map(s=>(
                       <SpotCard key={s.id} s={s} isSel={sel.includes(s.id)}
                         onClick={()=>{setDid(s.id);setPage("detail");}}
                         onToggle={()=>toggleSel(s.id)}
@@ -886,7 +928,7 @@ function App(){
                   <div style={{fontSize:12,lineHeight:1.7}}>到「探索」頁面點景點卡片右上角的 <strong style={{color:"#555"}}>＋</strong> 加入行程</div>
                 </div>
                 {/* 諮詢橫幅（無景點時） */}
-                <a href="https://tabinihon.github.io/tabinihon/consultation.html" target="_blank" rel="noreferrer"
+                <a href="https://forms.gle/PLACEHOLDER" target="_blank" rel="noreferrer"
                   style={{display:"block",textDecoration:"none",background:"linear-gradient(135deg,#2c3e50,#3d5166)",borderRadius:14,padding:"16px 18px",marginBottom:24}}>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                     <div>
