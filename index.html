@@ -475,7 +475,7 @@ function App(){
   if(page==="detail"&&spot) return(
     <div style={{maxWidth:420,margin:"0 auto",background:"#fff",position:"fixed",inset:0,overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
       <div style={{background:`linear-gradient(135deg,${a.color}cc,${a.color})`,color:"#fff",padding:"16px 16px 20px"}}>
-        <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"7px 16px",cursor:"pointer",marginBottom:10,fontSize:14,fontWeight:600}}>← 返回</button>
+        <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"8px 20px",cursor:"pointer",marginBottom:10,fontSize:16,fontWeight:700}}>← 返回</button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           <div style={{flex:1}}>
             <div style={{fontSize:22,fontWeight:700}}>{spot.name}</div>
@@ -609,9 +609,9 @@ function App(){
           ))}
           {spot.suitable&&<div style={{padding:"10px 0",fontSize:12,color:"#888"}}>👥 {spot.suitable}</div>}
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
-          <div style={{paddingTop:16,paddingBottom:8}}>
-            <button onClick={()=>setPage("main")} style={{width:"100%",background:"#f0f0f0",border:"none",borderRadius:24,padding:"14px",cursor:"pointer",fontSize:15,fontWeight:700,color:"#555"}}>← 返回探索頁</button>
-          </div>
+        </div>
+        <div style={{padding:"16px 0 32px"}}>
+          <button onClick={()=>setPage("main")} style={{width:"100%",background:"#f0f0f0",border:"none",borderRadius:24,padding:"16px",cursor:"pointer",fontSize:17,fontWeight:700,color:"#444"}}>← 返回探索頁</button>
         </div>
       </div>
       {fb&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
@@ -760,7 +760,7 @@ function App(){
               <button key={ax||"all"} onClick={()=>setAxisFilter(ax)}
                 style={{padding:"5px 12px",borderRadius:20,border:"none",
                   background:axisFilter===ax?(ax?AXES[ax].color:"#c0392b"):"#f0f0f0",
-                  color:axisFilter===ax?"#fff":"#666",fontSize:13,cursor:"pointer",
+                  color:axisFilter===ax?"#fff":"#666",fontSize:14,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:axisFilter===ax?700:400}}>
                 {ax||"全部"}
               </button>
@@ -773,7 +773,7 @@ function App(){
               <button key={ar||"area-all"} onClick={()=>setAreaFilter(ar)}
                 style={{padding:"4px 11px",borderRadius:20,border:"1px solid "+(areaFilter===ar?"#2980b9":"#ddd"),
                   background:areaFilter===ar?"#2980b9":"#fff",
-                  color:areaFilter===ar?"#fff":"#888",fontSize:12,cursor:"pointer",
+                  color:areaFilter===ar?"#fff":"#888",fontSize:13,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:areaFilter===ar?700:400,transition:"all 0.15s"}}>
                 {ar||"🗺️ 全區域"}
               </button>
