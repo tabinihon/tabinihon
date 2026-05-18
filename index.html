@@ -378,6 +378,8 @@ function App(){
   const [helpPage,setHelpPage]=useState(false);
   const [activeTab,setActiveTab]=useState("explore");
   const [toast,setToast]=useState("");
+  const [webviewUrl,setWebviewUrl]=useState(null);
+  const [iframeError,setIframeError]=useState(false);
 
   const [favs,setFavs]=useState(()=>{
     try {
@@ -473,7 +475,7 @@ function App(){
   if(page==="detail"&&spot) return(
     <div style={{maxWidth:420,margin:"0 auto",background:"#fff",position:"fixed",inset:0,overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
       <div style={{background:`linear-gradient(135deg,${a.color}cc,${a.color})`,color:"#fff",padding:"16px 16px 20px"}}>
-        <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"4px 12px",cursor:"pointer",marginBottom:10,fontSize:12}}>← 返回</button>
+        <button onClick={()=>setPage("main")} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"7px 16px",cursor:"pointer",marginBottom:10,fontSize:14,fontWeight:600}}>← 返回</button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           <div style={{flex:1}}>
             <div style={{fontSize:22,fontWeight:700}}>{spot.name}</div>
@@ -541,7 +543,7 @@ function App(){
         {(spot.openTime||spot.holiday)&&<div style={{background:"#f9f9f9",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",lineHeight:1.7}}>
           {spot.openTime&&<div style={{display:"flex",alignItems:"center",gap:6}}>
             <span>🕐 開放時間：{spot.openTime}</span>
-            {spot.websiteUrl&&<a href={spot.websiteUrl} target="_blank" rel="noreferrer" style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",textDecoration:"none",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</a>}
+            {spot.websiteUrl&&<button onClick={()=>{setIframeError(false);setWebviewUrl(spot.websiteUrl);}} style={{fontSize:10,color:"#2980b9",border:"1px solid #d0e8f8",borderRadius:6,padding:"1px 6px",background:"#fff",cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}}>官網 ↗</button>}
           </div>}
           {spot.stayTime&&<div>⏱ 建議停留：{spot.stayTime}</div>}
           {spot.holiday&&<div>📅 公休日：{spot.holiday}</div>}
@@ -607,6 +609,9 @@ function App(){
           ))}
           {spot.suitable&&<div style={{padding:"10px 0",fontSize:12,color:"#888"}}>👥 {spot.suitable}</div>}
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
+          <div style={{paddingTop:16,paddingBottom:8}}>
+            <button onClick={()=>setPage("main")} style={{width:"100%",background:"#f0f0f0",border:"none",borderRadius:24,padding:"14px",cursor:"pointer",fontSize:15,fontWeight:700,color:"#555"}}>← 返回探索頁</button>
+          </div>
         </div>
       </div>
       {fb&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
@@ -626,10 +631,27 @@ function App(){
           </>}
         </div>
       </div>}
-    </div>
-  );
-
-  // ── 使用說明頁（全屏） ──
+      {webviewUrl&&(
+        <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",flexDirection:"column",background:"#fff"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:"#c0392b",flexShrink:0,paddingTop:"calc(12px + env(safe-area-inset-top,0px))"}}>
+            <span style={{color:"#fff",fontSize:13,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,marginRight:8}}>{webviewUrl.replace(/^https?:\/\//,"").split("/")[0]}</span>
+            <button onClick={()=>{setWebviewUrl(null);setIframeError(false);}} style={{background:"rgba(255,255,255,0.2)",border:"none",borderRadius:20,color:"#fff",fontSize:13,fontWeight:700,padding:"5px 14px",cursor:"pointer",flexShrink:0}}>✕ 關閉</button>
+          </div>
+          {iframeError
+            ?<div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16,padding:32,textAlign:"center"}}>
+              <div style={{fontSize:40}}>🔒</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#333"}}>此網站不允許在 APP 內開啟</div>
+              <div style={{fontSize:13,color:"#888",lineHeight:1.7}}>請用瀏覽器直接開啟官網</div>
+              <a href={webviewUrl} target="_blank" rel="noreferrer" style={{background:"#c0392b",color:"#fff",borderRadius:24,padding:"12px 28px",fontSize:14,fontWeight:700,textDecoration:"none"}}>用瀏覽器開啟 ↗</a>
+              <button onClick={()=>{setWebviewUrl(null);setIframeError(false);}} style={{background:"#f0f0f0",border:"none",borderRadius:24,padding:"10px 24px",fontSize:13,color:"#666",cursor:"pointer"}}>返回</button>
+            </div>
+            :<iframe src={webviewUrl} style={{flex:1,border:"none",width:"100%"}} allow="fullscreen"
+              onError={()=>setIframeError(true)}
+              onLoad={e=>{try{const d=e.target.contentDocument;if(!d||!d.body)setIframeError(true);}catch{setIframeError(true);}}}
+            />
+          }
+        </div>
+      )}
   if(helpPage) return(
     <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:300,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
       <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
@@ -738,7 +760,7 @@ function App(){
               <button key={ax||"all"} onClick={()=>setAxisFilter(ax)}
                 style={{padding:"5px 12px",borderRadius:20,border:"none",
                   background:axisFilter===ax?(ax?AXES[ax].color:"#c0392b"):"#f0f0f0",
-                  color:axisFilter===ax?"#fff":"#666",fontSize:11,cursor:"pointer",
+                  color:axisFilter===ax?"#fff":"#666",fontSize:13,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:axisFilter===ax?700:400}}>
                 {ax||"全部"}
               </button>
@@ -751,7 +773,7 @@ function App(){
               <button key={ar||"area-all"} onClick={()=>setAreaFilter(ar)}
                 style={{padding:"4px 11px",borderRadius:20,border:"1px solid "+(areaFilter===ar?"#2980b9":"#ddd"),
                   background:areaFilter===ar?"#2980b9":"#fff",
-                  color:areaFilter===ar?"#fff":"#888",fontSize:10,cursor:"pointer",
+                  color:areaFilter===ar?"#fff":"#888",fontSize:12,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:areaFilter===ar?700:400,transition:"all 0.15s"}}>
                 {ar||"🗺️ 全區域"}
               </button>
@@ -1099,6 +1121,28 @@ function App(){
           </>}
         </div>
       </div>}
+
+      {webviewUrl&&(
+        <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",flexDirection:"column",background:"#fff"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:"#c0392b",flexShrink:0,paddingTop:"calc(12px + env(safe-area-inset-top,0px))"}}>
+            <span style={{color:"#fff",fontSize:13,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,marginRight:8}}>{webviewUrl.replace(/^https?:\/\//,"").split("/")[0]}</span>
+            <button onClick={()=>{setWebviewUrl(null);setIframeError(false);}} style={{background:"rgba(255,255,255,0.2)",border:"none",borderRadius:20,color:"#fff",fontSize:13,fontWeight:700,padding:"5px 14px",cursor:"pointer",flexShrink:0}}>✕ 關閉</button>
+          </div>
+          {iframeError
+            ?<div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16,padding:32,textAlign:"center"}}>
+              <div style={{fontSize:40}}>🔒</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#333"}}>此網站不允許在 APP 內開啟</div>
+              <div style={{fontSize:13,color:"#888",lineHeight:1.7}}>請用瀏覽器直接開啟官網</div>
+              <a href={webviewUrl} target="_blank" rel="noreferrer" style={{background:"#c0392b",color:"#fff",borderRadius:24,padding:"12px 28px",fontSize:14,fontWeight:700,textDecoration:"none"}}>用瀏覽器開啟 ↗</a>
+              <button onClick={()=>{setWebviewUrl(null);setIframeError(false);}} style={{background:"#f0f0f0",border:"none",borderRadius:24,padding:"10px 24px",fontSize:13,color:"#666",cursor:"pointer"}}>返回</button>
+            </div>
+            :<iframe src={webviewUrl} style={{flex:1,border:"none",width:"100%"}} allow="fullscreen"
+              onError={()=>setIframeError(true)}
+              onLoad={e=>{try{const d=e.target.contentDocument;if(!d||!d.body)setIframeError(true);}catch{setIframeError(true);}}}
+            />
+          }
+        </div>
+      )}
 
     </div>
   );
