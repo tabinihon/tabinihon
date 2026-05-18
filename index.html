@@ -598,7 +598,7 @@ function App(){
             </button>
           ))}
         </div>
-        <div style={{paddingBottom:60}}>
+        <div style={{paddingBottom:120}}>
           {(curTab==="附近景點"?spot.nearby:curTab==="周邊散步"?spot.walking:spot.shops).map((item,i)=>(
             <div key={i} style={{padding:"10px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <RecommendItem item={item} icon={curTab==="附近景點"?"📍":curTab==="周邊散步"?"🚶":"🛍"}/>
@@ -608,6 +608,9 @@ function App(){
           {spot.suitable&&<div style={{padding:"10px 0",fontSize:12,color:"#888"}}>👥 {spot.suitable}</div>}
           {spot.bestTime&&<div style={{paddingBottom:8,fontSize:12,color:"#888"}}>⏰ {spot.bestTime}</div>}
         </div>
+      </div>
+      <div style={{position:"fixed",bottom:0,left:0,right:0,maxWidth:420,margin:"0 auto",padding:"10px 16px",paddingBottom:"calc(10px + env(safe-area-inset-bottom,0px))",background:"rgba(255,255,255,0.97)",borderTop:"1px solid #eee",zIndex:50}}>
+        <button onClick={()=>setPage("main")} style={{width:"100%",background:"#eee",border:"none",borderRadius:24,padding:"14px",cursor:"pointer",fontSize:17,fontWeight:700,color:"#444"}}>← 返回探索頁</button>
       </div>
       {fb&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:99,padding:20}}>
         <div style={{background:"#fff",borderRadius:16,padding:20,width:"100%",maxWidth:320}}>
@@ -738,7 +741,7 @@ function App(){
               <button key={ax||"all"} onClick={()=>setAxisFilter(ax)}
                 style={{padding:"5px 12px",borderRadius:20,border:"none",
                   background:axisFilter===ax?(ax?AXES[ax].color:"#c0392b"):"#f0f0f0",
-                  color:axisFilter===ax?"#fff":"#666",fontSize:11,cursor:"pointer",
+                  color:axisFilter===ax?"#fff":"#666",fontSize:15,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:axisFilter===ax?700:400}}>
                 {ax||"全部"}
               </button>
@@ -751,7 +754,7 @@ function App(){
               <button key={ar||"area-all"} onClick={()=>setAreaFilter(ar)}
                 style={{padding:"4px 11px",borderRadius:20,border:"1px solid "+(areaFilter===ar?"#2980b9":"#ddd"),
                   background:areaFilter===ar?"#2980b9":"#fff",
-                  color:areaFilter===ar?"#fff":"#888",fontSize:10,cursor:"pointer",
+                  color:areaFilter===ar?"#fff":"#888",fontSize:14,cursor:"pointer",
                   whiteSpace:"nowrap",flexShrink:0,fontWeight:areaFilter===ar?700:400,transition:"all 0.15s"}}>
                 {ar||"🗺️ 全區域"}
               </button>
