@@ -153,6 +153,7 @@ async function fetchGuideItems() {
       checklist: row.checklist || false,
       content: row.content || [],
       sortOrder: row.sort_order || 99,
+      linkUrl: row.link_url || '',
     }));
   } catch(e) { return []; }
 }
@@ -399,6 +400,7 @@ function App(){
   const [guideTab,setGuideTab]=useState("出發前");
   const [guideItems,setGuideItems]=useState([]);
   const [guideOpen,setGuideOpen]=useState(null);
+  const [checkedItems,setCheckedItems]=useState({});
   const [activeTab,setActiveTab]=useState("explore");
   const [toast,setToast]=useState("");
 
@@ -691,17 +693,30 @@ function App(){
               <div style={{borderTop:"0.5px solid #f5f5f5",padding:"12px 14px",background:"#fafafa"}}>
                 {(item.content||[]).map((section,si)=>(
                   <div key={si} style={{marginBottom:12}}>
-                    <div style={{fontSize:11,fontWeight:700,color:"#c0392b",marginBottom:6,textTransform:"uppercase",letterSpacing:0.5}}>{section.category}</div>
-                    {(section.items||[]).map((it,ii)=>(
-                      <div key={ii} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"5px 0",borderBottom:"0.5px solid #f0f0f0"}}>
-                        {item.checklist
-                          ?<div style={{width:18,height:18,border:"1.5px solid #ddd",borderRadius:4,flexShrink:0,marginTop:1}}/>
-                          :<div style={{width:5,height:5,borderRadius:"50%",background:"#c0392b",flexShrink:0,marginTop:6}}/>}
-                        <span style={{fontSize:13,color:"#333",lineHeight:1.6}}>{it}</span>
-                      </div>
-                    ))}
+                    <div style={{fontSize:11,fontWeight:700,color:"#c0392b",marginBottom:6,letterSpacing:0.5}}>{section.category}</div>
+                    {(section.items||[]).map((it,ii)=>{
+                      const ck=`${item.id}-${si}-${ii}`;
+                      const isChecked=checkedItems[ck]||false;
+                      return(
+                        <div key={ii} onClick={()=>item.checklist&&setCheckedItems(prev=>({...prev,[ck]:!isChecked}))}
+                          style={{display:"flex",alignItems:"flex-start",gap:8,padding:"6px 0",borderBottom:"0.5px solid #f0f0f0",cursor:item.checklist?"pointer":"default"}}>
+                          {item.checklist
+                            ?<div style={{width:18,height:18,border:"1.5px solid "+(isChecked?"#c0392b":"#ddd"),borderRadius:4,flexShrink:0,marginTop:1,background:isChecked?"#c0392b":"#fff",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                              {isChecked&&<span style={{color:"#fff",fontSize:12,fontWeight:700}}>✓</span>}
+                            </div>
+                            :<div style={{width:5,height:5,borderRadius:"50%",background:"#c0392b",flexShrink:0,marginTop:6}}/>}
+                          <span style={{fontSize:13,color:isChecked?"#bbb":"#333",lineHeight:1.6,textDecoration:isChecked?"line-through":"none"}}>{it}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
+                {item.linkUrl&&(
+                  <a href={item.linkUrl} target="_blank" rel="noreferrer"
+                    style={{display:"block",marginTop:8,background:"#c0392b",color:"#fff",borderRadius:20,padding:"10px 16px",textAlign:"center",fontSize:13,fontWeight:700,textDecoration:"none"}}>
+                    前往官網 ↗
+                  </a>
+                )}
               </div>
             )}
           </div>
