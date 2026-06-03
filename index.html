@@ -138,6 +138,25 @@ async function fetchTickets() {
   }
 }
 
+
+async function fetchGuideItems() {
+  try {
+    const { data, error } = await supabase.from('guide_items').select('*').eq('status', '已上架').order('sort_order', { ascending: true });
+    if (error) throw error;
+    return (data || []).map(row => ({
+      id: row.id,
+      tab: row.tab || '',
+      title: row.title || '',
+      subtitle: row.subtitle || '',
+      tag: row.tag || '',
+      icon: row.icon || '📖',
+      checklist: row.checklist || false,
+      content: row.content || [],
+      sortOrder: row.sort_order || 99,
+    }));
+  } catch(e) { return []; }
+}
+
 async function fetchSpots() {
   try {
     const { data, error } = await supabase.from('spots').select('*').eq('status', '已上架').order('sort_order', { ascending: true });
@@ -376,6 +395,10 @@ function App(){
   const [fbSent,setFbSent]=useState(false);
   const [fbTxt,setFbTxt]=useState("");
   const [helpPage,setHelpPage]=useState(false);
+  const [guidePage,setGuidePage]=useState(false);
+  const [guideTab,setGuideTab]=useState("出發前");
+  const [guideItems,setGuideItems]=useState([]);
+  const [guideOpen,setGuideOpen]=useState(null);
   const [activeTab,setActiveTab]=useState("explore");
   const [toast,setToast]=useState("");
 
@@ -406,13 +429,15 @@ function App(){
   };
 
   const loadData=()=>{
-    Promise.all([fetchSpots(),fetchTickets()]).then(([spotsData,ticketsData])=>{
+    Promise.all([fetchSpots(),fetchTickets(),fetchGuideItems()]).then(([spotsData,ticketsData,guideData])=>{
       setSpots(spotsData);
       setTickets(ticketsData);
+      setGuideItems(guideData);
       setLoading(false);
     }).catch(()=>{
       setSpots([]);
       setTickets([]);
+      setGuideItems([]);
       setLoading(false);
     });
   };
@@ -633,6 +658,61 @@ function App(){
   );
 
   // ── 使用說明頁（全屏） ──
+  if(guidePage) return(
+    <div style={{maxWidth:420,margin:"0 auto",background:"#f8f8f8",position:"fixed",inset:0,overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
+      <div style={{background:"#c0392b",color:"#fff",padding:"16px 16px 0",paddingTop:"calc(16px + env(safe-area-inset-top,0px))"}}>
+        <button onClick={()=>setGuidePage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"7px 16px",cursor:"pointer",marginBottom:10,fontSize:14,fontWeight:600}}>← 返回</button>
+        <div style={{fontSize:20,fontWeight:700,marginBottom:12}}>✈️ 旅遊指南</div>
+        <div style={{display:"flex",gap:4,overflowX:"auto",scrollbarWidth:"none",paddingBottom:0}}>
+          {["出發前","在日本","嚮導觀點"].map(t=>(
+            <button key={t} onClick={()=>setGuideTab(t)}
+              style={{flexShrink:0,padding:"8px 16px",border:"none",borderRadius:"12px 12px 0 0",cursor:"pointer",fontSize:13,fontWeight:guideTab===t?700:400,
+                background:guideTab===t?"#f8f8f8":"rgba(255,255,255,0.2)",
+                color:guideTab===t?"#c0392b":"#fff"}}>
+              {t==="出發前"?"✈️ 出發前":t==="在日本"?"🗾 在日本":"💡 嚮導觀點"}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,paddingBottom:40}}>
+        {guideItems.filter(item=>item.tab===guideTab).map(item=>(
+          <div key={item.id} style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"0.5px solid #eee"}}>
+            <div onClick={()=>setGuideOpen(guideOpen===item.id?null:item.id)}
+              style={{padding:"12px 14px",display:"flex",alignItems:"center",gap:12,cursor:"pointer"}}>
+              <div style={{fontSize:24,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",background:"#fff5f5",borderRadius:10,flexShrink:0}}>{item.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:600,color:"#222"}}>{item.title}</div>
+                <div style={{fontSize:11,color:"#888",marginTop:2}}>{item.subtitle}</div>
+                {item.tag&&<div style={{display:"inline-block",marginTop:5,fontSize:10,padding:"2px 8px",borderRadius:10,background:"#fff0ee",color:"#993c1d",fontWeight:500}}>{item.tag}</div>}
+              </div>
+              <div style={{fontSize:16,color:"#ccc",transform:guideOpen===item.id?"rotate(90deg)":"rotate(0deg)",transition:"transform 0.2s"}}>›</div>
+            </div>
+            {guideOpen===item.id&&(
+              <div style={{borderTop:"0.5px solid #f5f5f5",padding:"12px 14px",background:"#fafafa"}}>
+                {(item.content||[]).map((section,si)=>(
+                  <div key={si} style={{marginBottom:12}}>
+                    <div style={{fontSize:11,fontWeight:700,color:"#c0392b",marginBottom:6,textTransform:"uppercase",letterSpacing:0.5}}>{section.category}</div>
+                    {(section.items||[]).map((it,ii)=>(
+                      <div key={ii} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"5px 0",borderBottom:"0.5px solid #f0f0f0"}}>
+                        {item.checklist
+                          ?<div style={{width:18,height:18,border:"1.5px solid #ddd",borderRadius:4,flexShrink:0,marginTop:1}}/>
+                          :<div style={{width:5,height:5,borderRadius:"50%",background:"#c0392b",flexShrink:0,marginTop:6}}/>}
+                        <span style={{fontSize:13,color:"#333",lineHeight:1.6}}>{it}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        {guideItems.filter(item=>item.tab===guideTab).length===0&&(
+          <div style={{textAlign:"center",padding:"40px 0",color:"#bbb",fontSize:13}}>準備中，敬請期待</div>
+        )}
+      </div>
+    </div>
+  );
+
   if(helpPage) return(
     <div style={{position:"fixed",inset:0,background:"#f8f8f8",zIndex:300,maxWidth:420,margin:"0 auto",overflowY:"auto"}}>
       <div style={{background:"linear-gradient(135deg,#922b21,#c0392b)",color:"#fff",padding:"16px 16px 14px",display:"flex",alignItems:"center",gap:12}}>
@@ -790,6 +870,15 @@ function App(){
                 </div>}
             </div>
           ):(
+            <div style={{margin:"8px 16px 4px"}}>
+              <div onClick={()=>setGuidePage(true)} style={{background:"#c0392b",borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
+                <div>
+                  <div style={{color:"#fff",fontSize:14,fontWeight:700}}>✈️ 旅遊指南</div>
+                  <div style={{color:"rgba(255,255,255,0.8)",fontSize:11,marginTop:2}}>行李清單・必裝APP・在日本實用資訊</div>
+                </div>
+                <div style={{color:"#fff",fontSize:18}}>›</div>
+              </div>
+            </div>
             <div style={{paddingTop:4,paddingBottom:8}}>
               {(()=>{
                 const bannerSpots=spots.filter(s=>s.banner).sort((a,b)=>a.sortOrder-b.sortOrder);
