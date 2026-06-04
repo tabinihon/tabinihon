@@ -1284,7 +1284,7 @@ function App(){
                           <div style={{flex:1}}>
                             <ArrivalNote note={selSpots[i+1].arrivalNote}/>
                           </div>
-                          <a href={"https://www.google.com/maps/dir/"+encodeURIComponent(selSpots[i].name)+"/"+encodeURIComponent(selSpots[i+1].name)+"/?travelmode=transit&hl=ja"}
+                          <a href={"https://www.google.com/maps/dir/"+(selSpots[i].lat&&selSpots[i].lng?selSpots[i].lat+","+selSpots[i].lng:encodeURIComponent(selSpots[i].jaName||selSpots[i].name))+"/"+(selSpots[i+1].lat&&selSpots[i+1].lng?selSpots[i+1].lat+","+selSpots[i+1].lng:encodeURIComponent(selSpots[i+1].jaName||selSpots[i+1].name))+"/?travelmode=transit&hl=ja"}
                             target="_blank" rel="noreferrer"
                             style={{fontSize:10,background:"#e8f4fd",color:"#1a73e8",border:"1px solid #c5dff8",borderRadius:10,padding:"4px 8px",textDecoration:"none",fontWeight:700,whiteSpace:"nowrap",flexShrink:0,marginTop:2}}>
                             查電車 →
