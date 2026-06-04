@@ -153,6 +153,7 @@ async function fetchGuideItems() {
       checklist: row.checklist || false,
       content: row.content || [],
       sortOrder: row.sort_order || 99,
+      linkUrl: row.link_url || '',
     }));
   } catch(e) { return []; }
 }
@@ -246,6 +247,74 @@ const AREA_MAP={
 const AREA_ORDER=["淺草・上野周邊","新宿周邊","銀座・東京站周邊","澀谷・原宿周邊","秋葉原・上野周邊","六本木・麻布周邊","吉祥寺・自由が丘周邊","清澄白河・門前仲町周邊","近郊小旅行"];
 const {useState,useEffect}=React;
 const S={width:"100%",padding:"9px 12px",borderRadius:10,border:"1px solid #e0e0e0",fontSize:13,marginTop:6,outline:"none",display:"block",background:"#fafafa"};
+
+
+const JP_PHRASES = {
+  "緊急": [
+    {jp:"救急車を呼んでください", tw:"請叫救護車"},
+    {jp:"病院はどこですか？", tw:"醫院在哪裡？"},
+    {jp:"警察を呼んでください", tw:"請叫警察"},
+    {jp:"財布を盗まれました", tw:"我的錢包被偷了"},
+    {jp:"迷子になりました", tw:"我迷路了"},
+    {jp:"助けてください", tw:"請幫幫我"},
+  ],
+  "交通": [
+    {jp:"〇〇駅はどこですか？", tw:"〇〇站在哪裡？"},
+    {jp:"〇〇に行きたいです", tw:"我想去〇〇"},
+    {jp:"この電車は〇〇に止まりますか？", tw:"這班車有停〇〇嗎？"},
+    {jp:"タクシーを呼んでください", tw:"請幫我叫計程車"},
+    {jp:"ここで降ろしてください", tw:"請在這裡讓我下車"},
+  ],
+  "購物": [
+    {jp:"これはいくらですか？", tw:"這個多少錢？"},
+    {jp:"試着してもいいですか？", tw:"可以試穿嗎？"},
+    {jp:"免税できますか？", tw:"可以退稅嗎？"},
+    {jp:"領収書をください", tw:"請給我收據"},
+    {jp:"カードで払えますか？", tw:"可以刷卡嗎？"},
+    {jp:"袋をください", tw:"請給我袋子"},
+  ],
+  "餐廳": [
+    {jp:"一名です", tw:"一個人"},
+    {jp:"〇名です", tw:"〇個人"},
+    {jp:"これをください", tw:"我要這個（指菜單）"},
+    {jp:"アレルギーがあります", tw:"我有過敏"},
+    {jp:"辛くしないでください", tw:"請不要加辣"},
+    {jp:"お会計をお願いします", tw:"買單"},
+    {jp:"美味しかったです", tw:"很好吃"},
+  ],
+};
+
+function JpPhrases(){
+  const [cat,setCat]=React.useState("緊急");
+  const cats=Object.keys(JP_PHRASES);
+  return(
+    <div>
+      <div style={{display:"flex",borderBottom:"0.5px solid #f0f0f0"}}>
+        {cats.map(c=>(
+          <button key={c} onClick={()=>setCat(c)}
+            style={{flex:1,padding:"8px 4px",border:"none",cursor:"pointer",fontSize:11,fontWeight:cat===c?700:400,
+              color:cat===c?"#c0392b":"#888",borderBottom:cat===c?"2px solid #c0392b":"2px solid transparent",background:"#fff"}}>
+            {c==="緊急"?"🆘 緊急":c==="交通"?"🚇 交通":c==="購物"?"🛒 購物":"🍽 餐廳"}
+          </button>
+        ))}
+      </div>
+      <div style={{padding:"4px 0"}}>
+        {JP_PHRASES[cat].map((p,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderBottom:"0.5px solid #f8f8f8"}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:600,color:"#222"}}>{p.jp}</div>
+              <div style={{fontSize:11,color:"#888",marginTop:2}}>{p.tw}</div>
+            </div>
+            <button onClick={()=>navigator.clipboard&&navigator.clipboard.writeText(p.jp)}
+              style={{fontSize:10,color:"#c0392b",border:"0.5px solid #c0392b",borderRadius:10,padding:"3px 10px",background:"#fff",cursor:"pointer",flexShrink:0}}>
+              複製
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function SpotCard({s,isFav,isSel,onFav,onToggle,onClick}){
   const sa=getAx(s.axis);
@@ -443,6 +512,61 @@ function App(){
   };
 
   useEffect(()=>{ loadData(); },[]);
+
+  // 匯率 + 天氣初始化
+  useEffect(()=>{
+    // 匯率
+    fetch("https://api.frankfurter.app/latest?from=JPY&to=TWD")
+      .then(r=>r.json()).then(d=>{
+        const rate=d.rates&&d.rates.TWD?d.rates.TWD:0.218;
+        window._jpyRate=rate;
+        const label=document.getElementById("rate-label");
+        if(label) label.textContent="1 JPY = "+rate.toFixed(3)+" TWD・今日參考匯率";
+        const input=document.getElementById("jpy-input");
+        const result=document.getElementById("twd-result");
+        if(input&&result) result.textContent="NT$ "+Math.round((input.value||3800)*rate).toLocaleString();
+      }).catch(()=>{ window._jpyRate=0.218; });
+
+    // 天氣（東京 35.6762, 139.6503）
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=35.6762&longitude=139.6503&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=7")
+      .then(r=>r.json()).then(d=>{
+        const days=["今天","明天","後天","三","四","五","六"];
+        const icons=["☀️","⛅","🌥","🌧","⛈","🌨","🌫"];
+        const wIcon=(code)=>{
+          if(code<=1) return "☀️";
+          if(code<=3) return "⛅";
+          if(code<=48) return "🌫";
+          if(code<=67) return "🌧";
+          if(code<=77) return "🌨";
+          if(code<=82) return "🌦";
+          return "⛈";
+        };
+        const outfitText=(temp)=>{
+          if(temp>=28) return "👕 建議：短袖・透氣材質，注意防曬";
+          if(temp>=22) return "👕 建議：薄長袖・早晚可帶薄外套";
+          if(temp>=16) return "🧥 建議：薄外套＋長褲，早晚涼";
+          if(temp>=10) return "🧥 建議：外套必備・建議疊穿";
+          return "🧣 建議：厚外套・圍巾手套";
+        };
+        const today=d.daily;
+        const todayMax=Math.round(today.temperature_2m_max[0]);
+        const todayMin=Math.round(today.temperature_2m_min[0]);
+        const todayRain=today.precipitation_probability_max[0];
+        const el=document.getElementById("weather-today");
+        if(el) el.innerHTML=`<div style="display:flex;align-items:center;gap:14px"><div style="font-size:40px">${wIcon(today.weathercode[0])}</div><div><div style="font-size:22px;font-weight:700;color:#222">${todayMax}°C<span style="font-size:14px;color:#aaa;margin-left:4px">/ ${todayMin}°</span></div><div style="font-size:11px;color:#888;margin-top:2px">降雨機率 ${todayRain}%</div></div></div>`;
+        const outfit=document.getElementById("weather-outfit");
+        if(outfit) outfit.textContent=outfitText(todayMax);
+        const week=document.getElementById("weather-week");
+        if(week){
+          week.innerHTML=today.weathercode.slice(1,7).map((code,i)=>`<div style="flex:1;text-align:center;flex-shrink:0"><div style="font-size:9px;color:#aaa;margin-bottom:3px">${days[i+1]}</div><div style="font-size:18px">${wIcon(code)}</div><div style="font-size:10px;color:#555;margin-top:2px">${Math.round(today.temperature_2m_max[i+1])}°</div></div>`).join("");
+        }
+      }).catch(()=>{
+        const el=document.getElementById("weather-today");
+        if(el) el.innerHTML='<div style="font-size:12px;color:#aaa">天氣資料載入失敗，請稍後再試</div>';
+      });
+  },[guidePage]);
+
+
 
   useEffect(()=>{
     const fn=()=>{if(document.visibilityState==='visible')loadData();};
@@ -664,7 +788,7 @@ function App(){
         <button onClick={()=>setGuidePage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"7px 16px",cursor:"pointer",marginBottom:10,fontSize:14,fontWeight:600}}>← 返回</button>
         <div style={{fontSize:20,fontWeight:700,marginBottom:12}}>✈️ 旅遊指南</div>
         <div style={{display:"flex",gap:4,overflowX:"auto",scrollbarWidth:"none",paddingBottom:0}}>
-          {["出發前","在日本","嚮導觀點"].map(t=>(
+          {["出發前","在日本","工具"].map(t=>(
             <button key={t} onClick={()=>setGuideTab(t)}
               style={{flexShrink:0,padding:"8px 16px",border:"none",borderRadius:"12px 12px 0 0",cursor:"pointer",fontSize:13,fontWeight:guideTab===t?700:400,
                 background:guideTab===t?"#f8f8f8":"rgba(255,255,255,0.2)",
@@ -702,11 +826,74 @@ function App(){
                     ))}
                   </div>
                 ))}
+                {item.linkUrl&&(
+                  <a href={item.linkUrl} target="_blank" rel="noreferrer"
+                    style={{display:"block",margin:"8px 0 0",background:"#c0392b",color:"#fff",borderRadius:20,padding:"10px 16px",textAlign:"center",fontSize:13,fontWeight:700,textDecoration:"none"}}>
+                    前往官網 ↗
+                  </a>
+                )}
               </div>
             )}
           </div>
         ))}
-        {guideItems.filter(item=>item.tab===guideTab).length===0&&(
+        {guideTab==="工具"&&(
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+
+            {/* 匯率換算 */}
+            <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"0.5px solid #eee"}}>
+              <div style={{background:"#c0392b",padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:20}}>💴</span>
+                <div>
+                  <div style={{color:"#fff",fontSize:13,fontWeight:700}}>日幣換算</div>
+                  <div style={{color:"rgba(255,255,255,0.7)",fontSize:10}} id="rate-label">載入中...</div>
+                </div>
+              </div>
+              <div style={{padding:"14px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                  <span style={{fontSize:12,color:"#888",flexShrink:0}}>JPY</span>
+                  <input id="jpy-input" type="number" defaultValue="3800" onChange={()=>{
+                    const rate=window._jpyRate||0.218;
+                    const val=document.getElementById("jpy-input").value||0;
+                    document.getElementById("twd-result").textContent="NT$ "+Math.round(val*rate).toLocaleString();
+                  }} style={{flex:1,border:"1px solid #eee",borderRadius:8,padding:"8px 12px",fontSize:16,outline:"none"}}/>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:12,color:"#888",flexShrink:0}}>TWD</span>
+                  <div id="twd-result" style={{flex:1,background:"#fff5f5",borderRadius:8,padding:"8px 12px",fontSize:18,fontWeight:700,color:"#c0392b"}}>NT$ 829</div>
+                </div>
+                <div style={{fontSize:10,color:"#bbb",marginTop:8}}>今日參考匯率・僅供參考，實際以換匯當下為準</div>
+              </div>
+            </div>
+
+            {/* 東京天氣 */}
+            <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"0.5px solid #eee"}}>
+              <div style={{background:"#c0392b",padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:20}}>🌤</span>
+                  <div style={{color:"#fff",fontSize:13,fontWeight:700}}>東京天氣</div>
+                </div>
+                <div style={{color:"rgba(255,255,255,0.7)",fontSize:10}}>東京都・新宿區</div>
+              </div>
+              <div id="weather-today" style={{padding:"12px 14px",borderBottom:"0.5px solid #f0f0f0"}}>
+                <div style={{color:"#aaa",fontSize:12}}>天氣載入中...</div>
+              </div>
+              <div id="weather-outfit" style={{background:"#fff5f5",padding:"8px 14px",fontSize:11,color:"#7a1a0a",borderBottom:"0.5px solid #f0f0f0"}}></div>
+              <div id="weather-week" style={{display:"flex",padding:"10px 14px",gap:4,overflowX:"auto"}}></div>
+            </div>
+
+            {/* 日文必備句子 */}
+            <div style={{background:"#fff",borderRadius:12,overflow:"hidden",border:"0.5px solid #eee"}}>
+              <div style={{background:"#c0392b",padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:20}}>🗣</span>
+                <div style={{color:"#fff",fontSize:13,fontWeight:700}}>日本旅遊必備句子</div>
+              </div>
+              <JpPhrases/>
+            </div>
+
+          </div>
+        )}
+
+        {guideTab!=="工具"&&guideItems.filter(item=>item.tab===guideTab).length===0&&(
           <div style={{textAlign:"center",padding:"40px 0",color:"#bbb",fontSize:13}}>準備中，敬請期待</div>
         )}
       </div>
@@ -875,7 +1062,7 @@ function App(){
               <div onClick={()=>setGuidePage(true)} style={{background:"#c0392b",borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
                 <div>
                   <div style={{color:"#fff",fontSize:14,fontWeight:700}}>✈️ 旅遊指南</div>
-                  <div style={{color:"rgba(255,255,255,0.8)",fontSize:11,marginTop:2}}>行李清單・必裝APP・在日本實用資訊</div>
+                  <div style={{color:"rgba(255,255,255,0.8)",fontSize:11,marginTop:2}}>行李清單・東京天氣・日文句型・匯率換算</div>
                 </div>
                 <div style={{color:"#fff",fontSize:18}}>›</div>
               </div>
