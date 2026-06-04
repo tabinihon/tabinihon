@@ -1,4 +1,4 @@
-const CACHE = 'tabinihon-v205';
+const CACHE = 'tabinihon-v208';
 const ASSETS = [
   '/tabinihon/',
   '/tabinihon/index.html',
