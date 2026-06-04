@@ -158,6 +158,36 @@ async function fetchGuideItems() {
   } catch(e) { return []; }
 }
 
+async function fetchEvents() {
+  try {
+    const now = new Date();
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', '已上架')
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return (data || []).map(row => ({
+      id: row.id,
+      month: row.month,
+      year: row.year || now.getFullYear(),
+      eventName: row.event_name || '',
+      location: row.location || '',
+      dateRange: row.date_range || '',
+      description: row.description || '',
+      tags: row.tags ? row.tags.split('｜').map(t=>t.trim()).filter(Boolean) : [],
+      coverPhoto: row.cover_photo || '',
+      ticketUrl: row.ticket_url || '',
+      officialUrl: row.official_url || '',
+      badge: row.badge || '',
+      sortOrder: row.sort_order || 99,
+    }));
+  } catch(e) {
+    console.error('活動載入失敗:', e);
+    return [];
+  }
+}
+
 async function fetchSpots() {
   try {
     const { data, error } = await supabase.from('spots').select('*').eq('status', '已上架').order('sort_order', { ascending: true });
@@ -448,6 +478,8 @@ function TicketPage({tickets}){
 function App(){
   const [spots,setSpots]=useState([]);
   const [tickets,setTickets]=useState([]);
+  const [events,setEvents]=useState([]);
+  const [eventMonth,setEventMonth]=useState(new Date().getMonth()+1);
   const [loading,setLoading]=useState(true);
   const [sel,setSel]=useState([]);
   const [search,setSearch]=useState("");
@@ -502,15 +534,17 @@ function App(){
   };
 
   const loadData=()=>{
-    Promise.all([fetchSpots(),fetchTickets(),fetchGuideItems()]).then(([spotsData,ticketsData,guideData])=>{
+    Promise.all([fetchSpots(),fetchTickets(),fetchGuideItems(),fetchEvents()]).then(([spotsData,ticketsData,guideData,eventsData])=>{
       setSpots(spotsData);
       setTickets(ticketsData);
       setGuideItems(guideData);
+      setEvents(eventsData);
       setLoading(false);
     }).catch(()=>{
       setSpots([]);
       setTickets([]);
       setGuideItems([]);
+      setEvents([]);
       setLoading(false);
     });
   };
@@ -753,7 +787,7 @@ function App(){
         <button onClick={()=>setGuidePage(false)} style={{background:"rgba(255,255,255,0.2)",border:"none",color:"#fff",borderRadius:20,padding:"7px 16px",cursor:"pointer",marginBottom:10,fontSize:14,fontWeight:600}}>← 返回</button>
         <div style={{fontSize:20,fontWeight:700,marginBottom:12}}>✈️ 旅遊指南</div>
         <div style={{display:"flex",gap:4,overflowX:"auto",scrollbarWidth:"none",paddingBottom:0}}>
-          {["出發前","在日本","工具"].map(t=>(
+          {["出發前","在日本","活動","工具"].map(t=>(
             <button key={t} onClick={()=>setGuideTab(t)}
               style={{flexShrink:0,padding:"8px 16px",border:"none",borderRadius:"12px 12px 0 0",cursor:"pointer",fontSize:13,fontWeight:guideTab===t?700:400,
                 background:guideTab===t?"#f8f8f8":"rgba(255,255,255,0.2)",
@@ -808,6 +842,101 @@ function App(){
             )}
           </div>
         ))}
+        {guideTab==="活動"&&(()=>{
+          const now=new Date();
+          const months=[1,2,3,4,5,6,7,8,9,10,11,12];
+          const monthNames=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+          const filtered=events.filter(e=>e.month===eventMonth);
+          const HERO_COLORS=[
+            {bg:"#EEEDFE",text:"#3C3489"},
+            {bg:"#E1F5EE",text:"#0F6E56"},
+            {bg:"#FAEEDA",text:"#854F0B"},
+            {bg:"#FBEAF0",text:"#72243E"},
+            {bg:"#E6F1FB",text:"#185FA5"},
+            {bg:"#EAF3DE",text:"#3B6D11"},
+          ];
+          return(
+            <div style={{margin:"0 -16px"}}>
+              {/* 月份選擇 */}
+              <div style={{display:"flex",gap:6,overflowX:"auto",padding:"4px 16px 12px",scrollbarWidth:"none"}}>
+                {months.map((m,i)=>(
+                  <button key={m} onClick={()=>setEventMonth(m)}
+                    style={{flexShrink:0,padding:"6px 14px",borderRadius:20,border:"none",fontSize:13,cursor:"pointer",fontWeight:eventMonth===m?700:400,
+                      background:eventMonth===m?"#c0392b":"#f0f0f0",
+                      color:eventMonth===m?"#fff":"#666"}}>
+                    {monthNames[i]}
+                  </button>
+                ))}
+              </div>
+              <div style={{fontSize:13,color:"#888",padding:"0 16px 10px"}}>
+                {monthNames[eventMonth-1]}・{filtered.length} 筆活動
+              </div>
+              {filtered.length===0&&(
+                <div style={{textAlign:"center",padding:"48px 16px",color:"#ccc"}}>
+                  <div style={{fontSize:38,marginBottom:10}}>📅</div>
+                  <div style={{fontSize:14,marginBottom:6}}>這個月還沒有活動資訊</div>
+                  <div style={{fontSize:12,color:"#bbb",lineHeight:1.7}}>確定公告的活動才會收錄<br/>歡迎持續關注</div>
+                </div>
+              )}
+              {filtered.map((ev,idx)=>{
+                const heroColor=HERO_COLORS[idx%HERO_COLORS.length];
+                const hasCover=ev.coverPhoto&&ev.coverPhoto.startsWith("http");
+                const badgeStyle=ev.badge==="免費"
+                  ?{background:"#1D9E75",color:"#fff"}
+                  :ev.badge==="需預約"
+                  ?{background:"#185FA5",color:"#fff"}
+                  :{background:"#c0392b",color:"#fff"};
+                return(
+                  <div key={ev.id} style={{background:"#fff",border:"0.5px solid #eee",borderRadius:14,margin:"0 16px 14px",overflow:"hidden"}}>
+                    {hasCover
+                      ?<div style={{position:"relative",height:120}}>
+                          <img src={ev.coverPhoto} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}} alt=""/>
+                          {ev.badge&&<span style={{position:"absolute",top:10,left:10,fontSize:11,padding:"3px 8px",borderRadius:4,fontWeight:600,...badgeStyle}}>{ev.badge}</span>}
+                        </div>
+                      :<div style={{height:90,background:heroColor.bg,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",padding:"0 16px"}}>
+                          {ev.badge&&<span style={{position:"absolute",top:10,left:10,fontSize:11,padding:"3px 8px",borderRadius:4,fontWeight:600,...badgeStyle}}>{ev.badge}</span>}
+                          <div style={{fontSize:15,fontWeight:500,color:heroColor.text,textAlign:"center",lineHeight:1.5}}>{ev.eventName}</div>
+                        </div>
+                    }
+                    <div style={{padding:"12px 14px"}}>
+                      <div style={{fontSize:15,fontWeight:600,color:"#222",marginBottom:6,lineHeight:1.4}}>{ev.eventName}</div>
+                      <div style={{display:"flex",flexDirection:"column",gap:4,marginBottom:8}}>
+                        {ev.dateRange&&<div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#666"}}><span>📅</span><span>{ev.dateRange}</span></div>}
+                        {ev.location&&<div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#666"}}><span>📍</span><span>{ev.location}</span></div>}
+                      </div>
+                      {ev.tags.length>0&&(
+                        <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:8}}>
+                          {ev.tags.map((tag,ti)=>(
+                            <span key={ti} style={{fontSize:11,padding:"2px 8px",borderRadius:4,background:"#f5f5f5",color:"#666",border:"0.5px solid #e8e8e8"}}>{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                      {ev.description&&<div style={{fontSize:13,color:"#555",lineHeight:1.7,marginBottom:10}}>{ev.description}</div>}
+                      <div style={{fontSize:11,color:"#aaa",lineHeight:1.6,marginBottom:10,padding:"6px 10px",background:"#f9f9f9",borderRadius:6,borderLeft:"2px solid #e8e8e8"}}>
+                        如遇氣候或其他因素停辦，請以官方公告為主。
+                      </div>
+                      <div style={{display:"flex",gap:8}}>
+                        {ev.officialUrl&&(
+                          <a href={ev.officialUrl} target="_blank" rel="noreferrer"
+                            style={{flex:1,padding:"9px",borderRadius:9,fontSize:13,textAlign:"center",border:"0.5px solid #ddd",background:"#f7f7f7",color:"#333",textDecoration:"none",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                            🔗 官方網站
+                          </a>
+                        )}
+                        {ev.ticketUrl&&(
+                          <a href={ev.ticketUrl} target="_blank" rel="noreferrer"
+                            style={{flex:1,padding:"9px",borderRadius:9,fontSize:13,textAlign:"center",border:"none",background:"#c0392b",color:"#fff",textDecoration:"none",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                            🎟 購票
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {filtered.length>0&&<div style={{fontSize:11,color:"#bbb",padding:"0 16px 8px",lineHeight:1.7}}>活動資訊由旅日嚮導人工整理，確定公告後才收錄。</div>}
+            </div>
+          );
+        })()}
         {guideTab==="工具"&&(
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
 
