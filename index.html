@@ -516,16 +516,16 @@ function App(){
   // 匯率 + 天氣初始化
   useEffect(()=>{
     // 匯率
-    fetch("https://api.frankfurter.app/latest?from=JPY&to=TWD")
+    fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/jpy.json")
       .then(r=>r.json()).then(d=>{
-        const rate=d.rates&&d.rates.TWD?d.rates.TWD:0.218;
+        const rate=d.jpy&&d.jpy.twd?d.jpy.twd:0.218;
         window._jpyRate=rate;
         const label=document.getElementById("rate-label");
         if(label) label.textContent="1 JPY = "+rate.toFixed(3)+" TWD・今日參考匯率";
         const input=document.getElementById("jpy-input");
         const result=document.getElementById("twd-result");
         if(input&&result) result.textContent="NT$ "+Math.round((input.value||3800)*rate).toLocaleString();
-      }).catch(()=>{ window._jpyRate=0.218; });
+      }).catch(()=>{ window._jpyRate=0.218; const label=document.getElementById("rate-label"); if(label) label.textContent="匯率載入失敗，使用預設值"; });
 
     // 天氣（東京 35.6762, 139.6503）
     fetch("https://api.open-meteo.com/v1/forecast?latitude=35.6762&longitude=139.6503&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=7")
