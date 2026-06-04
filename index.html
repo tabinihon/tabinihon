@@ -539,7 +539,7 @@ function App(){
   useEffect(()=>{
     setWeatherData(null);
     const coord=WEATHER_AREAS[weatherArea]||WEATHER_AREAS["東京市區"];
-    fetch("https://api.open-meteo.com/v1/jma?latitude="+coord.lat+"&longitude="+coord.lng+"&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=4")
+    fetch("https://api.open-meteo.com/v1/forecast?latitude="+coord.lat+"&longitude="+coord.lng+"&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=7&models=jma_seamless")
       .then(r=>r.json()).then(d=>setWeatherData(d.daily))
       .catch(()=>setWeatherData("error"));
   },[weatherArea]);
@@ -894,7 +894,7 @@ function App(){
                   <div style={{background:"#fff5f5",padding:"8px 14px",fontSize:11,color:"#7a1a0a",borderBottom:"0.5px solid #f0f0f0"}}>{outfit(max)}</div>
                   <div style={{padding:"6px 14px",fontSize:10,color:"#bbb",borderTop:"0.5px solid #f0f0f0"}}>資料來源：日本氣象廳（JMA）</div>
                   <div style={{display:"flex",padding:"10px 14px",gap:4}}>
-                    {weatherData.weathercode.slice(1,4).map((code,i)=>(
+                    {weatherData.weathercode.slice(1,6).map((code,i)=>(
                       <div key={i} style={{flex:1,textAlign:"center"}}>
                         <div style={{fontSize:9,color:"#aaa",marginBottom:3}}>{days[i]}</div>
                         <div style={{fontSize:18}}>{wIcon(code)}</div>
