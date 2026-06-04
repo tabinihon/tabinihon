@@ -872,7 +872,12 @@ function App(){
               {(()=>{
                 const wIcon=(code)=>{if(code<=1)return"☀️";if(code<=3)return"⛅";if(code<=48)return"🌫";if(code<=67)return"🌧";if(code<=77)return"🌨";if(code<=82)return"🌦";return"⛈";};
                 const outfit=(t)=>{if(t>=28)return"👕 建議：短袖・透氣材質，注意防曬";if(t>=22)return"👕 建議：薄長袖・早晚可帶薄外套";if(t>=16)return"🧥 建議：薄外套＋長褲，早晚涼";if(t>=10)return"🧥 建議：外套必備・建議疊穿";return"🧣 建議：厚外套・圍巾手套";};
-                const days=["明天","後天","三","四","五","六"];
+                const weekNames=["日","一","二","三","四","五","六"];
+                const today=new Date();
+                const days=Array.from({length:6},(_,i)=>{
+                  const d=new Date(today); d.setDate(d.getDate()+i+1);
+                  return i===0?"明天":i===1?"後天":"週"+weekNames[d.getDay()];
+                });
                 if(!weatherData) return <div style={{padding:"12px 14px",color:"#aaa",fontSize:12}}>天氣載入中...</div>;
                 if(weatherData==="error") return <div style={{padding:"12px 14px",color:"#aaa",fontSize:12}}>天氣資料載入失敗</div>;
                 const max=Math.round(weatherData.temperature_2m_max[0]);
