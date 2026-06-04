@@ -212,6 +212,7 @@ async function fetchSpots() {
         stay:parseFlexible(row.accommodation_recommendations), shops:parseFlexible(row.shop_recommendations),
         walking:[...parseFlexible(row.food_recommendations),...parseFlexible(row.accommodation_recommendations)],
         mapsUrl:row.google_maps_url||'', officialUrl:row.ticket_url_official||'',
+        lat:row.latitude||null, lng:row.longitude||null,
         websiteUrl:row.website_url||'', sortOrder:row.sort_order||999, banner:row.banner||'',
         photos:photos.length?photos:["📸"]
       };
@@ -539,7 +540,7 @@ function App(){
   useEffect(()=>{
     setWeatherData(null);
     const coord=WEATHER_AREAS[weatherArea]||WEATHER_AREAS["東京市區"];
-    fetch("https://api.open-meteo.com/v1/forecast?latitude="+coord.lat+"&longitude="+coord.lng+"&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=7&models=jma_seamless")
+    fetch("https://api.open-meteo.com/v1/forecast?latitude="+coord.lat+"&longitude="+coord.lng+"&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=7")
       .then(r=>r.json()).then(d=>setWeatherData(d.daily))
       .catch(()=>setWeatherData("error"));
   },[weatherArea]);
@@ -581,10 +582,16 @@ function App(){
 
   const mapsLink=()=>{
     if(!selSpots.length) return "#";
-    if(selSpots.length===1) return selSpots[0].mapsUrl||("https://maps.google.com/?q="+encodeURIComponent(selSpots[0].name));
-    const o=encodeURIComponent(selSpots[0].name),d=encodeURIComponent(selSpots[selSpots.length-1].name);
-    const w=selSpots.slice(1,-1).map(s=>encodeURIComponent(s.name)).join("|");
-    return "https://www.google.com/maps/dir/?api=1&origin="+o+"&destination="+d+(w?"&waypoints="+w:"")+"&travelmode=transit";
+    const spotCoord=(s)=>s.lat&&s.lng?(s.lat+","+s.lng):(s.jaName||s.name);
+    if(selSpots.length===1){
+      const s=selSpots[0];
+      if(s.lat&&s.lng) return "https://maps.google.com/?q="+s.lat+","+s.lng;
+      return "https://maps.google.com/?q="+encodeURIComponent(s.jaName||s.name);
+    }
+    const o=spotCoord(selSpots[0]);
+    const d=spotCoord(selSpots[selSpots.length-1]);
+    const w=selSpots.slice(1,-1).map(s=>spotCoord(s)).join("|");
+    return "https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(o)+"&destination="+encodeURIComponent(d)+(w?"&waypoints="+encodeURIComponent(w):"")+"&travelmode=transit";
   };
   const shareText=()=>selSpots.map((s,i)=>`【第${i+1}站】${s.name}（${s.area}）\n交通：${s.metro}\n票價：${s.ticket}`).join("\n\n")+"\n\n✅ 由旅日嚮導嚴選・真實評價・不接業配";
 
@@ -888,7 +895,7 @@ function App(){
                     <div style={{fontSize:40}}>{wIcon(weatherData.weathercode[0])}</div>
                     <div>
                       <div style={{fontSize:22,fontWeight:700,color:"#222"}}>{max}°C<span style={{fontSize:14,color:"#aaa",marginLeft:4}}>/ {min}°</span></div>
-                      <div style={{fontSize:11,color:"#888",marginTop:2}}>降雨機率 {rain}%</div>
+                      <div style={{fontSize:11,color:"#888",marginTop:2}}>降雨機率 {rain!=null&&rain!==undefined?rain+"%":"－"}</div>
                     </div>
                   </div>
                   <div style={{background:"#fff5f5",padding:"8px 14px",fontSize:11,color:"#7a1a0a",borderBottom:"0.5px solid #f0f0f0"}}>{outfit(max)}</div>
