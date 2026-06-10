@@ -9,18 +9,18 @@
   gtag('config', 'G-91K3PERTJG');
 </script>
 <meta charset="UTF-8">
-<meta name="description" content="旅日嚮導－東京旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
-<meta name="keywords" content="東京旅遊,日本旅遊,東京景點,行程規劃">
+<meta name="description" content="旅日嚮導－不接業配的東京旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
+<meta name="keywords" content="東京旅遊,日本旅遊,東京景點,行程規劃,不接業配">
 <meta name="author" content="旅日嚮導">
 <meta property="og:type" content="website">
-<meta property="og:title" content="旅日嚮導｜嚴選的東京旅遊指南">
-<meta property="og:description" content="真實・客觀・嚴選｜替消費者把關，所有景點實地查核">
+<meta property="og:title" content="旅日嚮導｜不接業配・客觀嚴選的東京旅遊指南">
+<meta property="og:description" content="真實・客觀・嚴選｜替消費者把關，所有景點實地查核，絕不業配">
 <meta property="og:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta property="og:url" content="https://tabinihon.github.io/tabinihon/">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="旅日嚮導｜東京旅遊">
-<meta name="twitter:description" content="真實・嚴選，替消費者把關的日本旅遊指南">
+<meta name="twitter:title" content="旅日嚮導｜不接業配東京旅遊">
+<meta name="twitter:description" content="真實・客觀・嚴選，替消費者把關的日本旅遊指南">
 <meta name="twitter:image" content="https://tabinihon.github.io/tabinihon/icon-512.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>旅日嚮導</title>
@@ -905,16 +905,14 @@ function App(){
                           <div style={{fontSize:14,fontWeight:500,color:heroColor.text,textAlign:"center",lineHeight:1.5}}>{ev.eventName}</div>
                         </div>
                     )}
-                    {/* 卡片主體，點擊展開收合 */}
-                    <div style={{padding:"12px 14px",cursor:"pointer"}} onClick={toggleExpand}>
+                    {/* 卡片主體 */}
+                    <div style={{padding:"12px 14px 8px"}}>
                       {/* 標題行 */}
-                      <div style={{display:"flex",alignItems:"flex-start",marginBottom:6}}>
-                        <div style={{display:"flex",alignItems:"center",gap:6,flex:1}}>
-                          {!isExpanded&&ev.badge&&(
-                            <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,fontWeight:600,flexShrink:0,...badgeStyle}}>{ev.badge}</span>
-                          )}
-                          <div style={{fontSize:14,fontWeight:600,color:"#222",lineHeight:1.4}}>{ev.eventName}</div>
-                        </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+                        {!isExpanded&&ev.badge&&(
+                          <span style={{fontSize:10,padding:"2px 7px",borderRadius:4,fontWeight:600,flexShrink:0,...badgeStyle}}>{ev.badge}</span>
+                        )}
+                        <div style={{fontSize:14,fontWeight:600,color:"#222",lineHeight:1.4}}>{ev.eventName}</div>
                       </div>
                       {/* 日期、地點 */}
                       <div style={{display:"flex",flexDirection:"column",gap:3,marginBottom:6}}>
@@ -929,25 +927,19 @@ function App(){
                           ))}
                         </div>
                       )}
-                      {/* 描述：收合截字，展開全文 */}
+                      {/* 描述 */}
                       {ev.description&&(
-                        <div style={{fontSize:13,color:"#555",lineHeight:1.7,marginBottom:6}}>
+                        <div style={{fontSize:13,color:"#555",lineHeight:1.7}}>
                           {isExpanded?ev.description:previewDesc}
                         </div>
                       )}
-                      {/* 看更多 / 收起 */}
-                      <div style={{textAlign:"center",padding:"4px 0 2px"}}>
-                        <span style={{fontSize:12,color:"#aaa",letterSpacing:"0.03em"}}>
-                          {isExpanded?"收起 ∧":"看更多 ∨"}
-                        </span>
-                      </div>
-                      {/* 展開才顯示 */}
+                      {/* 展開後的詳細內容 */}
                       {isExpanded&&(
-                        <>
-                          <div style={{fontSize:11,color:"#aaa",lineHeight:1.6,margin:"10px 0",padding:"6px 10px",background:"#f9f9f9",borderRadius:6,borderLeft:"2px solid #e8e8e8"}}>
+                        <div style={{marginTop:10}} onClick={e=>e.stopPropagation()}>
+                          <div style={{fontSize:11,color:"#aaa",lineHeight:1.6,marginBottom:10,padding:"6px 10px",background:"#f9f9f9",borderRadius:6,borderLeft:"2px solid #e8e8e8"}}>
                             如遇氣候或其他因素停辦，請以官方公告為主。
                           </div>
-                          <div style={{display:"flex",gap:8}} onClick={e=>e.stopPropagation()}>
+                          <div style={{display:"flex",gap:8}}>
                             {ev.officialUrl&&(
                               <a href={ev.officialUrl} target="_blank" rel="noreferrer"
                                 style={{flex:1,padding:"9px",borderRadius:9,fontSize:13,textAlign:"center",border:"0.5px solid #ddd",background:"#f7f7f7",color:"#333",textDecoration:"none",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
@@ -961,8 +953,16 @@ function App(){
                               </a>
                             )}
                           </div>
-                        </>
+                        </div>
                       )}
+                    </div>
+                    {/* 看更多 / 收起 按鈕列 — 固定在底部 */}
+                    <div onClick={toggleExpand}
+                      style={{display:"flex",alignItems:"center",justifyContent:"center",gap:5,
+                        margin:"0 14px 12px",padding:"8px",borderRadius:8,cursor:"pointer",
+                        border:"0.5px solid #d0d0d0",background:"#efefef"}}>
+                      <span style={{fontSize:12,color:"#666"}}>{isExpanded?"收起":"看更多"}</span>
+                      <span style={{fontSize:12,color:"#666",display:"inline-block",transform:isExpanded?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
                     </div>
                   </div>
                 );
