@@ -7,8 +7,6 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-91K3PERTJG');
-  // ── GA4 事件追蹤小幫手（全域）──
-  function track(name, params){ try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){} }
 </script>
 <meta charset="UTF-8">
 <meta name="description" content="旅日嚮導－不接業配的東京旅遊APP，嚴選景點客觀評述，含行程規劃與換乘資訊">
@@ -522,10 +520,8 @@ function App(){
 
   const toggleFav=id=>{
     setFavs(prev=>{
-      const adding=!prev.includes(id);
       const next=prev.includes(id)?prev.filter(x=>x!==id):[...prev,id];
       try{ localStorage.setItem("tabinihon_favs",JSON.stringify({ids:next,ts:Date.now()})); }catch(e){}
-      if(adding){ const sp=spots.find(x=>x.id===id); track('add_favorite',{spot_name:sp&&sp.name||''}); }
       return next;
     });
   };
@@ -572,34 +568,12 @@ function App(){
     return ()=>document.removeEventListener('visibilitychange',fn);
   },[]);
 
-  // ── GA4：開啟景點詳情時記錄 view_spot ──
-  useEffect(()=>{
-    if(page==='detail'&&did){ const sp=spots.find(s=>s.id===did); if(sp) track('view_spot',{spot_name:sp.name||'',axis:sp.axis||''}); }
-  },[page,did]);
-
-  // ── GA4：搜尋（停止輸入 0.9 秒後才送一次，避免每個字都送）──
-  useEffect(()=>{
-    if(!search||search.trim().length<2) return;
-    const t=setTimeout(()=>track('search',{keyword:search.trim()}),900);
-    return ()=>clearTimeout(t);
-  },[search]);
-
-  // ── 深連結：從 SEO 靜態頁帶 ?spot=ID 進來時，自動開啟該景點 ──
-  useEffect(()=>{
-    if(!spots.length) return;
-    try{
-      const sid=new URLSearchParams(window.location.search).get('spot');
-      if(sid){ const sp=spots.find(s=>String(s.id)===String(sid)); if(sp){ setDid(sp.id); setPage('detail'); } }
-    }catch(e){}
-  },[spots]);
-
   const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(""),2000);};
   const toggleSel=id=>setSel(s=>{
     if(s.includes(id)){showToast("已移除");return s.filter(x=>x!==id);}
     if(s.length>=4){showToast("最多選 4 個景點");return s;}
     const spot=spots.find(x=>x.id===id);
     showToast((spot?.name||"景點")+" 已加入行程 ✓");
-    track('add_to_itinerary',{spot_name:spot&&spot.name||'',axis:spot&&spot.axis||''});
     return [...s,id];
   });
   const selSpots=sel.map(id=>spots.find(s=>s.id===id)).filter(Boolean);
@@ -733,14 +707,14 @@ function App(){
                 const bs={borderRadius:10,padding:"10px 14px",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,textDecoration:"none",minWidth:90};
                 if(spot.partnerUrl&&spot.ticketUrl){
                   return <div style={{display:"flex",flexDirection:"column",gap:6,flexShrink:0}}>
-                    <a href={spot.partnerUrl} target="_blank" rel="noreferrer" onClick={()=>track('ticket_click',{spot_name:spot.name||'',btn_type:'partner'})} style={{...bs,background:"#e67e22",color:"#fff",minWidth:80}}>優惠購票</a>
-                    <a href={spot.ticketUrl} target="_blank" rel="noreferrer" onClick={()=>track('ticket_click',{spot_name:spot.name||'',btn_type:'official'})} style={{...bs,background:"#2c7be5",color:"#fff",minWidth:80}}>官方購票</a>
+                    <a href={spot.partnerUrl} target="_blank" rel="noreferrer" style={{...bs,background:"#e67e22",color:"#fff",minWidth:80}}>優惠購票</a>
+                    <a href={spot.ticketUrl} target="_blank" rel="noreferrer" style={{...bs,background:"#2c7be5",color:"#fff",minWidth:80}}>官方購票</a>
                   </div>;
                 }
                 const href=spot.partnerUrl||spot.ticketUrl||"";
                 let label=m.includes("優惠")?"優惠購票":m.includes("官方")?"官方購票":m.includes("免費")?"免費入場":m.includes("現場")?"現場購票":spot.partnerUrl?"優惠購票":spot.ticketUrl?"官方購票":(spot.ticket||"").includes("免費")?"免費入場":"現場購票";
                 return href
-                  ?<a href={href} target="_blank" rel="noreferrer" onClick={()=>track('ticket_click',{spot_name:spot.name||'',btn_type:spot.partnerUrl?'partner':'official'})} style={{...bs,background:label==="優惠購票"?"#e67e22":"#2c7be5",color:"#fff"}}>{label}</a>
+                  ?<a href={href} target="_blank" rel="noreferrer" style={{...bs,background:label==="優惠購票"?"#e67e22":"#2c7be5",color:"#fff"}}>{label}</a>
                   :<div style={{...bs,background:label==="免費入場"?"#e8f5e9":"#f0f0f0",color:label==="免費入場"?"#2e7d32":"#666"}}>{label}</div>;
               })()}
             </div>
@@ -1352,6 +1326,22 @@ function App(){
                   <div style={{fontSize:14,marginBottom:6}}>還沒有選擇景點</div>
                   <div style={{fontSize:12,lineHeight:1.7}}>到「探索」頁面點景點卡片右上角的 <strong style={{color:"#555"}}>＋</strong> 加入行程</div>
                 </div>
+                {/* 諮詢橫幅（無景點時） */}
+                <a href="https://tabinihon.github.io/tabinihon/consultation.html" target="_blank" rel="noreferrer"
+                  style={{display:"block",textDecoration:"none",background:"linear-gradient(135deg,#2c3e50,#3d5166)",borderRadius:14,padding:"16px 18px",marginBottom:24}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:"#fff",marginBottom:4}}>✉️ 需要專人規劃行程？</div>
+                      <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",lineHeight:1.6}}>告訴我你的偏好和天數<br/>旅日嚮導為你量身安排</div>
+                    </div>
+                    <div style={{background:"#c0392b",borderRadius:20,padding:"8px 14px",fontSize:12,fontWeight:700,color:"#fff",flexShrink:0,marginLeft:12}}>填寫諮詢 →</div>
+                  </div>
+                  <div style={{marginTop:10,display:"flex",gap:8}}>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>3天 NT$1,200起</span>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>走訪認證景點</span>
+                    <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>實地規劃</span>
+                  </div>
+                </a>
               </div>
             :<div style={{padding:"0 16px"}}>
               <div style={{fontSize:11,color:"#888",marginBottom:12,background:"#f8f8f8",padding:"7px 10px",borderRadius:6,lineHeight:1.5}}>
@@ -1399,6 +1389,22 @@ function App(){
                 <button onClick={()=>setShared(true)} style={{background:"#2c3e50",color:"#fff",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:13}}>📤</button>
                 <button onClick={()=>setSel([])} style={{background:"#f0f0f0",color:"#888",border:"none",borderRadius:20,padding:"11px 14px",cursor:"pointer",fontSize:12}}>清除</button>
               </div>
+              {/* 諮詢橫幅（有景點時） */}
+              <a href="https://tabinihon.github.io/tabinihon/consultation.html" target="_blank" rel="noreferrer"
+                style={{display:"block",textDecoration:"none",background:"linear-gradient(135deg,#2c3e50,#3d5166)",borderRadius:14,padding:"16px 18px",marginBottom:24}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:"#fff",marginBottom:4}}>✉️ 需要專人規劃行程？</div>
+                    <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",lineHeight:1.6}}>告訴我你的偏好和天數<br/>旅日嚮導為你量身安排</div>
+                  </div>
+                  <div style={{background:"#c0392b",borderRadius:20,padding:"8px 14px",fontSize:12,fontWeight:700,color:"#fff",flexShrink:0,marginLeft:12}}>填寫諮詢 →</div>
+                </div>
+                <div style={{marginTop:10,display:"flex",gap:8}}>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>3天 NT$1,200起</span>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>走訪認證景點</span>
+                  <span style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:"3px 8px",fontSize:10,color:"rgba(255,255,255,0.8)"}}>實地規劃</span>
+                </div>
+              </a>
             </div>}
         </div>
 
