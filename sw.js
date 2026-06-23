@@ -1,4 +1,4 @@
-const CACHE = 'tabinihon-v271';
+const CACHE = 'tabinihon-v23';
 const ASSETS = [
   '/tabinihon/',
   '/tabinihon/index.html',
@@ -25,7 +25,6 @@ self.addEventListener('fetch', e => {
   if (e.request.url.includes('googleapis') || e.request.url.includes('gviz')) return;
 
   e.respondWith(
-    // 網路優先：先抓最新版本，失敗才用快取
     fetch(e.request).then(res => {
       if (res && res.status === 200 && res.type !== 'opaque') {
         const copy = res.clone();
@@ -33,7 +32,6 @@ self.addEventListener('fetch', e => {
       }
       return res;
     }).catch(() => {
-      // 離線時才用快取
       return caches.match(e.request).then(cached => {
         if (cached) return cached;
         if (e.request.destination === 'document') {
