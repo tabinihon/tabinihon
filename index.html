@@ -34,7 +34,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
 <style>
 .verified-badge{color:#27ae60;font-weight:bold;}
 .unverified-item{color:#444;}
@@ -93,7 +93,7 @@ button,input,textarea{font-family:inherit;}
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/babel" data-type="script" data-presets="react">
 
 const SUPABASE_URL = "https://vxdpnhjitcdtyshnopus.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHBuaGppdGNkdHlzaG5vcHVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NTcwMzEsImV4cCI6MjA5MTEzMzAzMX0.VEFi_QAH4afDCMYPiNVsRPgAIGrTxwjY7ApflwUsANU";
